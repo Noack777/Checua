@@ -1,8 +1,7 @@
 import React from 'react';
-import { TOUR_OPTIONS } from '../constants/tours';
 
-const TourSelectionSection = ({ selectedTourId, sectionRef }) => {
-  const selectedTour = TOUR_OPTIONS.find(tour => tour.id.toString() === selectedTourId);
+const TourSelectionSection = ({ selectedTourId, sectionRef, tours = [], loading = false }) => {
+  const selectedTour = tours.find(tour => tour.id.toString() === selectedTourId);
 
   return (
     <div 
@@ -26,7 +25,12 @@ const TourSelectionSection = ({ selectedTourId, sectionRef }) => {
 
         <div className="space-y-4">
           {/* Read-only Selection Display */}
-          {selectedTour ? (
+          {loading ? (
+            <div className="bg-brand-light/20 border-2 border-dashed border-brand-primary/20 rounded-[2rem] p-8 text-center ml-0 md:ml-9 animate-pulse">
+              <div className="w-8 h-8 border-4 border-brand-primary border-t-transparent rounded-full animate-spin mx-auto mb-3"></div>
+              <p className="text-sm text-brand-text-secondary font-medium">Cargando detalles del plan...</p>
+            </div>
+          ) : selectedTour ? (
             <div className="animate-in fade-in duration-300 ml-0 md:ml-9">
               <div className="bg-brand-light/40 border-2 border-brand-primary/20 rounded-[2rem] p-6 md:p-8 flex flex-col md:flex-row md:items-center md:justify-between gap-6 relative overflow-hidden group">
                 <div className="absolute top-0 right-0 w-24 h-24 bg-brand-primary/5 rounded-full -mr-12 -mt-12 transition-transform group-hover:scale-110"></div>
@@ -57,8 +61,8 @@ const TourSelectionSection = ({ selectedTourId, sectionRef }) => {
           {/* Hidden input for backend compatibility */}
           <input 
             type="hidden" 
-            name="tour_reserva" 
-            value={selectedTour ? selectedTour.name : ''} 
+            name="id_plan" 
+            value={selectedTour ? selectedTour.id : ''} 
           />
         </div>
       </div>

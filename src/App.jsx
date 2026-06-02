@@ -1,25 +1,39 @@
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import ReservationContactSection from './components/ReservationContactSection'
 import TourSelectionSection from './components/TourSelectionSection'
 import DateSelectionSection from './components/DateSelectionSection'
 import TimeSelectionSection from './components/TimeSelectionSection'
 import WelcomeModal from './components/WelcomeModal'
+import { getTours } from './services/tourService'
 
 function App() {
   // --- ESTADO DEL MODAL ---
   const [isModalOpen, setIsModalOpen] = useState(true);
+  const [tours, setTours] = useState([]);
+  const [loadingTours, setLoadingTours] = useState(true);
+
+  // --- CARGAR TOURS ---
+  useEffect(() => {
+    const fetchTours = async () => {
+      setLoadingTours(true);
+      const data = await getTours();
+      setTours(data);
+      setLoadingTours(false);
+    };
+    fetchTours();
+  }, []);
 
   // --- ESTADO GLOBAL DEL FORMULARIO ---
   const [reservationData, setReservationData] = useState({
     contact: {
       nombre_jefe_reserva: '',
-      telefono_contacto: '',
+      telefono_cliente: '',
       correo_contacto: ''
     },
     tour: {
       tour_reserva: '',
       precio_por_persona: null,
-      id: null
+      id_plan: null
     },
     date: {
       fecha_reserva: '',
@@ -58,7 +72,7 @@ function App() {
         const newErrors = { ...prev };
         delete newErrors[field];
         // Si no hay más errores de contacto, quitar el flag general
-        const contactFields = ['nombre_jefe_reserva', 'telefono_contacto', 'correo_contacto'];
+        const contactFields = ['nombre_jefe_reserva', 'telefono_cliente', 'correo_contacto'];
         const hasMoreContactErrors = contactFields.some(f => f !== field && newErrors[f]);
         if (!hasMoreContactErrors) delete newErrors.contact;
         return newErrors;
@@ -72,7 +86,7 @@ function App() {
       tour: {
         tour_reserva: tour.name,
         precio_por_persona: tour.price,
-        id: tour.id.toString()
+        id_plan: tour.id.toString()
       }
     }));
     if (errors.tour) setErrors(prev => {
@@ -127,11 +141,11 @@ function App() {
       newErrors.contact = true;
     }
 
-    if (!contact.telefono_contacto.trim()) {
-      newErrors.telefono_contacto = "El teléfono es obligatorio";
+    if (!contact.telefono_cliente.trim()) {
+      newErrors.telefono_cliente = "El teléfono es obligatorio";
       newErrors.contact = true;
-    } else if (!/^\+?\d+$/.test(contact.telefono_contacto)) {
-      newErrors.telefono_contacto = "Formato de teléfono inválido";
+    } else if (!/^\+?\d+$/.test(contact.telefono_cliente)) {
+      newErrors.telefono_cliente = "Formato de teléfono inválido";
       newErrors.contact = true;
     }
 
@@ -210,12 +224,12 @@ function App() {
       ...prev,
       contact: {
         ...prev.contact,
-        telefono_contacto: phone
+        telefono_cliente: phone
       },
       tour: {
         tour_reserva: tour.name,
         precio_por_persona: tour.price,
-        id: tour.id.toString()
+        id_plan: tour.id.toString()
       }
     }));
     setIsModalOpen(false);
@@ -226,6 +240,8 @@ function App() {
       <WelcomeModal 
         isOpen={isModalOpen} 
         onComplete={handleModalComplete} 
+        tours={tours}
+        loading={loadingTours}
       />
       
       {/* Header Titles */}
@@ -252,9 +268,11 @@ function App() {
         
         <TourSelectionSection 
           sectionRef={tourRef}
-          selectedTourId={reservationData.tour.id}
+          selectedTourId={reservationData.tour.id_plan}
           onSelect={handleTourSelect}
           errors={errors}
+          tours={tours}
+          loading={loadingTours}
         />
         
         <DateSelectionSection 
@@ -306,7 +324,7 @@ function App() {
                     <div className="flex flex-wrap gap-x-4 gap-y-1 mt-1">
                       <p className="text-brand-text-secondary text-sm flex items-center gap-1.5">
                         <span className="w-1 h-1 bg-brand-primary rounded-full"></span>
-                        {reservationData.contact.telefono_contacto}
+                        {reservationData.contact.telefono_cliente}
                       </p>
                       <p className="text-brand-text-secondary text-sm flex items-center gap-1.5">
                         <span className="w-1 h-1 bg-brand-primary rounded-full"></span>

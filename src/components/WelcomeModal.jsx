@@ -2,11 +2,10 @@ import React, { useState, useEffect, useRef } from 'react';
 import PhoneInputPkg from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
 import { isValidPhoneNumber } from 'libphonenumber-js';
-import { TOUR_OPTIONS } from '../constants/tours';
 
 const PhoneInput = PhoneInputPkg.default || PhoneInputPkg;
 
-const WelcomeModal = ({ isOpen, onComplete }) => {
+const WelcomeModal = ({ isOpen, onComplete, tours = [], loading = false }) => {
   const [phone, setPhone] = useState('');
   const [selectedTourId, setSelectedTourId] = useState('');
   const [acceptedTerms, setAcceptedTerms] = useState(false);
@@ -34,7 +33,7 @@ const WelcomeModal = ({ isOpen, onComplete }) => {
 
   const handleContinue = () => {
     if (canContinue) {
-      const tour = TOUR_OPTIONS.find(t => t.id.toString() === selectedTourId);
+      const tour = tours.find(t => t.id.toString() === selectedTourId);
       const phoneWithPlus = phone.startsWith('+') ? phone : `+${phone}`;
       onComplete({
         phone: phoneWithPlus,
@@ -43,7 +42,7 @@ const WelcomeModal = ({ isOpen, onComplete }) => {
     }
   };
 
-  const selectedTour = TOUR_OPTIONS.find(t => t.id.toString() === selectedTourId);
+  const selectedTour = tours.find(t => t.id.toString() === selectedTourId);
 
   if (!isOpen) return null;
 
@@ -146,44 +145,55 @@ const WelcomeModal = ({ isOpen, onComplete }) => {
                 {isTourDropdownOpen && (
                   <div className="absolute left-0 right-0 mt-3 bg-white border-2 border-brand-border rounded-[1.5rem] shadow-2xl z-[1001] overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
                     <div className="max-h-[300px] overflow-y-auto welcome-tour-list">
-                      {TOUR_OPTIONS.map((tour) => (
-                        <button
-                          key={tour.id}
-                          type="button"
-                          onClick={() => {
-                            setSelectedTourId(tour.id.toString());
-                            setIsTourDropdownOpen(false);
-                          }}
-                          className={`w-full px-6 py-4 text-left transition-all duration-200 border-b border-brand-light last:border-0 flex flex-col gap-1 group ${
-                            selectedTourId === tour.id.toString() 
-                              ? 'bg-brand-primary/10 border-l-4 border-l-brand-primary pl-5' 
-                              : 'hover:bg-brand-light/50 border-l-4 border-l-transparent'
-                          }`}
-                        >
-                          <span className={`font-bold text-sm md:text-base transition-colors ${
-                            selectedTourId === tour.id.toString() ? 'text-brand-primary' : 'text-brand-text-main'
-                          }`}>
-                            {tour.name}
-                          </span>
-                          <div className="flex items-center justify-between">
-                            <div className="flex flex-col">
-                              <span className="text-brand-primary font-black text-base md:text-lg">
-                                ${tour.price.toLocaleString('es-CO')}
-                              </span>
-                              <span className="text-[10px] uppercase font-bold text-brand-text-secondary/60 tracking-wider">
-                                Precio por persona
-                              </span>
-                            </div>
-                            {selectedTourId === tour.id.toString() && (
-                              <div className="bg-brand-primary text-white p-1 rounded-full">
-                                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="4">
-                                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                                </svg>
+                      {loading ? (
+                        <div className="p-10 text-center">
+                          <div className="w-8 h-8 border-4 border-brand-primary border-t-transparent rounded-full animate-spin mx-auto mb-3"></div>
+                          <p className="text-xs font-bold text-brand-text-secondary uppercase tracking-widest">Cargando experiencias...</p>
+                        </div>
+                      ) : tours.length > 0 ? (
+                        tours.map((tour) => (
+                          <button
+                            key={tour.id}
+                            type="button"
+                            onClick={() => {
+                              setSelectedTourId(tour.id.toString());
+                              setIsTourDropdownOpen(false);
+                            }}
+                            className={`w-full px-6 py-4 text-left transition-all duration-200 border-b border-brand-light last:border-0 flex flex-col gap-1 group ${
+                              selectedTourId === tour.id.toString() 
+                                ? 'bg-brand-primary/10 border-l-4 border-l-brand-primary pl-5' 
+                                : 'hover:bg-brand-light/50 border-l-4 border-l-transparent'
+                            }`}
+                          >
+                            <span className={`font-bold text-sm md:text-base transition-colors ${
+                              selectedTourId === tour.id.toString() ? 'text-brand-primary' : 'text-brand-text-main'
+                            }`}>
+                              {tour.name}
+                            </span>
+                            <div className="flex items-center justify-between">
+                              <div className="flex flex-col">
+                                <span className="text-brand-primary font-black text-base md:text-lg">
+                                  ${tour.price.toLocaleString('es-CO')}
+                                </span>
+                                <span className="text-[10px] uppercase font-bold text-brand-text-secondary/60 tracking-wider">
+                                  Precio por persona
+                                </span>
                               </div>
-                            )}
-                          </div>
-                        </button>
-                      ))}
+                              {selectedTourId === tour.id.toString() && (
+                                <div className="bg-brand-primary text-white p-1 rounded-full">
+                                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="4">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                                  </svg>
+                                </div>
+                              )}
+                            </div>
+                          </button>
+                        ))
+                      ) : (
+                        <div className="p-8 text-center">
+                          <p className="text-sm font-bold text-brand-text-secondary italic">No hay planes disponibles por ahora.</p>
+                        </div>
+                      )}
                     </div>
                   </div>
                 )}

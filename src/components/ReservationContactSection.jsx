@@ -62,7 +62,7 @@ const ReservationContactSection = ({ data, onChange, errors, sectionRef }) => {
               <div className="relative">
                 <PhoneInput
                   country={'co'}
-                  value={data.telefono_contacto}
+                  value={data.telefono_cliente}
                   disabled={true}
                   containerClass="!w-full !opacity-100"
                   inputClass="!w-full !h-auto !py-3.5 !pl-[70px] !pr-24 !bg-brand-light/50 !border-2 !border-brand-border !rounded-full !text-brand-text-secondary/70 !font-bold !text-sm md:!text-base !cursor-not-allowed"
