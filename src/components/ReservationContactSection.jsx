@@ -1,4 +1,8 @@
 import React from 'react';
+import PhoneInputPkg from 'react-phone-input-2';
+import 'react-phone-input-2/lib/style.css';
+
+const PhoneInput = PhoneInputPkg.default || PhoneInputPkg;
 
 const ReservationContactSection = ({ data, onChange, errors, sectionRef }) => {
   const handleChange = (e) => {
@@ -10,9 +14,6 @@ const ReservationContactSection = ({ data, onChange, errors, sectionRef }) => {
     if (name === 'nombre_jefe_reserva') {
       // Solo letras, espacios y caracteres especiales de español (tildes, ñ)
       cleanValue = value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s]/g, '');
-    } else if (name === 'telefono_contacto') {
-      // Solo números
-      cleanValue = value.replace(/\D/g, '');
     }
 
     onChange(name, cleanValue);
@@ -57,20 +58,24 @@ const ReservationContactSection = ({ data, onChange, errors, sectionRef }) => {
               {errors.nombre_jefe_reserva && <p className="text-[10px] text-red-500 mt-1 ml-4 font-bold uppercase tracking-wider">{errors.nombre_jefe_reserva}</p>}
             </div>
 
-            <div className="relative group ml-0 md:ml-9">
-              <input
-                type="tel"
-                inputMode="numeric"
-                pattern="[0-9]*"
-                name="telefono_contacto"
-                placeholder="Teléfono de contacto"
-                value={data.telefono_contacto}
-                onChange={handleChange}
-                className={`w-full px-5 py-3.5 bg-white border-2 rounded-full text-brand-text-main placeholder-brand-text-secondary/40 focus:outline-none focus:ring-4 transition-all duration-300 font-medium text-sm md:text-base ${
-                  errors.telefono_contacto ? 'border-red-200 focus:border-red-400 focus:ring-red-400/5' : 'border-brand-border focus:border-brand-primary focus:ring-brand-primary/5'
-                }`}
-              />
-              {errors.telefono_contacto && <p className="text-[10px] text-red-500 mt-1 ml-4 font-bold uppercase tracking-wider">{errors.telefono_contacto}</p>}
+            <div className="relative group ml-0 md:ml-9 verified-phone-display">
+              <div className="relative">
+                <PhoneInput
+                  country={'co'}
+                  value={data.telefono_contacto}
+                  disabled={true}
+                  containerClass="!w-full !opacity-100"
+                  inputClass="!w-full !h-auto !py-3.5 !pl-[70px] !pr-24 !bg-brand-light/50 !border-2 !border-brand-border !rounded-full !text-brand-text-secondary/70 !font-bold !text-sm md:!text-base !cursor-not-allowed"
+                  buttonClass="!bg-transparent !border-none !rounded-l-full !pl-4 !cursor-not-allowed"
+                />
+                <div className="absolute right-5 top-1/2 -translate-y-1/2 flex items-center gap-2 pointer-events-none">
+                  <span className="hidden sm:inline-block text-[10px] font-black text-brand-primary uppercase tracking-widest bg-white px-2 py-1 rounded-md border border-brand-primary/20 shadow-sm">Verificado</span>
+                  <svg className="w-5 h-5 text-brand-primary" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                  </svg>
+                </div>
+              </div>
+              <p className="text-[10px] text-brand-text-secondary/50 mt-1.5 ml-4 font-medium italic">Este número fue verificado al inicio.</p>
             </div>
 
             <div className="relative group ml-0 md:ml-9">

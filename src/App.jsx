@@ -3,8 +3,12 @@ import ReservationContactSection from './components/ReservationContactSection'
 import TourSelectionSection from './components/TourSelectionSection'
 import DateSelectionSection from './components/DateSelectionSection'
 import TimeSelectionSection from './components/TimeSelectionSection'
+import WelcomeModal from './components/WelcomeModal'
 
 function App() {
+  // --- ESTADO DEL MODAL ---
+  const [isModalOpen, setIsModalOpen] = useState(true);
+
   // --- ESTADO GLOBAL DEL FORMULARIO ---
   const [reservationData, setReservationData] = useState({
     contact: {
@@ -126,8 +130,8 @@ function App() {
     if (!contact.telefono_contacto.trim()) {
       newErrors.telefono_contacto = "El teléfono es obligatorio";
       newErrors.contact = true;
-    } else if (!/^\d+$/.test(contact.telefono_contacto)) {
-      newErrors.telefono_contacto = "Solo se permiten números";
+    } else if (!/^\+?\d+$/.test(contact.telefono_contacto)) {
+      newErrors.telefono_contacto = "Formato de teléfono inválido";
       newErrors.contact = true;
     }
 
@@ -201,8 +205,29 @@ function App() {
     }
   };
 
+  const handleModalComplete = ({ phone, tour }) => {
+    setReservationData(prev => ({
+      ...prev,
+      contact: {
+        ...prev.contact,
+        telefono_contacto: phone
+      },
+      tour: {
+        tour_reserva: tour.name,
+        precio_por_persona: tour.price,
+        id: tour.id.toString()
+      }
+    }));
+    setIsModalOpen(false);
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-brand-light/40 py-8 px-4 sm:px-6 lg:px-8 flex flex-col items-center">
+    <div className={`min-h-screen bg-gradient-to-b from-white to-brand-light/40 py-8 px-4 sm:px-6 lg:px-8 flex flex-col items-center ${isModalOpen ? 'overflow-hidden h-screen' : ''}`}>
+      <WelcomeModal 
+        isOpen={isModalOpen} 
+        onComplete={handleModalComplete} 
+      />
+      
       {/* Header Titles */}
       <div className="w-full max-w-xl text-center mb-8">
         <h1 className="text-2xl md:text-3xl font-black tracking-tight text-brand-text-main uppercase leading-none">

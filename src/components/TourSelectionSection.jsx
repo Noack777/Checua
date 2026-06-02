@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React from 'react';
 
 const TOUR_OPTIONS = [
   { id: 1, name: "Senderismo por el Desierto", price: 30000 },
@@ -10,100 +10,58 @@ const TOUR_OPTIONS = [
   { id: 7, name: "Noche mágica en el Desierto", price: 150000 },
 ];
 
-const TourSelectionSection = ({ onSelect, selectedTourId, errors, sectionRef }) => {
-  const [isOpen, setIsOpen] = useState(false);
-  const dropdownRef = useRef(null);
-
+const TourSelectionSection = ({ selectedTourId, sectionRef }) => {
   const selectedTour = TOUR_OPTIONS.find(tour => tour.id.toString() === selectedTourId);
-
-  // Close dropdown when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setIsOpen(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
-
-  const handleSelect = (tourId) => {
-    const tour = TOUR_OPTIONS.find(t => t.id === tourId);
-    onSelect(tour);
-    setIsOpen(false);
-  };
 
   return (
     <div 
       ref={sectionRef}
-      className={`w-full max-w-xl bg-white rounded-[1.5rem] shadow-lg shadow-brand-dark/5 border transition-all duration-300 relative ${
-        errors.tour ? 'border-red-400 ring-2 ring-red-50' : 'border-brand-border'
-      }`}
+      className="w-full max-w-xl bg-white rounded-[1.5rem] shadow-lg shadow-brand-dark/5 border border-brand-border transition-all duration-300 relative"
     >
       {/* Visual Accent Line */}
-      <div className={`absolute top-0 left-0 w-full h-1.5 rounded-t-[1.5rem] ${errors.tour ? 'bg-red-400' : 'bg-brand-primary'}`}></div>
+      <div className="absolute top-0 left-0 w-full h-1.5 rounded-t-[1.5rem] bg-brand-primary"></div>
       
       <div className="px-5 py-6 md:p-10 space-y-6">
         <div>
           <h3 className="text-base md:text-lg font-bold text-brand-text-main flex items-center gap-2">
-            <span className={`flex items-center justify-center w-7 h-7 rounded-full text-xs font-black transition-colors ${
-              errors.tour ? 'bg-red-100 text-red-600' : 'bg-brand-light text-brand-dark'
-            }`}>2</span>
-            Tipo de tour y lugar de la reserva
+            <span className="flex items-center justify-center w-7 h-7 rounded-full text-xs font-black bg-brand-light text-brand-dark">2</span>
+            Confirmación de tu experiencia
             <span className="text-brand-primary ml-1 text-xl leading-none">*</span>
           </h3>
           <p className="text-sm md:text-base text-brand-text-secondary mt-1.5 ml-0 md:ml-9">
-            Selecciona el plan que deseas reservar.
+            Has seleccionado el siguiente plan para tu reserva.
           </p>
         </div>
 
-        <div className="space-y-4" ref={dropdownRef}>
-          {/* Custom Dropdown Trigger */}
-          <div className="relative">
-            <button
-              type="button"
-              onClick={() => setIsOpen(!isOpen)}
-              aria-expanded={isOpen}
-              className={`w-full px-6 py-3.5 bg-white border-2 rounded-full text-left transition-all duration-300 flex items-center justify-between group ${
-                isOpen ? 'border-brand-primary ring-4 ring-brand-primary/5' : 'border-brand-border'
-              }`}
-            >
-              <span className={`font-medium text-sm md:text-base ${selectedTour ? 'text-brand-text-main' : 'text-brand-text-secondary/60'}`}>
-                {selectedTour ? selectedTour.name : 'Selecciona un plan turístico'}
-              </span>
-              <svg 
-                className={`w-4 h-4 text-brand-primary transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} 
-                fill="none" 
-                stroke="currentColor" 
-                viewBox="0 0 24 24"
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 9l-7 7-7-7" />
-              </svg>
-            </button>
-
-            {/* Custom Dropdown List */}
-            {isOpen && (
-              <div className="absolute z-[100] w-full mt-2 bg-white border border-brand-border rounded-2xl shadow-2xl shadow-brand-dark/20 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
-                <div className="max-h-64 overflow-y-auto py-2 scrollbar-thin scrollbar-thumb-brand-primary/20 scrollbar-track-transparent">
-                  {TOUR_OPTIONS.map((tour) => (
-                    <button
-                      key={tour.id}
-                      type="button"
-                      onClick={() => handleSelect(tour.id)}
-                      className={`w-full px-6 py-3 text-left hover:bg-brand-light/50 transition-colors flex flex-col gap-0.5 ${
-                        selectedTourId === tour.id.toString() ? 'bg-brand-light/80' : ''
-                      }`}
-                    >
-                      <span className="font-bold text-brand-text-main text-sm md:text-base">{tour.name}</span>
-                      <span className="text-[11px] font-bold text-brand-primary uppercase tracking-wider">
-                        ${tour.price.toLocaleString('es-CO')} COP / persona
-                      </span>
-                    </button>
-                  ))}
+        <div className="space-y-4">
+          {/* Read-only Selection Display */}
+          {selectedTour ? (
+            <div className="animate-in fade-in duration-300 ml-0 md:ml-9">
+              <div className="bg-brand-light/40 border-2 border-brand-primary/20 rounded-[2rem] p-6 md:p-8 flex flex-col md:flex-row md:items-center md:justify-between gap-6 relative overflow-hidden group">
+                <div className="absolute top-0 right-0 w-24 h-24 bg-brand-primary/5 rounded-full -mr-12 -mt-12 transition-transform group-hover:scale-110"></div>
+                
+                <div className="relative">
+                  <p className="text-[10px] uppercase tracking-[0.2em] font-black text-brand-primary mb-1">Plan Seleccionado</p>
+                  <p className="text-brand-text-main font-black text-lg md:text-xl leading-tight">{selectedTour.name}</p>
+                </div>
+                
+                <div className="relative md:text-right border-t md:border-t-0 md:border-l border-brand-primary/10 pt-4 md:pt-0 md:pl-8">
+                  <p className="text-[10px] uppercase tracking-[0.2em] font-black text-brand-primary mb-1">Precio por Persona</p>
+                  <p className="text-brand-dark font-black text-2xl">
+                    ${selectedTour.price.toLocaleString('es-CO')}
+                    <span className="text-xs ml-1.5 font-bold text-brand-text-secondary uppercase">COP</span>
+                  </p>
                 </div>
               </div>
-            )}
-          </div>
+              <p className="text-[10px] text-brand-text-secondary/50 mt-3 font-medium italic text-center md:text-left">
+                * Para cambiar el tour, por favor recarga la página.
+              </p>
+            </div>
+          ) : (
+            <div className="bg-gray-50 border-2 border-dashed border-gray-200 rounded-2xl p-8 text-center ml-0 md:ml-9">
+              <p className="text-sm text-gray-400 font-medium italic">No se ha seleccionado ningún tour aún.</p>
+            </div>
+          )}
 
           {/* Hidden input for backend compatibility */}
           <input 
@@ -111,26 +69,6 @@ const TourSelectionSection = ({ onSelect, selectedTourId, errors, sectionRef }) 
             name="tour_reserva" 
             value={selectedTour ? selectedTour.name : ''} 
           />
-          {errors.tour && <p className="text-[10px] text-red-500 mt-1 ml-4 font-bold uppercase tracking-wider">{errors.tour}</p>}
-
-          {/* Selection Summary Card */}
-          {selectedTour && (
-            <div className="animate-in fade-in slide-in-from-top-2 duration-300">
-              <div className="bg-brand-light/50 border border-brand-primary/20 rounded-2xl p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-2 shadow-sm">
-                <div>
-                  <p className="text-[10px] uppercase tracking-widest font-black text-brand-primary">Plan Seleccionado</p>
-                  <p className="text-brand-text-main font-bold text-sm md:text-base">{selectedTour.name}</p>
-                </div>
-                <div className="md:text-right border-t md:border-t-0 md:border-l border-brand-primary/10 pt-2 md:pt-0 md:pl-4">
-                  <p className="text-[10px] uppercase tracking-widest font-black text-brand-primary">Precio por Persona</p>
-                  <p className="text-brand-dark font-black text-lg">
-                    ${selectedTour.price.toLocaleString('es-CO')}
-                    <span className="text-[10px] ml-1 font-bold text-brand-text-secondary uppercase">COP</span>
-                  </p>
-                </div>
-              </div>
-            </div>
-          )}
         </div>
       </div>
     </div>
