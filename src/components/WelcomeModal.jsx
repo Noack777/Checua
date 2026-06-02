@@ -1,25 +1,28 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import PhoneInputPkg from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
 import { isValidPhoneNumber } from 'libphonenumber-js';
+import { TOUR_OPTIONS } from '../constants/tours';
 
 const PhoneInput = PhoneInputPkg.default || PhoneInputPkg;
-
-export const TOUR_OPTIONS = [
-  { id: 1, name: "Senderismo por el Desierto", price: 30000 },
-  { id: 2, name: "Desierto más Bicicleta", price: 125000 },
-  { id: 3, name: "Desierto más Relajación", price: 152000 },
-  { id: 4, name: "Escápate a Nemocón", price: 352000 },
-  { id: 5, name: "Plan Buggy Extremo", price: 76000 },
-  { id: 6, name: "Retiro de Parejas", price: 155000 },
-  { id: 7, name: "Noche mágica en el Desierto", price: 150000 },
-];
 
 const WelcomeModal = ({ isOpen, onComplete }) => {
   const [phone, setPhone] = useState('');
   const [selectedTourId, setSelectedTourId] = useState('');
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [isValid, setIsValid] = useState(false);
+  const [isTourDropdownOpen, setIsTourDropdownOpen] = useState(false);
+  const dropdownRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsTourDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   useEffect(() => {
     // libphonenumber-js needs the + prefix for validation
@@ -39,6 +42,8 @@ const WelcomeModal = ({ isOpen, onComplete }) => {
       });
     }
   };
+
+  const selectedTour = TOUR_OPTIONS.find(t => t.id.toString() === selectedTourId);
 
   if (!isOpen) return null;
 
@@ -93,23 +98,96 @@ const WelcomeModal = ({ isOpen, onComplete }) => {
             </div>
 
             {/* Tour Selection Field */}
-            <div className="space-y-2">
+            <div className="space-y-2" ref={dropdownRef}>
               <label className="text-[10px] font-black text-brand-primary uppercase tracking-[0.2em] ml-4">
                 ¿Qué experiencia buscas? *
               </label>
-              <select
-                value={selectedTourId}
-                onChange={(e) => setSelectedTourId(e.target.value)}
-                className="w-full px-5 py-4 bg-brand-light/30 border-2 border-brand-border rounded-full text-brand-text-main focus:outline-none focus:border-brand-primary focus:ring-4 focus:ring-brand-primary/5 transition-all duration-300 font-bold text-sm md:text-base appearance-none cursor-pointer"
-                style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' fill=\'none\' viewBox=\'0 0 24 24\' stroke=\'%238CC915\' stroke-width=\'3\'%3E%3Cpath stroke-linecap=\'round\' stroke-linejoin=\'round\' d=\'M19 9l-7 7-7-7\' /%3E%3C/svg%3E")', backgroundRepeat: 'no-repeat', backgroundPosition: 'right 1.5rem center', backgroundSize: '1rem' }}
-              >
-                <option value="" disabled>Selecciona un plan turístico</option>
-                {TOUR_OPTIONS.map(tour => (
-                  <option key={tour.id} value={tour.id}>
-                    {tour.name} - ${tour.price.toLocaleString('es-CO')}
-                  </option>
-                ))}
-              </select>
+              
+              <div className="relative">
+                {/* Custom Trigger */}
+                <button
+                  type="button"
+                  onClick={() => setIsTourDropdownOpen(!isTourDropdownOpen)}
+                  className={`w-full px-6 py-4 bg-brand-light/30 border-2 rounded-full text-left transition-all duration-300 flex items-center justify-between group ${
+                    isTourDropdownOpen ? 'border-brand-primary ring-4 ring-brand-primary/5' : 'border-brand-border hover:border-brand-primary/50'
+                  }`}
+                >
+                  {selectedTour ? (
+                    <div className="flex flex-col">
+                      <span className="text-brand-text-main font-bold text-sm md:text-base leading-tight">
+                        {selectedTour.name}
+                      </span>
+                      <div className="flex items-center gap-2 mt-1">
+                        <span className="text-brand-primary font-black text-sm">
+                          ${selectedTour.price.toLocaleString('es-CO')}
+                        </span>
+                        <span className="text-[9px] uppercase font-bold text-brand-text-secondary/60">
+                          Precio por persona
+                        </span>
+                      </div>
+                    </div>
+                  ) : (
+                    <span className="text-brand-text-secondary/60 font-bold text-sm md:text-base">
+                      Selecciona un plan turístico
+                    </span>
+                  )}
+                  <svg 
+                    className={`w-5 h-5 text-brand-primary transition-transform duration-300 ${isTourDropdownOpen ? 'rotate-180' : ''}`} 
+                    fill="none" 
+                    viewBox="0 0 24 24" 
+                    stroke="currentColor" 
+                    strokeWidth="3"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+
+                {/* Custom Dropdown Options */}
+                {isTourDropdownOpen && (
+                  <div className="absolute left-0 right-0 mt-3 bg-white border-2 border-brand-border rounded-[1.5rem] shadow-2xl z-[1001] overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
+                    <div className="max-h-[300px] overflow-y-auto welcome-tour-list">
+                      {TOUR_OPTIONS.map((tour) => (
+                        <button
+                          key={tour.id}
+                          type="button"
+                          onClick={() => {
+                            setSelectedTourId(tour.id.toString());
+                            setIsTourDropdownOpen(false);
+                          }}
+                          className={`w-full px-6 py-4 text-left transition-all duration-200 border-b border-brand-light last:border-0 flex flex-col gap-1 group ${
+                            selectedTourId === tour.id.toString() 
+                              ? 'bg-brand-primary/10 border-l-4 border-l-brand-primary pl-5' 
+                              : 'hover:bg-brand-light/50 border-l-4 border-l-transparent'
+                          }`}
+                        >
+                          <span className={`font-bold text-sm md:text-base transition-colors ${
+                            selectedTourId === tour.id.toString() ? 'text-brand-primary' : 'text-brand-text-main'
+                          }`}>
+                            {tour.name}
+                          </span>
+                          <div className="flex items-center justify-between">
+                            <div className="flex flex-col">
+                              <span className="text-brand-primary font-black text-base md:text-lg">
+                                ${tour.price.toLocaleString('es-CO')}
+                              </span>
+                              <span className="text-[10px] uppercase font-bold text-brand-text-secondary/60 tracking-wider">
+                                Precio por persona
+                              </span>
+                            </div>
+                            {selectedTourId === tour.id.toString() && (
+                              <div className="bg-brand-primary text-white p-1 rounded-full">
+                                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="4">
+                                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                                </svg>
+                              </div>
+                            )}
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
 
             {/* Terms Checkbox */}
@@ -294,6 +372,20 @@ const WelcomeModal = ({ isOpen, onComplete }) => {
 
         .react-tel-input .selected-flag .arrow.up {
           border-bottom-color: #8CC915 !important;
+        }
+
+        /* Estilos para el scrollbar del selector de tours */
+        .welcome-tour-list::-webkit-scrollbar {
+          width: 6px;
+        }
+
+        .welcome-tour-list::-webkit-scrollbar-track {
+          background: #F9FAFB;
+        }
+
+        .welcome-tour-list::-webkit-scrollbar-thumb {
+          background-color: #8CC915;
+          border-radius: 20px;
         }
       `}} />
     </div>

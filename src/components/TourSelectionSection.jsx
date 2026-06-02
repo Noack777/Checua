@@ -1,14 +1,5 @@
 import React from 'react';
-
-const TOUR_OPTIONS = [
-  { id: 1, name: "Senderismo por el Desierto", price: 30000 },
-  { id: 2, name: "Desierto más Bicicleta", price: 125000 },
-  { id: 3, name: "Desierto más Relajación", price: 152000 },
-  { id: 4, name: "Escápate a Nemocón", price: 352000 },
-  { id: 5, name: "Plan Buggy Extremo", price: 76000 },
-  { id: 6, name: "Retiro de Parejas", price: 155000 },
-  { id: 7, name: "Noche mágica en el Desierto", price: 150000 },
-];
+import { TOUR_OPTIONS } from '../constants/tours';
 
 const TourSelectionSection = ({ selectedTourId, sectionRef }) => {
   const selectedTour = TOUR_OPTIONS.find(tour => tour.id.toString() === selectedTourId);
