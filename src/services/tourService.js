@@ -2,6 +2,11 @@ import { supabase } from '../lib/supabase'
 import { TOUR_OPTIONS as STATIC_TOURS } from '../constants/tours'
 
 export const getTours = async () => {
+  // Si no hay credenciales reales, devolvemos el fallback inmediatamente sin intentar conectar
+  if (!import.meta.env.VITE_SUPABASE_URL || !import.meta.env.VITE_SUPABASE_ANON_KEY) {
+    return STATIC_TOURS
+  }
+
   try {
     const { data, error } = await supabase
       .from('plan')
