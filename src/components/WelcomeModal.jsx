@@ -375,13 +375,32 @@ const WelcomeModal = ({ isOpen, onComplete, onClose, tours = [], loading = false
           <button
             onClick={handleContinue}
             disabled={!canContinue}
-            className={`w-full py-4 rounded-full font-black text-lg uppercase tracking-widest transition-all duration-300 shadow-lg ${
-              canContinue 
-                ? 'bg-brand-primary text-white hover:bg-brand-dark shadow-brand-primary/20 scale-[1.02] active:scale-[0.98]' 
-                : 'bg-gray-100 dark:bg-dark-bg-main text-gray-400 dark:text-gray-600 cursor-not-allowed shadow-none'
-            }`}
+            className="btn-animate-continue w-full"
           >
-            {t('welcome.continue')}
+            <div className="dots_border"></div>
+            <svg
+              className="sparkle"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                className="path"
+                d="M12 2L14.5 9L22 11.5L14.5 14L12 21L9.5 14L2 11.5L9.5 9L12 2Z"
+              ></path>
+            </svg>
+            <span className="text_button">{t('welcome.continue')}</span>
+            <svg
+              className="sparkle"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                className="path"
+                d="M12 2L14.5 9L22 11.5L14.5 14L12 21L9.5 14L2 11.5L9.5 9L12 2Z"
+              ></path>
+            </svg>
           </button>
         </div>
       </div>
