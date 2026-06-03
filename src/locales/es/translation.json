@@ -19,7 +19,9 @@
     "terms_authorize": "Autorizo el tratamiento de mis datos personales de acuerdo con la política de tratamiento de datos de la empresa.",
     "terms_accept": "He leído y acepto la política de tratamiento de datos.",
     "continue": "Continuar",
-    "change_plan": "CAMBIAR PLAN O TELÉFONO"
+    "change_plan": "CAMBIAR PLAN O TELÉFONO",
+    "switch_dark": "Cambiar a modo oscuro",
+    "switch_light": "Cambiar a modo claro"
   },
   "home": {
     "title": "Formulario de Reservas",

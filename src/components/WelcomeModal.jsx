@@ -110,41 +110,55 @@ const WelcomeModal = ({ isOpen, onComplete, onClose, tours = [], loading = false
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[999] flex items-center justify-center p-4 bg-brand-dark/40 dark:bg-black/60 backdrop-blur-md animate-in fade-in duration-300">
-      <div className="w-full max-w-lg bg-white dark:bg-dark-bg-card rounded-[2.5rem] shadow-2xl overflow-hidden relative border border-brand-border dark:border-dark-border animate-in zoom-in-95 duration-300">
+    <div className="fixed inset-0 z-[999] flex items-center justify-center p-4 bg-brand-dark/40 dark:bg-black/60 backdrop-blur-md animate-in fade-in duration-300 overflow-y-auto">
+      <div className="w-full max-w-lg bg-white dark:bg-dark-bg-card rounded-[2.5rem] shadow-2xl relative border border-brand-border dark:border-dark-border animate-in zoom-in-95 duration-300 my-auto">
         {/* Header Accent */}
-        <div className="h-2 w-full bg-brand-primary"></div>
+        <div className="h-2 w-full bg-brand-primary rounded-t-[2.5rem] shrink-0"></div>
         
         {/* Selectors and Close Button Container */}
-        <div className="absolute top-6 right-6 flex items-center gap-3 z-20">
+        <div className="absolute top-6 right-6 flex items-center gap-4 z-20">
           {/* Theme Toggle */}
           <button
             onClick={toggleTheme}
-            className="p-2 rounded-full bg-brand-light dark:bg-dark-bg-main border border-brand-border dark:border-dark-border text-brand-primary transition-all shadow-sm hover:scale-110"
-            title={theme === 'light' ? 'Modo Oscuro' : 'Modo Claro'}
+            className={`w-11 h-11 flex items-center justify-center rounded-2xl transition-all duration-300 shadow-sm border-2 ${
+              theme === 'light' 
+                ? 'bg-white border-brand-border text-amber-500 hover:border-amber-400 hover:bg-amber-50/50' 
+                : 'bg-dark-bg-main border-dark-border text-brand-primary hover:border-brand-primary/50 hover:bg-brand-primary/10'
+            }`}
+            title={theme === 'light' ? t('welcome.switch_dark') || 'Cambiar a modo oscuro' : t('welcome.switch_light') || 'Cambiar a modo claro'}
           >
             {theme === 'light' ? (
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+              // Icono Sol para modo claro
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707M16.243 17.657l-.707-.707M7.05 7.05l-.707-.707M12 8a4 4 0 100 8 4 4 0 000-8z" />
               </svg>
             ) : (
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707M16.243 17.657l-.707-.707M7.05 7.05l-.707-.707M12 8a4 4 0 100 8 4 4 0 000-8z" />
+              // Icono Luna para modo oscuro
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
               </svg>
             )}
           </button>
 
           {/* Language Selector */}
-          <div className="flex gap-1.5">
+          <div className="flex bg-brand-light/50 dark:bg-dark-bg-main/50 p-1.5 rounded-2xl border-2 border-brand-border dark:border-dark-border gap-1.5">
             <button 
               onClick={() => changeLanguage('es')}
-              className={`px-2.5 py-1 rounded-full text-[9px] font-black transition-all ${i18n.language.startsWith('es') ? 'bg-brand-primary text-white shadow-md' : 'bg-brand-light dark:bg-dark-bg-main text-brand-text-secondary dark:text-dark-text-secondary border border-brand-border dark:border-dark-border hover:border-brand-primary'}`}
+              className={`px-4 py-2 rounded-xl text-[11px] font-black transition-all duration-300 uppercase tracking-wider ${
+                i18n.language.startsWith('es') 
+                  ? 'bg-brand-primary text-white shadow-lg scale-105' 
+                  : 'text-brand-text-secondary dark:text-dark-text-secondary hover:text-brand-primary dark:hover:text-brand-primary'
+              }`}
             >
               ES
             </button>
             <button 
               onClick={() => changeLanguage('en')}
-              className={`px-2.5 py-1 rounded-full text-[9px] font-black transition-all ${i18n.language.startsWith('en') ? 'bg-brand-primary text-white shadow-md' : 'bg-brand-light dark:bg-dark-bg-main text-brand-text-secondary dark:text-dark-text-secondary border border-brand-border dark:border-dark-border hover:border-brand-primary'}`}
+              className={`px-4 py-2 rounded-xl text-[11px] font-black transition-all duration-300 uppercase tracking-wider ${
+                i18n.language.startsWith('en') 
+                  ? 'bg-brand-primary text-white shadow-lg scale-105' 
+                  : 'text-brand-text-secondary dark:text-dark-text-secondary hover:text-brand-primary dark:hover:text-brand-primary'
+              }`}
             >
               EN
             </button>
@@ -154,16 +168,16 @@ const WelcomeModal = ({ isOpen, onComplete, onClose, tours = [], loading = false
           {initialPhone && (
             <button 
               onClick={onClose}
-              className="p-2 text-brand-text-secondary dark:text-dark-text-secondary hover:text-brand-primary transition-colors"
+              className="w-11 h-11 flex items-center justify-center text-brand-text-secondary dark:text-dark-text-secondary hover:text-red-500 dark:hover:text-red-400 transition-all duration-300 hover:scale-110 active:scale-95"
             >
-              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+              <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
           )}
         </div>
 
-        <div className="px-6 py-8 md:p-10 space-y-8">
+        <div className="px-6 pt-20 pb-8 md:pt-24 md:pb-10 md:px-10 space-y-8">
           <div className="text-center space-y-2">
             <h2 className="text-2xl md:text-3xl font-black text-brand-text-main dark:text-dark-text-main uppercase tracking-tight">
               {t('welcome.title')}
@@ -245,7 +259,7 @@ const WelcomeModal = ({ isOpen, onComplete, onClose, tours = [], loading = false
             </div>
 
             {/* Tour Selection Field */}
-            <div className="space-y-2" ref={dropdownRef}>
+            <div className={`space-y-2 transition-all duration-500 ease-in-out ${isTourDropdownOpen ? 'pb-[320px]' : 'pb-0'}`} ref={dropdownRef}>
               <label className="text-[10px] font-black text-brand-primary uppercase tracking-[0.2em] ml-4">
                 {t('welcome.experience_label')}
               </label>
@@ -292,7 +306,7 @@ const WelcomeModal = ({ isOpen, onComplete, onClose, tours = [], loading = false
                 {/* Custom Dropdown Options */}
                 {isTourDropdownOpen && (
                   <div className="absolute left-0 right-0 mt-3 bg-white dark:bg-dark-bg-card border-2 border-brand-border dark:border-dark-border rounded-[1.5rem] shadow-2xl z-[1001] overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
-                    <div className="max-h-[300px] overflow-y-auto welcome-tour-list">
+                    <div className="max-h-[300px] md:max-h-[350px] overflow-y-auto welcome-tour-list">
                       {loading ? (
                         <div className="p-10 text-center">
                           <div className="w-8 h-8 border-4 border-brand-primary border-t-transparent rounded-full animate-spin mx-auto mb-3"></div>

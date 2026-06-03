@@ -19,7 +19,9 @@
     "terms_authorize": "I authorize the processing of my personal data in accordance with the company's data processing policy.",
     "terms_accept": "I have read and accept the data processing policy.",
     "continue": "Continue",
-    "change_plan": "CHANGE PLAN OR PHONE"
+    "change_plan": "CHANGE PLAN OR PHONE",
+    "switch_dark": "Switch to dark mode",
+    "switch_light": "Switch to light mode"
   },
   "home": {
     "title": "Reservation Form",
