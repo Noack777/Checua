@@ -7,6 +7,7 @@
     "phone_hint": "Use your WhatsApp number.",
     "phone_valid": "Valid number",
     "phone_invalid": "Incomplete number",
+    "search_placeholder": "Search country or dialing code",
     "verifying": "Verifying number...",
     "client_found": "Client found in our system.",
     "client_created": "We didn't find this number. We've created a new record for you!",

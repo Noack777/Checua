@@ -17,6 +17,24 @@ const WelcomeModal = ({ isOpen, onComplete, onClose, tours = [], loading = false
   const [searchTerm, setSearchTerm] = useState('');
   const dropdownRef = useRef(null);
   const searchInputRef = useRef(null);
+  const phoneContainerRef = useRef(null);
+  const [phoneDropdownPosition, setPhoneDropdownPosition] = useState('down');
+
+  // Detectar espacio para el dropdown de teléfono
+  const handlePhoneDropdownClick = () => {
+    if (phoneContainerRef.current) {
+      const rect = phoneContainerRef.current.getBoundingClientRect();
+      const spaceBelow = window.innerHeight - rect.bottom;
+      const spaceAbove = rect.top;
+      const dropdownHeight = 300; // Altura aproximada del dropdown
+
+      if (spaceBelow < dropdownHeight && spaceAbove > dropdownHeight) {
+        setPhoneDropdownPosition('up');
+      } else {
+        setPhoneDropdownPosition('down');
+      }
+    }
+  };
 
   // Filtrado de tours optimizado
   const filteredTours = React.useMemo(() => {
@@ -219,19 +237,23 @@ const WelcomeModal = ({ isOpen, onComplete, onClose, tours = [], loading = false
               <label className="text-[10px] font-black text-brand-primary uppercase tracking-[0.2em] ml-4">
                 {t('welcome.phone_label')}
               </label>
-              <div className="relative welcome-phone-input-v2">
+              <div 
+                ref={phoneContainerRef}
+                onClick={handlePhoneDropdownClick}
+                className={`relative welcome-phone-input-v2 ${phoneDropdownPosition === 'up' ? 'drop-up' : ''}`}
+              >
                 <PhoneInput
                   country={'co'}
                   value={phone}
                   onChange={setPhone}
                   enableSearch={true}
-                  searchPlaceholder={t('welcome.search_placeholder') || "Buscar país..."}
-                  searchNotFound={t('welcome.search_not_found') || "País no encontrado"}
+                  searchPlaceholder={t('welcome.search_placeholder')}
+                  searchNotFound={t('welcome.search_not_found') || "..."}
                   placeholder={t('welcome.phone_placeholder')}
                   containerClass="!w-full !font-sans"
                   inputClass="!w-full !h-auto !py-4 !pl-[70px] !pr-5 !bg-brand-light/30 dark:!bg-dark-bg-main/50 !border-2 !border-brand-border dark:!border-dark-border !rounded-full !text-brand-text-main dark:!text-dark-text-main !font-bold !text-base focus:!border-brand-primary focus:!ring-4 focus:!ring-brand-primary/5 !transition-all !duration-300"
                   buttonClass="!bg-transparent !border-none !rounded-l-full !pl-4 hover:!bg-brand-primary/5 !transition-colors"
-                  dropdownClass="welcome-phone-dropdown"
+                  dropdownClass={`welcome-phone-dropdown ${phoneDropdownPosition === 'up' ? 'open-up' : ''}`}
                   searchClass="welcome-phone-search"
                 />
               </div>
@@ -499,146 +521,180 @@ const WelcomeModal = ({ isOpen, onComplete, onClose, tours = [], loading = false
 
       <style dangerouslySetInnerHTML={{ __html: `
         /* Contenedor del Dropdown */
-        .welcome-phone-dropdown {
+        .react-tel-input .country-list {
           background-color: white !important;
           border-radius: 1.5rem !important;
           box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
           border: 2px solid #E5E7EB !important;
-          overflow: hidden !important;
-          margin-top: 0.75rem !important;
+          margin-top: 10px !important;
+          width: 100% !important; /* Ajustado al modal */
+          max-width: 320px !important;
+          max-height: 280px !important; /* Altura máxima requerida */
           z-index: 1000 !important;
-          width: 320px !important;
-          max-height: 350px !important;
+          scrollbar-width: thin;
+          scrollbar-color: #8CC915 #F3F4F6;
+          overflow-x: hidden !important; /* Eliminar scroll horizontal */
           left: 0 !important;
-          animation: modalSlideIn 0.3s ease-out;
         }
 
-        @keyframes modalSlideIn {
-          from { opacity: 0; transform: translateY(-10px); }
-          to { opacity: 1; transform: translateY(0); }
+        /* Clase para abrir hacia arriba */
+        .react-tel-input .country-list.open-up {
+          bottom: 100% !important;
+          top: auto !important;
+          margin-top: 0 !important;
+          margin-bottom: 10px !important;
+          box-shadow: 0 -25px 50px -12px rgba(0, 0, 0, 0.25) !important;
+        }
+
+        .dark .react-tel-input .country-list.open-up {
+          box-shadow: 0 -25px 50px -12px rgba(0, 0, 0, 0.5) !important;
+        }
+
+        .dark .react-tel-input .country-list {
+          background-color: #1E293B !important;
+          border-color: #334155 !important;
+          box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5) !important;
         }
 
         /* Responsive para móviles */
         @media (max-width: 480px) {
-          .welcome-phone-dropdown {
-            width: calc(90vw - 2rem) !important;
-            position: fixed !important;
-            left: 50% !important;
-            top: 50% !important;
-            transform: translate(-50%, -50%) !important;
-            max-height: 60vh !important;
-            margin-top: 0 !important;
+          .react-tel-input .country-list {
+            width: calc(100vw - 3rem) !important;
+            max-width: none !important;
+            left: -15px !important; /* Centrado relativo al input */
+            max-height: 250px !important;
           }
         }
 
-        /* Buscador */
-        .welcome-phone-search {
-          padding: 1rem !important;
+        /* Buscador interno de la librería */
+        .react-tel-input .search {
+          padding: 12px !important;
           background: white !important;
+          border-bottom: 1px solid #F3F4F6 !important;
           position: sticky !important;
           top: 0 !important;
           z-index: 10 !important;
-          border-bottom: 1px solid #F3F4F6 !important;
+          display: flex !important;
         }
 
-        .welcome-phone-search input {
+        .dark .react-tel-input .search {
+          background: #1E293B !important;
+          border-bottom-color: #334155 !important;
+        }
+
+        .react-tel-input .search-box {
           width: 100% !important;
-          height: 45px !important;
-          padding: 0 1.25rem !important;
+          margin: 0 !important;
+          padding: 10px 12px 10px 35px !important; /* Espacio para el icono */
           background-color: #F9FAFB !important;
           border: 2px solid #E5E7EB !important;
-          border-radius: 1rem !important;
-          font-size: 0.875rem !important;
+          border-radius: 12px !important; /* Bordes redondeados */
+          font-size: 14px !important;
           font-weight: 700 !important;
           color: #172033 !important;
-          transition: all 0.2s !important;
         }
 
-        .welcome-phone-search input:focus {
-          border-color: #8CC915 !important;
-          background-color: white !important;
-          outline: none !important;
-          box-shadow: 0 0 0 4px rgba(140, 201, 21, 0.1) !important;
+        /* Icono de búsqueda simulado */
+        .react-tel-input .search::before {
+          content: "🔍";
+          position: absolute;
+          left: 22px;
+          top: 50%;
+          transform: translateY(-50%);
+          font-size: 14px;
+          z-index: 11;
+          opacity: 0.6;
         }
 
-        /* Lista de países */
-        .react-tel-input .country-list {
-          width: 100% !important;
-          scrollbar-width: thin;
-          scrollbar-color: #8CC915 #F3F4F6;
-          padding-top: 0 !important;
+        .dark .react-tel-input .search-box {
+          background-color: #0F172A !important;
+          border-color: #334155 !important;
+          color: #F8FAFC !important;
         }
 
-        .react-tel-input .country-list::-webkit-scrollbar {
-          width: 6px;
-        }
-
-        .react-tel-input .country-list::-webkit-scrollbar-track {
-          background: #F3F4F6;
-        }
-
-        .react-tel-input .country-list::-webkit-scrollbar-thumb {
-          background-color: #8CC915;
-          border-radius: 20px;
-        }
-
-        /* Opción individual */
+        /* Elemento de la lista (País) */
         .react-tel-input .country {
-          padding: 0.875rem 1.25rem !important;
+          padding: 12px 15px !important;
           display: flex !important;
           align-items: center !important;
+          gap: 12px !important;
           transition: background-color 0.2s !important;
-          border-bottom: 1px solid #F9FAFB !important;
+          overflow: hidden !important;
         }
 
         .react-tel-input .country:hover {
           background-color: #F7FBEF !important;
         }
 
+        .dark .react-tel-input .country:hover {
+          background-color: rgba(140, 201, 21, 0.1) !important;
+        }
+
         .react-tel-input .country.highlight {
           background-color: #F0F9E6 !important;
         }
 
-        .react-tel-input .country .flag {
-          margin-right: 1rem !important;
-          transform: scale(1.2) !important;
+        .dark .react-tel-input .country.highlight {
+          background-color: rgba(140, 201, 21, 0.2) !important;
         }
 
+        /* Forzar visibilidad de banderas */
+        .react-tel-input .country .flag {
+          display: inline-block !important;
+          margin: 0 !important;
+          position: static !important;
+          flex-shrink: 0 !important;
+          transform: scale(1.1);
+        }
+
+        /* Nombre del país */
         .react-tel-input .country .country-name {
-          font-size: 0.875rem !important;
+          font-size: 13px !important;
           font-weight: 700 !important;
           color: #172033 !important;
-          margin-right: 0.5rem !important;
-          white-space: normal !important;
-          line-height: 1.2 !important;
+          white-space: nowrap !important;
+          overflow: hidden !important;
+          text-overflow: ellipsis !important;
+          flex: 1 !important; /* Toma el espacio disponible */
+          min-width: 0 !important;
         }
 
+        .dark .react-tel-input .country .country-name {
+          color: #F8FAFC !important;
+        }
+
+        /* Código de área */
         .react-tel-input .country .dial-code {
-          font-size: 0.875rem !important;
-          font-weight: 500 !important;
+          font-size: 13px !important;
+          font-weight: 800 !important;
           color: #8CC915 !important;
+          flex-shrink: 0 !important;
         }
 
-        /* Formatear indicativo con paréntesis */
-        .react-tel-input .country .dial-code::before {
-          content: "(";
+        /* Scrollbar */
+        .react-tel-input .country-list::-webkit-scrollbar {
+          width: 6px;
         }
-        .react-tel-input .country .dial-code::after {
-          content: ")";
+        .react-tel-input .country-list::-webkit-scrollbar-track {
+          background: transparent;
+        }
+        .react-tel-input .country-list::-webkit-scrollbar-thumb {
+          background-color: #8CC915;
+          border-radius: 20px;
         }
 
-        /* Ajuste de la bandera en el botón principal */
+        /* Ajuste de la bandera seleccionada */
         .react-tel-input .selected-flag {
           width: 55px !important;
-          padding-left: 1rem !important;
+          padding-left: 15px !important;
           background: transparent !important;
         }
-
+        
         .react-tel-input .selected-flag .arrow {
           left: 35px !important;
           border-top-color: #8CC915 !important;
         }
-
+        
         .react-tel-input .selected-flag .arrow.up {
           border-bottom-color: #8CC915 !important;
         }
@@ -647,11 +703,9 @@ const WelcomeModal = ({ isOpen, onComplete, onClose, tours = [], loading = false
         .welcome-tour-list::-webkit-scrollbar {
           width: 6px;
         }
-
         .welcome-tour-list::-webkit-scrollbar-track {
           background: #F9FAFB;
         }
-
         .welcome-tour-list::-webkit-scrollbar-thumb {
           background-color: #8CC915;
           border-radius: 20px;
