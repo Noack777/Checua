@@ -10,7 +10,7 @@ export const findClientByPhone = async (phone) => {
     const { data, error } = await supabase
       .from('cliente')
       .select('*')
-      .eq('telefono_cliente', phone)
+      .eq('telefono', phone)
       .single()
 
     return { data, error }
@@ -30,9 +30,9 @@ export const createClient = async (phone) => {
       .from('cliente')
       .insert([
         { 
-          telefono_cliente: phone,
-          estado_cliente: 'nuevo',
-          fecha_creacion: new Date().toISOString()
+          telefono: phone,
+          atencion_humana: false,
+          etapaconversacion: 'saludo'
         }
       ])
       .select()
