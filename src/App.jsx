@@ -191,14 +191,20 @@ function App() {
     }
   };
 
-  const handleModalComplete = ({ phone, tour }) => {
+  const onModalComplete = (data) => {
+    // Actualizamos los datos del contacto con lo que viene del modal
     setReservationData(prev => ({
       ...prev,
-      contact: { ...prev.contact, telefono_cliente: phone },
+      contact: {
+        ...prev.contact,
+        telefono_cliente: data.phone,
+        // Si el cliente ya tenía nombre en la DB, lo podemos pre-cargar aquí en el futuro
+        nombre_jefe_reserva: data.client?.nombre_cliente || prev.contact.nombre_jefe_reserva
+      },
       tour: {
-        tour_reserva: tour.name,
-        precio_por_persona: tour.price,
-        id_plan: tour.id.toString()
+        tour_reserva: data.tour.name,
+        precio_por_persona: data.tour.price,
+        id_plan: data.tour.id.toString()
       }
     }));
     setIsModalOpen(false);
@@ -212,7 +218,7 @@ function App() {
           element={
             <HomePage 
               isModalOpen={isModalOpen}
-              onModalComplete={handleModalComplete}
+              onModalComplete={onModalComplete}
               tours={tours}
               loadingTours={loadingTours}
               reservationData={reservationData}

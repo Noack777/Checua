@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import PhoneInputPkg from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
 import { isValidPhoneNumber } from 'libphonenumber-js';
+import { findOrCreateClient } from '../services/clientService';
 
 const PhoneInput = PhoneInputPkg.default || PhoneInputPkg;
 
@@ -12,6 +13,12 @@ const WelcomeModal = ({ isOpen, onComplete, tours = [], loading = false }) => {
   const [isValid, setIsValid] = useState(false);
   const [isTourDropdownOpen, setIsTourDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
+
+  // Estados para la verificación del cliente
+  const [clientStatus, setClientStatus] = useState('idle'); // idle, checking, found, created, error
+  const [clientData, setClientData] = useState(null);
+  const [clientError, setClientError] = useState(null);
+  const debounceTimer = useRef(null);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -26,10 +33,32 @@ const WelcomeModal = ({ isOpen, onComplete, tours = [], loading = false }) => {
   useEffect(() => {
     // libphonenumber-js needs the + prefix for validation
     const phoneWithPlus = phone.startsWith('+') ? phone : `+${phone}`;
-    setIsValid(phone ? isValidPhoneNumber(phoneWithPlus) : false);
+    const valid = phone ? isValidPhoneNumber(phoneWithPlus) : false;
+    setIsValid(valid);
+
+    // Lógica de Debounce para búsqueda en Supabase
+    if (debounceTimer.current) clearTimeout(debounceTimer.current);
+
+    if (valid) {
+      setClientStatus('checking');
+      debounceTimer.current = setTimeout(async () => {
+        const { data, status, error } = await findOrCreateClient(phoneWithPlus);
+        if (status === 'error') {
+          setClientStatus('error');
+          setClientError(error.message);
+        } else {
+          setClientStatus(status);
+          setClientData(data);
+          setClientError(null);
+        }
+      }, 800);
+    } else {
+      setClientStatus('idle');
+      setClientData(null);
+    }
   }, [phone]);
 
-  const canContinue = acceptedTerms && isValid && selectedTourId;
+  const canContinue = acceptedTerms && isValid && selectedTourId && (clientStatus === 'found' || clientStatus === 'created');
 
   const handleContinue = () => {
     if (canContinue) {
@@ -37,7 +66,8 @@ const WelcomeModal = ({ isOpen, onComplete, tours = [], loading = false }) => {
       const phoneWithPlus = phone.startsWith('+') ? phone : `+${phone}`;
       onComplete({
         phone: phoneWithPlus,
-        tour
+        tour,
+        client: clientData
       });
     }
   };
@@ -85,9 +115,46 @@ const WelcomeModal = ({ isOpen, onComplete, tours = [], loading = false }) => {
                 />
               </div>
               <div className="flex justify-between items-center px-4">
-                <p className="text-[10px] text-brand-text-secondary/70 font-medium italic">
-                  Usa tu número de WhatsApp.
-                </p>
+                <div className="flex flex-col gap-0.5">
+                  <p className="text-[10px] text-brand-text-secondary/70 font-medium italic">
+                    Usa tu número de WhatsApp.
+                  </p>
+                  {/* Estados Visuales de Verificación */}
+                  {phone && isValid && (
+                    <div className="flex items-center gap-1.5 animate-in fade-in slide-in-from-left-2 duration-300">
+                      {clientStatus === 'checking' && (
+                        <>
+                          <div className="w-2 h-2 border-2 border-brand-primary border-t-transparent rounded-full animate-spin"></div>
+                          <span className="text-[9px] font-bold text-brand-primary uppercase tracking-wider">Verificando número...</span>
+                        </>
+                      )}
+                      {clientStatus === 'found' && (
+                        <>
+                          <svg className="w-3 h-3 text-brand-primary" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                          </svg>
+                          <span className="text-[9px] font-black text-brand-primary uppercase tracking-wider">Cliente encontrado en nuestro sistema.</span>
+                        </>
+                      )}
+                      {clientStatus === 'created' && (
+                        <>
+                          <svg className="w-3 h-3 text-brand-primary" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                          </svg>
+                          <span className="text-[9px] font-black text-brand-primary uppercase tracking-wider text-balance">No encontramos este número. ¡Hemos creado un nuevo registro para ti!</span>
+                        </>
+                      )}
+                      {clientStatus === 'error' && (
+                        <>
+                          <svg className="w-3 h-3 text-red-500" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                          </svg>
+                          <span className="text-[9px] font-bold text-red-500 uppercase tracking-wider">Error al verificar cliente.</span>
+                        </>
+                      )}
+                    </div>
+                  )}
+                </div>
                 {phone && (
                   <span className={`text-[9px] font-black uppercase tracking-widest ${isValid ? 'text-brand-primary' : 'text-red-400'}`}>
                     {isValid ? 'Número válido' : 'Número incompleto'}
