@@ -94,6 +94,11 @@
     "required_date": "Debes seleccionar una fecha",
     "required_time": "Debes seleccionar una hora",
     "required_doc_type": "Selecciona un tipo de documento",
-    "required_doc_number": "El número de documento es obligatorio"
+    "required_doc_number": "El número de documento es obligatorio",
+    "required_rh": "El RH es obligatorio",
+    "required_weight": "El peso es obligatorio",
+    "invalid_weight": "Peso inválido",
+    "required_height": "La estatura es obligatoria",
+    "invalid_height": "Estatura inválida"
   }
 }

@@ -94,6 +94,11 @@
     "required_date": "You must select a date",
     "required_time": "You must select a time",
     "required_doc_type": "Select a document type",
-    "required_doc_number": "Document number is required"
+    "required_doc_number": "Document number is required",
+    "required_rh": "RH is required",
+    "required_weight": "Weight is required",
+    "invalid_weight": "Invalid weight",
+    "required_height": "Height is required",
+    "invalid_height": "Invalid height"
   }
 }

@@ -187,11 +187,30 @@ const HomePage = ({
                     <div className="flex flex-wrap gap-x-4 gap-y-1 mt-1">
                       <p className="text-brand-text-secondary text-sm flex items-center gap-1.5">
                         <span className="w-1 h-1 bg-brand-primary rounded-full"></span>
+                        {reservationData.contact.tipo_documento}: {reservationData.contact.numero_documento}
+                      </p>
+                      <p className="text-brand-text-secondary text-sm flex items-center gap-1.5">
+                        <span className="w-1 h-1 bg-brand-primary rounded-full"></span>
                         {reservationData.contact.telefono_cliente}
                       </p>
                       <p className="text-brand-text-secondary text-sm flex items-center gap-1.5">
                         <span className="w-1 h-1 bg-brand-primary rounded-full"></span>
                         {reservationData.contact.correo_contacto}
+                      </p>
+                    </div>
+                    {/* Fila de Salud en Resumen */}
+                    <div className="flex flex-wrap gap-x-4 gap-y-1 mt-2 pt-2 border-t border-brand-border/30">
+                      <p className="text-brand-text-secondary text-sm flex items-center gap-1.5">
+                        <span className="text-[10px] font-black text-brand-primary/60">RH:</span>
+                        <span className="font-bold">{reservationData.contact.rh}</span>
+                      </p>
+                      <p className="text-brand-text-secondary text-sm flex items-center gap-1.5">
+                        <span className="text-[10px] font-black text-brand-primary/60">PESO:</span>
+                        <span className="font-bold">{reservationData.contact.peso_kg} kg</span>
+                      </p>
+                      <p className="text-brand-text-secondary text-sm flex items-center gap-1.5">
+                        <span className="text-[10px] font-black text-brand-primary/60">ESTATURA:</span>
+                        <span className="font-bold">{reservationData.contact.estatura_m} m</span>
                       </p>
                     </div>
                   </div>

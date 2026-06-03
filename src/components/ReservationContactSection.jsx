@@ -8,7 +8,9 @@ const PhoneInput = PhoneInputPkg.default || PhoneInputPkg;
 const ReservationContactSection = ({ data, onChange, errors, sectionRef }) => {
   const { t } = useTranslation();
   const [isDocTypeOpen, setIsDocTypeOpen] = useState(false);
+  const [isRHOpen, setIsRHOpen] = useState(false);
   const dropdownRef = useRef(null);
+  const rhDropdownRef = useRef(null);
 
   const DOCUMENT_TYPES = [
     t('doc_types.cc'),
@@ -20,10 +22,15 @@ const ReservationContactSection = ({ data, onChange, errors, sectionRef }) => {
     t('doc_types.other')
   ];
 
+  const RH_TYPES = ['O+', 'O-', 'A+', 'A-', 'B+', 'B-', 'AB+', 'AB-'];
+
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setIsDocTypeOpen(false);
+      }
+      if (rhDropdownRef.current && !rhDropdownRef.current.contains(event.target)) {
+        setIsRHOpen(false);
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
@@ -39,8 +46,12 @@ const ReservationContactSection = ({ data, onChange, errors, sectionRef }) => {
     }
 
     if (name === 'numero_documento') {
-      // Solo permitir números y eliminar cualquier otro caracter
       cleanValue = value.replace(/\D/g, '');
+    }
+
+    if (name === 'peso_kg' || name === 'estatura_m') {
+      // Permitir números, punto y coma
+      cleanValue = value.replace(/[^0-9.,]/g, '');
     }
 
     onChange(name, cleanValue);
@@ -54,6 +65,11 @@ const ReservationContactSection = ({ data, onChange, errors, sectionRef }) => {
   const handleDocTypeSelect = (type) => {
     onChange('tipo_documento', type);
     setIsDocTypeOpen(false);
+  };
+
+  const handleRHSelect = (type) => {
+    onChange('rh', type);
+    setIsRHOpen(false);
   };
 
   return (
@@ -190,6 +206,95 @@ const ReservationContactSection = ({ data, onChange, errors, sectionRef }) => {
                 }`}
               />
               {errors.correo_contacto && <p className="text-[10px] text-red-500 mt-1 ml-4 font-bold uppercase tracking-wider">{errors.correo_contacto}</p>}
+            </div>
+
+            {/* Fila de Salud: RH, Peso, Estatura */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 ml-0 md:ml-9">
+              {/* RH */}
+              <div className="relative" ref={rhDropdownRef}>
+                <button
+                  type="button"
+                  onClick={() => setIsRHOpen(!isRHOpen)}
+                  className={`w-full px-5 py-3.5 bg-white dark:bg-dark-bg-main/50 border-2 rounded-full text-left transition-all duration-300 flex items-center justify-between group ${
+                    isRHOpen ? 'border-brand-primary ring-4 ring-brand-primary/5' : errors.rh ? 'border-red-200' : 'border-brand-border dark:border-dark-border hover:border-brand-primary/50'
+                  }`}
+                >
+                  <span className={`text-sm md:text-base font-medium truncate ${data.rh ? 'text-brand-text-main dark:text-dark-text-main' : 'text-brand-text-secondary/40'}`}>
+                    {data.rh || 'RH'}
+                  </span>
+                  <svg 
+                    className={`w-4 h-4 text-brand-primary transition-transform duration-300 ${isRHOpen ? 'rotate-180' : ''}`} 
+                    fill="none" 
+                    viewBox="0 0 24 24" 
+                    stroke="currentColor" 
+                    strokeWidth="3"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+
+                {isRHOpen && (
+                  <div className="absolute left-0 right-0 mt-2 bg-white dark:bg-dark-bg-card border-2 border-brand-border dark:border-dark-border rounded-[1.2rem] shadow-xl z-[50] overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
+                    <div className="max-h-[200px] overflow-y-auto custom-scrollbar">
+                      {RH_TYPES.map((type) => (
+                        <button
+                          key={type}
+                          type="button"
+                          onClick={() => handleRHSelect(type)}
+                          className={`w-full px-5 py-3 text-left text-sm font-medium transition-colors hover:bg-brand-light/50 dark:hover:bg-dark-bg-main/50 ${
+                            data.rh === type ? 'text-brand-primary bg-brand-primary/5' : 'text-brand-text-main dark:text-dark-text-main'
+                          }`}
+                        >
+                          {type}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                {errors.rh && <p className="text-[10px] text-red-500 mt-1 ml-4 font-bold uppercase tracking-wider">{errors.rh}</p>}
+              </div>
+
+              {/* Peso */}
+              <div className="relative group">
+                <div className="relative">
+                  <input
+                    type="text"
+                    inputMode="decimal"
+                    name="peso_kg"
+                    placeholder="0.0"
+                    value={data.peso_kg}
+                    onChange={handleChange}
+                    className={`w-full px-5 py-3.5 bg-white dark:bg-dark-bg-main/50 border-2 rounded-full text-brand-text-main dark:text-dark-text-main placeholder-brand-text-secondary/40 focus:outline-none focus:ring-4 transition-all duration-300 font-medium text-sm md:text-base pr-12 ${
+                      errors.peso_kg ? 'border-red-200 focus:border-red-400 focus:ring-red-400/5' : 'border-brand-border dark:border-dark-border focus:border-brand-primary focus:ring-brand-primary/5'
+                    }`}
+                  />
+                  <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none">
+                    <span className="text-xs font-bold text-brand-text-secondary/50 uppercase tracking-widest">kg</span>
+                  </div>
+                </div>
+                {errors.peso_kg && <p className="text-[10px] text-red-500 mt-1 ml-4 font-bold uppercase tracking-wider">{errors.peso_kg}</p>}
+              </div>
+
+              {/* Estatura */}
+              <div className="relative group">
+                <div className="relative">
+                  <input
+                    type="text"
+                    inputMode="decimal"
+                    name="estatura_m"
+                    placeholder="0.00"
+                    value={data.estatura_m}
+                    onChange={handleChange}
+                    className={`w-full px-5 py-3.5 bg-white dark:bg-dark-bg-main/50 border-2 rounded-full text-brand-text-main dark:text-dark-text-main placeholder-brand-text-secondary/40 focus:outline-none focus:ring-4 transition-all duration-300 font-medium text-sm md:text-base pr-10 ${
+                      errors.estatura_m ? 'border-red-200 focus:border-red-400 focus:ring-red-400/5' : 'border-brand-border dark:border-dark-border focus:border-brand-primary focus:ring-brand-primary/5'
+                    }`}
+                  />
+                  <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none">
+                    <span className="text-xs font-bold text-brand-text-secondary/50 uppercase tracking-widest">m</span>
+                  </div>
+                </div>
+                {errors.estatura_m && <p className="text-[10px] text-red-500 mt-1 ml-4 font-bold uppercase tracking-wider">{errors.estatura_m}</p>}
+              </div>
             </div>
           </div>
       </div>

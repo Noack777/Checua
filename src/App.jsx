@@ -52,7 +52,10 @@ function App() {
       telefono_cliente: '',
       correo_contacto: '',
       tipo_documento: '',
-      numero_documento: ''
+      numero_documento: '',
+      rh: '',
+      peso_kg: '',
+      estatura_m: ''
     },
     tour: {
       tour_reserva: '',
@@ -86,15 +89,25 @@ function App() {
 
   // --- MANEJADORES DE CAMBIOS ---
   const handleContactChange = (field, value) => {
+    let finalValue = value;
+    
+    // Normalización de Peso y Estatura: convertir coma a punto
+    if (field === 'peso_kg' || field === 'estatura_m') {
+      if (typeof value === 'string') {
+        finalValue = value.replace(',', '.');
+      }
+    }
+
     setReservationData(prev => ({
       ...prev,
-      contact: { ...prev.contact, [field]: value }
+      contact: { ...prev.contact, [field]: finalValue }
     }));
+    
     if (errors[field] || errors.contact) {
       setErrors(prev => {
         const newErrors = { ...prev };
         delete newErrors[field];
-        const contactFields = ['nombre_jefe_reserva', 'telefono_cliente', 'correo_contacto', 'tipo_documento', 'numero_documento'];
+        const contactFields = ['nombre_jefe_reserva', 'telefono_cliente', 'correo_contacto', 'tipo_documento', 'numero_documento', 'rh', 'peso_kg', 'estatura_m'];
         const hasMoreContactErrors = contactFields.some(f => f !== field && newErrors[f]);
         if (!hasMoreContactErrors) delete newErrors.contact;
         return newErrors;
@@ -193,6 +206,32 @@ function App() {
     if (!contact.numero_documento) {
       newErrors.numero_documento = t('errors.required_doc_number');
       newErrors.numero_documento_key = 'required_doc_number';
+      newErrors.contact = true;
+    }
+
+    if (!contact.rh) {
+      newErrors.rh = t('errors.required_rh');
+      newErrors.rh_key = 'required_rh';
+      newErrors.contact = true;
+    }
+
+    if (!contact.peso_kg) {
+      newErrors.peso_kg = t('errors.required_weight');
+      newErrors.peso_kg_key = 'required_weight';
+      newErrors.contact = true;
+    } else if (isNaN(contact.peso_kg) || parseFloat(contact.peso_kg) <= 0) {
+      newErrors.peso_kg = t('errors.invalid_weight');
+      newErrors.peso_kg_key = 'invalid_weight';
+      newErrors.contact = true;
+    }
+
+    if (!contact.estatura_m) {
+      newErrors.estatura_m = t('errors.required_height');
+      newErrors.estatura_m_key = 'required_height';
+      newErrors.contact = true;
+    } else if (isNaN(contact.estatura_m) || parseFloat(contact.estatura_m) <= 0) {
+      newErrors.estatura_m = t('errors.invalid_height');
+      newErrors.estatura_m_key = 'invalid_height';
       newErrors.contact = true;
     }
 
