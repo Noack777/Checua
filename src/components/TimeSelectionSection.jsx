@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 const MORNING_HOURS = [
   { label: '9:30 AM', value: '09:30', period: 'mañana' },
@@ -11,6 +12,7 @@ const AFTERNOON_HOURS = [
 ];
 
 const TimeSelectionSection = ({ onSelect, selectedTime, errors, sectionRef }) => {
+  const { t } = useTranslation();
   const handleTimeSelect = (time) => {
     onSelect(time);
   };
@@ -28,24 +30,24 @@ const TimeSelectionSection = ({ onSelect, selectedTime, errors, sectionRef }) =>
       <div className="px-5 py-6 md:p-10 space-y-6">
         <div>
           <h3 className="text-base md:text-lg font-bold text-brand-text-main flex items-center gap-2">
-            <span className={`flex items-center justify-center w-7 h-7 rounded-full text-xs font-black transition-colors ${
-              errors.time ? 'bg-red-100 text-red-600' : 'bg-brand-light text-brand-dark'
-            }`}>4</span>
-            Hora de la reserva
-            <span className="text-brand-primary ml-1 text-xl leading-none">*</span>
-          </h3>
-          <p className="text-sm md:text-base text-brand-text-secondary mt-1.5 ml-0 md:ml-9">
-            Selecciona el horario que prefieras para tu experiencia.
-          </p>
-        </div>
+              <span className={`flex items-center justify-center w-7 h-7 rounded-full text-xs font-black transition-colors ${
+                errors.time ? 'bg-red-100 text-red-600' : 'bg-brand-light text-brand-dark'
+              }`}>4</span>
+              {t('sections.time_selection_title')}
+              <span className="text-brand-primary ml-1 text-xl leading-none">*</span>
+            </h3>
+            <p className="text-sm md:text-base text-brand-text-secondary mt-1.5 ml-0 md:ml-9">
+              {t('sections.time_selection_desc')}
+            </p>
+          </div>
 
-        <div className="space-y-8">
-          {/* Morning Section */}
-          <div className="space-y-4">
-            <div className="flex items-center gap-2">
-              <span className="text-[10px] font-black uppercase tracking-widest text-brand-text-secondary/60 whitespace-nowrap">En la mañana</span>
-              <div className="h-[1px] flex-1 bg-brand-border/60"></div>
-            </div>
+          <div className="space-y-8">
+            {/* Morning Section */}
+            <div className="space-y-4">
+              <div className="flex items-center gap-2">
+                <span className="text-[10px] font-black uppercase tracking-widest text-brand-text-secondary/60 whitespace-nowrap">{t('sections.morning')}</span>
+                <div className="h-[1px] flex-1 bg-brand-border/60"></div>
+              </div>
             <div className="grid grid-cols-2 gap-3 max-w-sm mx-auto w-full">
               {MORNING_HOURS.map((time) => (
                 <button
@@ -67,7 +69,7 @@ const TimeSelectionSection = ({ onSelect, selectedTime, errors, sectionRef }) =>
           {/* Afternoon Section */}
           <div className="space-y-4">
             <div className="flex items-center gap-2">
-              <span className="text-[10px] font-black uppercase tracking-widest text-brand-text-secondary/60 whitespace-nowrap">En la tarde</span>
+              <span className="text-[10px] font-black uppercase tracking-widest text-brand-text-secondary/60 whitespace-nowrap">{t('sections.afternoon')}</span>
               <div className="h-[1px] flex-1 bg-brand-border/60"></div>
             </div>
             <div className="grid grid-cols-2 gap-3 max-w-sm mx-auto w-full">

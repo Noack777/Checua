@@ -1,6 +1,8 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 const TourSelectionSection = ({ selectedTourId, sectionRef, tours = [], loading = false }) => {
+  const { t } = useTranslation();
   const selectedTour = tours.find(tour => tour.id.toString() === selectedTourId);
 
   return (
@@ -15,11 +17,11 @@ const TourSelectionSection = ({ selectedTourId, sectionRef, tours = [], loading 
         <div>
           <h3 className="text-base md:text-lg font-bold text-brand-text-main flex items-center gap-2">
             <span className="flex items-center justify-center w-7 h-7 rounded-full text-xs font-black bg-brand-light text-brand-dark">2</span>
-            Confirmación de tu experiencia
+            {t('sections.tour_confirmation')}
             <span className="text-brand-primary ml-1 text-xl leading-none">*</span>
           </h3>
           <p className="text-sm md:text-base text-brand-text-secondary mt-1.5 ml-0 md:ml-9">
-            Has seleccionado el siguiente plan para tu reserva.
+            {t('sections.tour_selected_desc')}
           </p>
         </div>
 
@@ -28,7 +30,7 @@ const TourSelectionSection = ({ selectedTourId, sectionRef, tours = [], loading 
           {loading ? (
             <div className="bg-brand-light/20 border-2 border-dashed border-brand-primary/20 rounded-[2rem] p-8 text-center ml-0 md:ml-9 animate-pulse">
               <div className="w-8 h-8 border-4 border-brand-primary border-t-transparent rounded-full animate-spin mx-auto mb-3"></div>
-              <p className="text-sm text-brand-text-secondary font-medium">Cargando detalles del plan...</p>
+              <p className="text-sm text-brand-text-secondary font-medium">{t('sections.loading_plan_details')}</p>
             </div>
           ) : selectedTour ? (
             <div className="animate-in fade-in duration-300 ml-0 md:ml-9">
@@ -36,12 +38,12 @@ const TourSelectionSection = ({ selectedTourId, sectionRef, tours = [], loading 
                 <div className="absolute top-0 right-0 w-24 h-24 bg-brand-primary/5 rounded-full -mr-12 -mt-12 transition-transform group-hover:scale-110"></div>
                 
                 <div className="relative">
-                  <p className="text-[10px] uppercase tracking-[0.2em] font-black text-brand-primary mb-1">Plan Seleccionado</p>
+                  <p className="text-[10px] uppercase tracking-[0.2em] font-black text-brand-primary mb-1">{t('sections.selected_plan')}</p>
                   <p className="text-brand-text-main font-black text-lg md:text-xl leading-tight">{selectedTour.name}</p>
                 </div>
                 
                 <div className="relative md:text-right border-t md:border-t-0 md:border-l border-brand-primary/10 pt-4 md:pt-0 md:pl-8">
-                  <p className="text-[10px] uppercase tracking-[0.2em] font-black text-brand-primary mb-1">Precio por Persona</p>
+                  <p className="text-[10px] uppercase tracking-[0.2em] font-black text-brand-primary mb-1">{t('sections.price_per_person_label')}</p>
                   <p className="text-brand-dark font-black text-2xl">
                     ${selectedTour.price.toLocaleString('es-CO')}
                     <span className="text-xs ml-1.5 font-bold text-brand-text-secondary uppercase">COP</span>
@@ -49,12 +51,12 @@ const TourSelectionSection = ({ selectedTourId, sectionRef, tours = [], loading 
                 </div>
               </div>
               <p className="text-[10px] text-brand-text-secondary/50 mt-3 font-medium italic text-center md:text-left">
-                * Para cambiar el tour, por favor recarga la página.
+                {t('sections.change_tour_hint')}
               </p>
             </div>
           ) : (
             <div className="bg-gray-50 border-2 border-dashed border-gray-200 rounded-2xl p-8 text-center ml-0 md:ml-9">
-              <p className="text-sm text-gray-400 font-medium italic">No se ha seleccionado ningún tour aún.</p>
+              <p className="text-sm text-gray-400 font-medium italic">{t('sections.no_tour_selected')}</p>
             </div>
           )}
 

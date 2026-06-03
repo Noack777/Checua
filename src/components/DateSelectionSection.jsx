@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useRef, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 
 /**
  * Utilidades para el cálculo de festivos en Colombia
@@ -92,6 +93,7 @@ const getColombianHolidays = (year) => {
 };
 
 const DateSelectionSection = ({ onSelect, selectedDate, errors, sectionRef }) => {
+  const { t, i18n } = useTranslation();
   const [currentMonthIndex, setCurrentMonthIndex] = useState(0);
   const scrollRef = useRef(null);
 
@@ -180,7 +182,7 @@ const DateSelectionSection = ({ onSelect, selectedDate, errors, sectionRef }) =>
 
   const formatDateLegible = (date) => {
     if (!date) return "";
-    return date.toLocaleDateString('es-ES', {
+    return date.toLocaleDateString(i18n.language === 'en' ? 'en-US' : 'es-ES', {
       weekday: 'long',
       year: 'numeric',
       month: 'long',
@@ -199,7 +201,7 @@ const DateSelectionSection = ({ onSelect, selectedDate, errors, sectionRef }) =>
   const renderMonth = (monthDate, monthIdx) => {
     const year = monthDate.getFullYear();
     const month = monthDate.getMonth();
-    const monthName = monthDate.toLocaleDateString('es-ES', { month: 'long' });
+    const monthName = monthDate.toLocaleDateString(i18n.language === 'en' ? 'en-US' : 'es-ES', { month: 'long' });
     
     // Calcular días del mes
     const firstDayOfMonth = new Date(year, month, 1).getDay(); // 0: Sun, 1: Mon...
@@ -255,7 +257,7 @@ const DateSelectionSection = ({ onSelect, selectedDate, errors, sectionRef }) =>
             {monthName} {year}
           </h4>
           <div className="grid grid-cols-7 gap-1 md:gap-2 text-center justify-items-center">
-            {['L', 'M', 'M', 'J', 'V', 'S', 'D'].map((d, i) => (
+            {(i18n.language === 'en' ? ['M', 'T', 'W', 'T', 'F', 'S', 'S'] : ['L', 'M', 'M', 'J', 'V', 'S', 'D']).map((d, i) => (
               <div key={`weekday-${d}-${monthIdx}-${i}`} className="text-[10px] md:text-xs font-black text-brand-text-secondary/50 py-2">{d}</div>
             ))}
             {days}
@@ -282,11 +284,11 @@ const DateSelectionSection = ({ onSelect, selectedDate, errors, sectionRef }) =>
               <span className={`flex items-center justify-center w-7 h-7 rounded-full text-xs font-black transition-colors ${
                 errors.date ? 'bg-red-100 text-red-600' : 'bg-brand-light text-brand-dark'
               }`}>3</span>
-              Seleccione el día de la reserva
+              {t('sections.select_day')}
               <span className="text-brand-primary ml-1 text-xl leading-none">*</span>
             </h3>
             <p className="text-sm md:text-base text-brand-text-secondary mt-1.5 ml-0 md:ml-9">
-              Disponibilidad para los próximos meses.
+              {t('sections.availability_next_months')}
             </p>
           </div>
           
@@ -351,15 +353,15 @@ const DateSelectionSection = ({ onSelect, selectedDate, errors, sectionRef }) =>
             <div className="flex flex-wrap items-center justify-center gap-4 text-[10px] font-bold uppercase tracking-wider text-brand-text-secondary/60">
               <div className="flex items-center gap-1.5">
                 <span className="w-2 h-2 rounded-full bg-red-400"></span>
-                Festivo
+                {t('sections.holiday')}
               </div>
               <div className="flex items-center gap-1.5">
                 <span className="w-2 h-2 rounded-full border-2 border-brand-primary"></span>
-                Hoy
+                {t('sections.today')}
               </div>
               <div className="flex items-center gap-1.5">
                 <span className="w-2 h-2 rounded-full bg-brand-primary"></span>
-                Seleccionado
+                {t('sections.selected')}
               </div>
             </div>
           </div>
@@ -373,20 +375,20 @@ const DateSelectionSection = ({ onSelect, selectedDate, errors, sectionRef }) =>
               <div className="bg-brand-light/50 border border-brand-primary/20 rounded-2xl p-4 flex items-center gap-4 shadow-sm">
                 <div className="flex-shrink-0 w-12 h-12 bg-white rounded-xl flex flex-col items-center justify-center border border-brand-primary/10 shadow-sm">
                   <span className="text-[10px] font-black text-brand-primary uppercase leading-none mb-1">
-                    {selectedDate.toLocaleDateString('es-ES', { month: 'short' }).replace('.', '')}
+                    {selectedDate.toLocaleDateString(i18n.language === 'en' ? 'en-US' : 'es-ES', { month: 'short' }).replace('.', '')}
                   </span>
                   <span className="text-xl font-black text-brand-text-main leading-none">
                     {selectedDate.getDate()}
                   </span>
                 </div>
                 <div>
-                  <p className="text-[10px] uppercase tracking-widest font-black text-brand-primary">Fecha seleccionada</p>
+                  <p className="text-[10px] uppercase tracking-widest font-black text-brand-primary">{t('sections.date_confirmation')}</p>
                   <p className="text-brand-text-main font-bold text-sm md:text-base capitalize">
                     {formatDateLegible(selectedDate)}
                   </p>
                   {isHoliday(selectedDate) && (
                     <span className="inline-block mt-1 px-2 py-0.5 bg-red-100 text-red-600 text-[9px] font-black uppercase rounded-full">
-                      ¡Día Festivo!
+                      {t('sections.holiday_tag')}
                     </span>
                   )}
                 </div>
@@ -401,7 +403,7 @@ const DateSelectionSection = ({ onSelect, selectedDate, errors, sectionRef }) =>
                     </div>
                   </div>
                   <p className="text-amber-800 text-xs md:text-sm font-medium leading-relaxed">
-                    Al escoger un día entre semana, los precios pueden variar.
+                    {t('sections.price_variation_notice')}
                   </p>
                 </div>
               )}

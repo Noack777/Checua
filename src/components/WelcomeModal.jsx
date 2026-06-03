@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import PhoneInputPkg from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
 import { isValidPhoneNumber } from 'libphonenumber-js';
@@ -7,6 +8,7 @@ import { findOrCreateClient, updateClientPlan } from '../services/clientService'
 const PhoneInput = PhoneInputPkg.default || PhoneInputPkg;
 
 const WelcomeModal = ({ isOpen, onComplete, onClose, tours = [], loading = false, initialPhone = '', initialTourId = '' }) => {
+  const { t } = useTranslation();
   const [phone, setPhone] = useState(initialPhone);
   const [selectedTourId, setSelectedTourId] = useState(initialTourId);
   const [acceptedTerms, setAcceptedTerms] = useState(false);
@@ -124,10 +126,10 @@ const WelcomeModal = ({ isOpen, onComplete, onClose, tours = [], loading = false
         <div className="px-6 py-8 md:p-10 space-y-8">
           <div className="text-center space-y-2">
             <h2 className="text-2xl md:text-3xl font-black text-brand-text-main uppercase tracking-tight">
-              Bienvenido a Checua
+              {t('welcome.title')}
             </h2>
             <p className="text-sm md:text-base text-brand-text-secondary font-medium">
-              Por favor completa estos datos para iniciar tu reserva.
+              {t('welcome.subtitle')}
             </p>
           </div>
 
@@ -135,7 +137,7 @@ const WelcomeModal = ({ isOpen, onComplete, onClose, tours = [], loading = false
             {/* Phone Field */}
             <div className="space-y-2">
               <label className="text-[10px] font-black text-brand-primary uppercase tracking-[0.2em] ml-4">
-                Teléfono de contacto *
+                {t('welcome.phone_label')}
               </label>
               <div className="relative welcome-phone-input-v2">
                 <PhoneInput
@@ -143,9 +145,9 @@ const WelcomeModal = ({ isOpen, onComplete, onClose, tours = [], loading = false
                   value={phone}
                   onChange={setPhone}
                   enableSearch={true}
-                  searchPlaceholder="Buscar país..."
-                  searchNotFound="País no encontrado"
-                  placeholder="Número de WhatsApp"
+                  searchPlaceholder={t('welcome.search_placeholder') || "Buscar país..."}
+                  searchNotFound={t('welcome.search_not_found') || "País no encontrado"}
+                  placeholder={t('welcome.phone_placeholder')}
                   containerClass="!w-full !font-sans"
                   inputClass="!w-full !h-auto !py-4 !pl-[70px] !pr-5 !bg-brand-light/30 !border-2 !border-brand-border !rounded-full !text-brand-text-main !font-bold !text-base focus:!border-brand-primary focus:!ring-4 focus:!ring-brand-primary/5 !transition-all !duration-300"
                   buttonClass="!bg-transparent !border-none !rounded-l-full !pl-4 hover:!bg-brand-primary/5 !transition-colors"
@@ -156,7 +158,7 @@ const WelcomeModal = ({ isOpen, onComplete, onClose, tours = [], loading = false
               <div className="flex justify-between items-center px-4">
                 <div className="flex flex-col gap-0.5">
                   <p className="text-[10px] text-brand-text-secondary/70 font-medium italic">
-                    Usa tu número de WhatsApp.
+                    {t('welcome.phone_hint')}
                   </p>
                   {/* Estados Visuales de Verificación */}
                   {phone && isValid && (
@@ -164,7 +166,7 @@ const WelcomeModal = ({ isOpen, onComplete, onClose, tours = [], loading = false
                       {clientStatus === 'checking' && (
                         <>
                           <div className="w-2 h-2 border-2 border-brand-primary border-t-transparent rounded-full animate-spin"></div>
-                          <span className="text-[9px] font-bold text-brand-primary uppercase tracking-wider">Verificando número...</span>
+                          <span className="text-[9px] font-bold text-brand-primary uppercase tracking-wider">{t('welcome.verifying')}</span>
                         </>
                       )}
                       {clientStatus === 'found' && (
@@ -172,7 +174,7 @@ const WelcomeModal = ({ isOpen, onComplete, onClose, tours = [], loading = false
                           <svg className="w-3 h-3 text-brand-primary" fill="currentColor" viewBox="0 0 20 20">
                             <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                           </svg>
-                          <span className="text-[9px] font-black text-brand-primary uppercase tracking-wider">Cliente encontrado en nuestro sistema.</span>
+                          <span className="text-[9px] font-black text-brand-primary uppercase tracking-wider">{t('welcome.client_found')}</span>
                         </>
                       )}
                       {clientStatus === 'created' && (
@@ -180,7 +182,7 @@ const WelcomeModal = ({ isOpen, onComplete, onClose, tours = [], loading = false
                           <svg className="w-3 h-3 text-brand-primary" fill="currentColor" viewBox="0 0 20 20">
                             <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                           </svg>
-                          <span className="text-[9px] font-black text-brand-primary uppercase tracking-wider text-balance">No encontramos este número. ¡Hemos creado un nuevo registro para ti!</span>
+                          <span className="text-[9px] font-black text-brand-primary uppercase tracking-wider text-balance">{t('welcome.client_created')}</span>
                         </>
                       )}
                       {clientStatus === 'error' && (
@@ -188,7 +190,7 @@ const WelcomeModal = ({ isOpen, onComplete, onClose, tours = [], loading = false
                           <svg className="w-3 h-3 text-red-500" fill="currentColor" viewBox="0 0 20 20">
                             <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
                           </svg>
-                          <span className="text-[9px] font-bold text-red-500 uppercase tracking-wider">Error al verificar cliente.</span>
+                          <span className="text-[9px] font-bold text-red-500 uppercase tracking-wider">{t('welcome.client_error')}</span>
                         </>
                       )}
                     </div>
@@ -196,7 +198,7 @@ const WelcomeModal = ({ isOpen, onComplete, onClose, tours = [], loading = false
                 </div>
                 {phone && (
                   <span className={`text-[9px] font-black uppercase tracking-widest ${isValid ? 'text-brand-primary' : 'text-red-400'}`}>
-                    {isValid ? 'Número válido' : 'Número incompleto'}
+                    {isValid ? t('welcome.phone_valid') : t('welcome.phone_invalid')}
                   </span>
                 )}
               </div>
@@ -205,7 +207,7 @@ const WelcomeModal = ({ isOpen, onComplete, onClose, tours = [], loading = false
             {/* Tour Selection Field */}
             <div className="space-y-2" ref={dropdownRef}>
               <label className="text-[10px] font-black text-brand-primary uppercase tracking-[0.2em] ml-4">
-                ¿Qué experiencia buscas? *
+                {t('welcome.experience_label')}
               </label>
               
               <div className="relative">
@@ -227,13 +229,13 @@ const WelcomeModal = ({ isOpen, onComplete, onClose, tours = [], loading = false
                           ${selectedTour.price.toLocaleString('es-CO')}
                         </span>
                         <span className="text-[9px] uppercase font-bold text-brand-text-secondary/60">
-                          Precio por persona
+                          {t('welcome.price_per_person')}
                         </span>
                       </div>
                     </div>
                   ) : (
                     <span className="text-brand-text-secondary/60 font-bold text-sm md:text-base">
-                      Selecciona un plan turístico
+                      {t('welcome.experience_placeholder')}
                     </span>
                   )}
                   <svg 
@@ -254,7 +256,7 @@ const WelcomeModal = ({ isOpen, onComplete, onClose, tours = [], loading = false
                       {loading ? (
                         <div className="p-10 text-center">
                           <div className="w-8 h-8 border-4 border-brand-primary border-t-transparent rounded-full animate-spin mx-auto mb-3"></div>
-                          <p className="text-xs font-bold text-brand-text-secondary uppercase tracking-widest">Cargando experiencias...</p>
+                          <p className="text-xs font-bold text-brand-text-secondary uppercase tracking-widest">{t('welcome.loading_tours')}</p>
                         </div>
                       ) : tours.length > 0 ? (
                         tours.map((tour) => (
@@ -282,7 +284,7 @@ const WelcomeModal = ({ isOpen, onComplete, onClose, tours = [], loading = false
                                   ${tour.price.toLocaleString('es-CO')}
                                 </span>
                                 <span className="text-[10px] uppercase font-bold text-brand-text-secondary/60 tracking-wider">
-                                  Precio por persona
+                                  {t('welcome.price_per_person')}
                                 </span>
                               </div>
                               {selectedTourId === tour.id.toString() && (
@@ -297,7 +299,7 @@ const WelcomeModal = ({ isOpen, onComplete, onClose, tours = [], loading = false
                         ))
                       ) : (
                         <div className="p-8 text-center">
-                          <p className="text-sm font-bold text-brand-text-secondary italic">No hay planes disponibles por ahora.</p>
+                          <p className="text-sm font-bold text-brand-text-secondary italic">{t('welcome.no_tours')}</p>
                         </div>
                       )}
                     </div>
@@ -309,7 +311,7 @@ const WelcomeModal = ({ isOpen, onComplete, onClose, tours = [], loading = false
             {/* Terms Checkbox */}
             <div className="space-y-4 pt-2">
               <p className="text-[11px] text-brand-text-secondary leading-relaxed ml-1">
-                Autorizo el tratamiento de mis datos personales de acuerdo con la política de tratamiento de datos de la empresa.
+                {t('welcome.terms_authorize')}
               </p>
               <label className="flex items-start gap-3 cursor-pointer group">
                 <div className="relative flex items-center mt-0.5">
@@ -324,7 +326,7 @@ const WelcomeModal = ({ isOpen, onComplete, onClose, tours = [], loading = false
                   </svg>
                 </div>
                 <span className="text-xs font-bold text-brand-text-main group-hover:text-brand-primary transition-colors">
-                  He leído y acepto la política de tratamiento de datos.
+                  {t('welcome.terms_accept')}
                 </span>
               </label>
             </div>
@@ -339,7 +341,7 @@ const WelcomeModal = ({ isOpen, onComplete, onClose, tours = [], loading = false
                 : 'bg-gray-100 text-gray-400 cursor-not-allowed shadow-none'
             }`}
           >
-            Continuar
+            {t('welcome.continue')}
           </button>
         </div>
       </div>

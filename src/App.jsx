@@ -1,9 +1,11 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { getTours } from './services/tourService';
 import HomePage from './pages/HomePage';
 
 function App() {
+  const { t } = useTranslation();
   // --- ESTADO DEL MODAL ---
   const [isModalOpen, setIsModalOpen] = useState(true);
   const [tours, setTours] = useState([]);
@@ -130,42 +132,59 @@ function App() {
     const { contact, tour, date, time } = reservationData;
 
     if (!contact.nombre_jefe_reserva.trim()) {
-      newErrors.nombre_jefe_reserva = "El nombre es obligatorio";
+      newErrors.nombre_jefe_reserva = t('errors.required_name');
+      newErrors.nombre_jefe_reserva_key = 'required_name';
       newErrors.contact = true;
     } else if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(contact.nombre_jefe_reserva)) {
-      newErrors.nombre_jefe_reserva = "Solo se permiten letras";
+      newErrors.nombre_jefe_reserva = t('errors.only_letters');
+      newErrors.nombre_jefe_reserva_key = 'only_letters';
       newErrors.contact = true;
     }
 
     if (!contact.telefono_cliente.trim()) {
-      newErrors.telefono_cliente = "El teléfono es obligatorio";
+      newErrors.telefono_cliente = t('errors.required_phone');
+      newErrors.telefono_cliente_key = 'required_phone';
       newErrors.contact = true;
     } else if (!/^\+?\d+$/.test(contact.telefono_cliente)) {
-      newErrors.telefono_cliente = "Formato de teléfono inválido";
+      newErrors.telefono_cliente = t('errors.invalid_phone');
+      newErrors.telefono_cliente_key = 'invalid_phone';
       newErrors.contact = true;
     }
 
     if (!contact.correo_contacto.trim()) {
-      newErrors.correo_contacto = "El correo es obligatorio";
+      newErrors.correo_contacto = t('errors.required_email');
+      newErrors.correo_contacto_key = 'required_email';
       newErrors.contact = true;
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contact.correo_contacto)) {
-      newErrors.correo_contacto = "Formato de correo inválido";
+      newErrors.correo_contacto = t('errors.invalid_email');
+      newErrors.correo_contacto_key = 'invalid_email';
       newErrors.contact = true;
     }
 
     if (!contact.tipo_documento) {
-      newErrors.tipo_documento = "Selecciona un tipo de documento";
+      newErrors.tipo_documento = t('errors.required_doc_type');
+      newErrors.tipo_documento_key = 'required_doc_type';
       newErrors.contact = true;
     }
 
     if (!contact.numero_documento) {
-      newErrors.numero_documento = "El número es obligatorio";
+      newErrors.numero_documento = t('errors.required_doc_number');
+      newErrors.numero_documento_key = 'required_doc_number';
       newErrors.contact = true;
     }
 
-    if (!tour.tour_reserva) newErrors.tour = "Debes seleccionar un plan";
-    if (!date.fecha_reserva) newErrors.date = "Debes seleccionar una fecha";
-    if (!time.hora_reserva) newErrors.time = "Debes seleccionar una hora";
+    if (!tour.tour_reserva) {
+      newErrors.tour = t('errors.required_tour');
+      newErrors.tour_key = 'required_tour';
+    }
+    if (!date.fecha_reserva) {
+      newErrors.date = t('errors.required_date');
+      newErrors.date_key = 'required_date';
+    }
+    if (!time.hora_reserva) {
+      newErrors.time = t('errors.required_time');
+      newErrors.time_key = 'required_time';
+    }
 
     setErrors(newErrors);
 
