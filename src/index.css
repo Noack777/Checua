@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
   --color-brand-primary: #8CC915;
   --color-brand-dark: #355E1B;
@@ -18,4 +20,8 @@
 
 :root {
   background: white;
+}
+
+body {
+  @apply bg-white dark:bg-dark-bg-main text-brand-text-main dark:text-dark-text-main transition-colors duration-300;
 }
