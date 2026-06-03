@@ -49,9 +49,20 @@ const ReservationContactSection = ({ data, onChange, errors, sectionRef }) => {
       cleanValue = value.replace(/\D/g, '');
     }
 
-    if (name === 'peso_kg' || name === 'estatura_m') {
-      // Permitir números, punto y coma
-      cleanValue = value.replace(/[^0-9.,]/g, '');
+    if (name === 'peso_kg') {
+      // Solo números y máximo 3 caracteres
+      cleanValue = value.replace(/\D/g, '').slice(0, 3);
+    }
+
+    if (name === 'estatura_m') {
+      // Solo números y máximo 3 caracteres
+      let digits = value.replace(/\D/g, '').slice(0, 3);
+      // El punto aparece únicamente con el tercer carácter, después del primero
+      if (digits.length === 3) {
+        cleanValue = `${digits[0]}.${digits.slice(1)}`;
+      } else {
+        cleanValue = digits;
+      }
     }
 
     onChange(name, cleanValue);
@@ -259,9 +270,10 @@ const ReservationContactSection = ({ data, onChange, errors, sectionRef }) => {
                 <div className="relative">
                   <input
                     type="text"
-                    inputMode="decimal"
+                    inputMode="numeric"
                     name="peso_kg"
-                    placeholder="0.0"
+                    placeholder="000"
+                    maxLength={3}
                     value={data.peso_kg}
                     onChange={handleChange}
                     className={`w-full px-3 md:px-5 py-3.5 bg-white dark:bg-dark-bg-main/50 border-2 rounded-full text-brand-text-main dark:text-dark-text-main placeholder-brand-text-secondary/40 focus:outline-none focus:ring-4 transition-all duration-300 font-bold text-xs md:text-base pr-8 md:pr-12 ${
@@ -280,9 +292,10 @@ const ReservationContactSection = ({ data, onChange, errors, sectionRef }) => {
                 <div className="relative">
                   <input
                     type="text"
-                    inputMode="decimal"
+                    inputMode="numeric"
                     name="estatura_m"
-                    placeholder="0.00"
+                    placeholder="000"
+                    maxLength={4}
                     value={data.estatura_m}
                     onChange={handleChange}
                     className={`w-full px-3 md:px-5 py-3.5 bg-white dark:bg-dark-bg-main/50 border-2 rounded-full text-brand-text-main dark:text-dark-text-main placeholder-brand-text-secondary/40 focus:outline-none focus:ring-4 transition-all duration-300 font-bold text-xs md:text-base pr-7 md:pr-10 ${

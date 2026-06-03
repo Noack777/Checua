@@ -102,17 +102,19 @@ const WelcomeModal = ({ isOpen, onComplete, onClose, tours = [], loading = false
     }
   }, [phone]);
 
-  const canContinue = acceptedTerms && isValid && selectedTourId && (clientStatus === 'found' || clientStatus === 'created');
+  // El botón se activa solo si hay teléfono válido, plan seleccionado y términos aceptados
+  const canContinue = acceptedTerms && isValid && selectedTourId;
 
   const handleContinue = async () => {
     if (canContinue) {
-      const tour = tours.find(t => t.id.toString() === selectedTourId);
-      const phoneWithPlus = phone.startsWith('+') ? phone : `+${phone}`;
+      const tour = tours.find(t => t.id.toString() === selectedTourId) || { name: '', price: 0, id: '' };
+      const phoneWithPlus = phone ? (phone.startsWith('+') ? phone : `+${phone}`) : '';
 
       // Actualizar el plan del cliente en la base de datos si es necesario
-      // Lo hacemos antes de completar para asegurar que la DB esté sincronizada
       try {
-        await updateClientPlan(phoneWithPlus, selectedTourId);
+        if (selectedTourId && phoneWithPlus) {
+          await updateClientPlan(phoneWithPlus, selectedTourId);
+        }
       } catch (err) {
         console.error("Error al actualizar el plan del cliente:", err);
       }

@@ -51,8 +51,11 @@ const HomePage = ({
         toggleTheme={toggleTheme}
       />
       
-      {/* Header Titles */}
-      <div className="w-full max-w-xl text-center mb-10 pt-16 md:pt-20 relative">
+      {/* Contenido principal condicional: activar/desactivar ventana principal */}
+      {!isModalOpen && (
+        <>
+          {/* Header Titles */}
+          <div className="w-full max-w-xl text-center mb-10 pt-16 md:pt-20 relative">
         {/* Theme & Language Selectors */}
         <div className="absolute top-0 right-0 flex items-center gap-4">
           {/* Theme Toggle */}
@@ -168,9 +171,32 @@ const HomePage = ({
         <div className="pt-4">
           <button
             onClick={handleContinue}
-            className="w-full py-4 px-8 bg-brand-primary hover:bg-brand-dark text-white font-black text-lg rounded-full shadow-lg shadow-brand-primary/20 transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] uppercase tracking-widest"
+            className="btn-animate-continue w-full"
           >
-            {t('welcome.continue')}
+            <div className="dots_border"></div>
+            <svg
+              className="sparkle"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                className="path"
+                d="M12 2L14.5 9L22 11.5L14.5 14L12 21L9.5 14L2 11.5L9.5 9L12 2Z"
+              ></path>
+            </svg>
+            <span className="text_button">{t('welcome.continue')}</span>
+            <svg
+              className="sparkle"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                className="path"
+                d="M12 2L14.5 9L22 11.5L14.5 14L12 21L9.5 14L2 11.5L9.5 9L12 2Z"
+              ></path>
+            </svg>
           </button>
         </div>
 
@@ -302,6 +328,8 @@ const HomePage = ({
           </div>
         )}
       </div>
+    </>
+  )}
 
       {/* Footer Info */}
       <p className="mt-10 text-[10px] text-brand-text-secondary uppercase tracking-[0.2em] font-bold opacity-40">

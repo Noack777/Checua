@@ -295,9 +295,9 @@ function App() {
         nombre_jefe_reserva: data.client?.nombre_cliente || prev.contact.nombre_jefe_reserva
       },
       tour: {
-        tour_reserva: data.tour.name,
-        precio_por_persona: data.tour.price,
-        id_plan: data.tour.id.toString()
+        tour_reserva: data.tour.name || '',
+        precio_por_persona: data.tour.price || null,
+        id_plan: data.tour.id ? data.tour.id.toString() : null
       }
     }));
     setIsModalOpen(false);
