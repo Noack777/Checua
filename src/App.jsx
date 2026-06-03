@@ -25,7 +25,9 @@ function App() {
     contact: {
       nombre_jefe_reserva: '',
       telefono_cliente: '',
-      correo_contacto: ''
+      correo_contacto: '',
+      tipo_documento: '',
+      numero_documento: ''
     },
     tour: {
       tour_reserva: '',
@@ -67,7 +69,7 @@ function App() {
       setErrors(prev => {
         const newErrors = { ...prev };
         delete newErrors[field];
-        const contactFields = ['nombre_jefe_reserva', 'telefono_cliente', 'correo_contacto'];
+        const contactFields = ['nombre_jefe_reserva', 'telefono_cliente', 'correo_contacto', 'tipo_documento', 'numero_documento'];
         const hasMoreContactErrors = contactFields.some(f => f !== field && newErrors[f]);
         if (!hasMoreContactErrors) delete newErrors.contact;
         return newErrors;
@@ -148,6 +150,16 @@ function App() {
       newErrors.contact = true;
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contact.correo_contacto)) {
       newErrors.correo_contacto = "Formato de correo inválido";
+      newErrors.contact = true;
+    }
+
+    if (!contact.tipo_documento) {
+      newErrors.tipo_documento = "Selecciona un tipo de documento";
+      newErrors.contact = true;
+    }
+
+    if (!contact.numero_documento) {
+      newErrors.numero_documento = "El número es obligatorio";
       newErrors.contact = true;
     }
 
