@@ -11,6 +11,8 @@ const HomePage = ({
   onModalComplete,
   onCloseModal,
   onOpenModal,
+  theme,
+  toggleTheme,
   tours,
   loadingTours,
   reservationData,
@@ -36,7 +38,7 @@ const HomePage = ({
   };
 
   return (
-    <div className={`min-h-screen bg-gradient-to-b from-white to-brand-light/40 py-8 px-4 sm:px-6 lg:px-8 flex flex-col items-center ${isModalOpen ? 'overflow-hidden h-screen' : ''}`}>
+    <div className={`min-h-screen bg-gradient-to-b from-white to-brand-light/40 dark:from-dark-bg-main dark:to-dark-bg-main py-8 px-4 sm:px-6 lg:px-8 flex flex-col items-center transition-colors duration-300 ${isModalOpen ? 'overflow-hidden h-screen' : ''}`}>
       <WelcomeModal 
         isOpen={isModalOpen} 
         onComplete={onModalComplete} 
@@ -49,28 +51,47 @@ const HomePage = ({
       
       {/* Header Titles */}
       <div className="w-full max-w-xl text-center mb-8 relative">
-        {/* Language Selector */}
-        <div className="absolute -top-4 right-0 flex gap-2">
-          <button 
-            onClick={() => changeLanguage('es')}
-            className={`px-3 py-1 rounded-full text-[10px] font-black transition-all ${i18n.language.startsWith('es') ? 'bg-brand-primary text-white shadow-md' : 'bg-white text-brand-text-secondary border border-brand-border hover:border-brand-primary'}`}
+        {/* Theme & Language Selectors */}
+        <div className="absolute -top-4 right-0 flex items-center gap-3">
+          {/* Theme Toggle */}
+          <button
+            onClick={toggleTheme}
+            className="p-2 rounded-full bg-white dark:bg-dark-bg-card border border-brand-border dark:border-dark-border text-brand-primary transition-all shadow-sm hover:scale-110"
+            title={theme === 'light' ? 'Modo Oscuro' : 'Modo Claro'}
           >
-            ES
+            {theme === 'light' ? (
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+              </svg>
+            ) : (
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707M16.243 17.657l-.707-.707M7.05 7.05l-.707-.707M12 8a4 4 0 100 8 4 4 0 000-8z" />
+              </svg>
+            )}
           </button>
-          <button 
-            onClick={() => changeLanguage('en')}
-            className={`px-3 py-1 rounded-full text-[10px] font-black transition-all ${i18n.language.startsWith('en') ? 'bg-brand-primary text-white shadow-md' : 'bg-white text-brand-text-secondary border border-brand-border hover:border-brand-primary'}`}
-          >
-            EN
-          </button>
+
+          <div className="flex gap-2">
+            <button 
+              onClick={() => changeLanguage('es')}
+              className={`px-3 py-1 rounded-full text-[10px] font-black transition-all ${i18n.language.startsWith('es') ? 'bg-brand-primary text-white shadow-md' : 'bg-white dark:bg-dark-bg-card text-brand-text-secondary dark:text-dark-text-secondary border border-brand-border dark:border-dark-border hover:border-brand-primary'}`}
+            >
+              ES
+            </button>
+            <button 
+              onClick={() => changeLanguage('en')}
+              className={`px-3 py-1 rounded-full text-[10px] font-black transition-all ${i18n.language.startsWith('en') ? 'bg-brand-primary text-white shadow-md' : 'bg-white dark:bg-dark-bg-card text-brand-text-secondary dark:text-dark-text-secondary border border-brand-border dark:border-dark-border hover:border-brand-primary'}`}
+            >
+              EN
+            </button>
+          </div>
         </div>
 
-        <h1 className="text-2xl md:text-3xl font-black tracking-tight text-brand-text-main uppercase leading-none">
+        <h1 className="text-2xl md:text-3xl font-black tracking-tight text-brand-text-main dark:text-dark-text-main uppercase leading-none">
           {t('home.title')}
         </h1>
         <div className="mt-2 flex items-center justify-center gap-3">
           <div className="h-[1px] w-6 bg-brand-primary opacity-60"></div>
-          <h2 className="text-base md:text-lg font-bold tracking-[0.2em] text-brand-dark uppercase">
+          <h2 className="text-base md:text-lg font-bold tracking-[0.2em] text-brand-dark dark:text-brand-primary uppercase">
             {t('home.subtitle')}
           </h2>
           <div className="h-[1px] w-6 bg-brand-primary opacity-60"></div>

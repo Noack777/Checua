@@ -231,11 +231,11 @@ const DateSelectionSection = ({ onSelect, selectedDate, errors, sectionRef }) =>
           disabled={past}
           onClick={() => handleDateClick(date)}
           className={`relative h-10 w-10 md:h-11 md:w-11 rounded-full flex items-center justify-center text-sm font-bold transition-all duration-200
-            ${past ? 'text-gray-300 cursor-not-allowed' : 'hover:bg-brand-light cursor-pointer'}
+            ${past ? 'text-gray-300 dark:text-gray-600 cursor-not-allowed' : 'hover:bg-brand-light dark:hover:bg-dark-bg-main cursor-pointer'}
             ${selected ? 'bg-brand-primary text-white hover:bg-brand-primary shadow-md scale-110 z-10' : ''}
-            ${!selected && holiday ? 'text-red-500 bg-red-50' : ''}
-            ${!selected && !holiday && weekend ? 'text-brand-dark' : ''}
-            ${!selected && !holiday && !weekend && !past ? 'text-brand-text-main' : ''}
+            ${!selected && holiday ? 'text-red-500 dark:text-red-400 bg-red-50 dark:bg-red-900/20' : ''}
+            ${!selected && !holiday && weekend ? 'text-brand-dark dark:text-brand-primary' : ''}
+            ${!selected && !holiday && !weekend && !past ? 'text-brand-text-main dark:text-dark-text-main' : ''}
             ${current && !selected ? 'border-2 border-brand-primary' : ''}
           `}
         >
@@ -252,13 +252,13 @@ const DateSelectionSection = ({ onSelect, selectedDate, errors, sectionRef }) =>
         key={`month-${year}-${month}`} 
         className="min-w-full snap-center px-1 pb-1"
       >
-        <div className="bg-white rounded-2xl p-3 md:p-6 border border-brand-border/50 shadow-sm">
-          <h4 className="text-sm font-black text-brand-text-main uppercase tracking-widest mb-6 text-center">
+        <div className="bg-white dark:bg-dark-bg-card rounded-2xl p-3 md:p-6 border border-brand-border/50 dark:border-dark-border shadow-sm">
+          <h4 className="text-sm font-black text-brand-text-main dark:text-dark-text-main uppercase tracking-widest mb-6 text-center">
             {monthName} {year}
           </h4>
           <div className="grid grid-cols-7 gap-1 md:gap-2 text-center justify-items-center">
             {(i18n.language === 'en' ? ['M', 'T', 'W', 'T', 'F', 'S', 'S'] : ['L', 'M', 'M', 'J', 'V', 'S', 'D']).map((d, i) => (
-              <div key={`weekday-${d}-${monthIdx}-${i}`} className="text-[10px] md:text-xs font-black text-brand-text-secondary/50 py-2">{d}</div>
+              <div key={`weekday-${d}-${monthIdx}-${i}`} className="text-[10px] md:text-xs font-black text-brand-text-secondary/50 dark:text-dark-text-secondary py-2">{d}</div>
             ))}
             {days}
           </div>
@@ -270,8 +270,8 @@ const DateSelectionSection = ({ onSelect, selectedDate, errors, sectionRef }) =>
   return (
     <div 
       ref={sectionRef}
-      className={`w-full max-w-xl bg-white rounded-[1.5rem] shadow-lg shadow-brand-dark/5 border transition-all duration-300 relative ${
-        errors.date ? 'border-red-400 ring-2 ring-red-50' : 'border-brand-border'
+      className={`w-full max-w-xl bg-white dark:bg-dark-bg-card rounded-[1.5rem] shadow-lg shadow-brand-dark/5 border transition-all duration-300 relative ${
+        errors.date ? 'border-red-400 ring-2 ring-red-50' : 'border-brand-border dark:border-dark-border'
       }`}
     >
       {/* Visual Accent Line */}
@@ -280,14 +280,14 @@ const DateSelectionSection = ({ onSelect, selectedDate, errors, sectionRef }) =>
       <div className="px-5 py-6 md:p-10 space-y-6">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
           <div>
-            <h3 className="text-base md:text-lg font-bold text-brand-text-main flex items-center gap-2">
+            <h3 className="text-base md:text-lg font-bold text-brand-text-main dark:text-dark-text-main flex items-center gap-2">
               <span className={`flex items-center justify-center w-7 h-7 rounded-full text-xs font-black transition-colors ${
-                errors.date ? 'bg-red-100 text-red-600' : 'bg-brand-light text-brand-dark'
+                errors.date ? 'bg-red-100 text-red-600' : 'bg-brand-light dark:bg-dark-bg-main text-brand-dark dark:text-brand-primary'
               }`}>3</span>
               {t('sections.select_day')}
               <span className="text-brand-primary ml-1 text-xl leading-none">*</span>
             </h3>
-            <p className="text-sm md:text-base text-brand-text-secondary mt-1.5 ml-0 md:ml-9">
+            <p className="text-sm md:text-base text-brand-text-secondary dark:text-dark-text-secondary mt-1.5 ml-0 md:ml-9">
               {t('sections.availability_next_months')}
             </p>
           </div>
@@ -298,8 +298,8 @@ const DateSelectionSection = ({ onSelect, selectedDate, errors, sectionRef }) =>
               type="button"
               disabled={currentMonthIndex === 0}
               onClick={() => scrollToMonth(currentMonthIndex - 1)}
-              className={`p-2 rounded-full border border-brand-border transition-all duration-300 ${
-                currentMonthIndex === 0 ? 'opacity-30 cursor-not-allowed' : 'hover:bg-brand-light text-brand-primary'
+              className={`p-2 rounded-full border border-brand-border dark:border-dark-border transition-all duration-300 ${
+                currentMonthIndex === 0 ? 'opacity-30 cursor-not-allowed' : 'hover:bg-brand-light dark:hover:bg-dark-bg-main text-brand-primary'
               }`}
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -310,8 +310,8 @@ const DateSelectionSection = ({ onSelect, selectedDate, errors, sectionRef }) =>
               type="button"
               disabled={currentMonthIndex === monthsToDisplay.length - 1}
               onClick={() => scrollToMonth(currentMonthIndex + 1)}
-              className={`p-2 rounded-full border border-brand-border transition-all duration-300 ${
-                currentMonthIndex === monthsToDisplay.length - 1 ? 'opacity-30 cursor-not-allowed' : 'hover:bg-brand-light text-brand-primary'
+              className={`p-2 rounded-full border border-brand-border dark:border-dark-border transition-all duration-300 ${
+                currentMonthIndex === monthsToDisplay.length - 1 ? 'opacity-30 cursor-not-allowed' : 'hover:bg-brand-light dark:hover:bg-dark-bg-main text-brand-primary'
               }`}
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -372,22 +372,22 @@ const DateSelectionSection = ({ onSelect, selectedDate, errors, sectionRef }) =>
           {selectedDate && (
             <div className="space-y-4 animate-in fade-in slide-in-from-top-2 duration-300">
               {/* Date Summary */}
-              <div className="bg-brand-light/50 border border-brand-primary/20 rounded-2xl p-4 flex items-center gap-4 shadow-sm">
-                <div className="flex-shrink-0 w-12 h-12 bg-white rounded-xl flex flex-col items-center justify-center border border-brand-primary/10 shadow-sm">
+              <div className="bg-brand-light/50 dark:bg-dark-bg-main/50 border border-brand-primary/20 dark:border-dark-border rounded-2xl p-4 flex items-center gap-4 shadow-sm">
+                <div className="flex-shrink-0 w-12 h-12 bg-white dark:bg-dark-bg-card rounded-xl flex flex-col items-center justify-center border border-brand-primary/10 dark:border-dark-border shadow-sm">
                   <span className="text-[10px] font-black text-brand-primary uppercase leading-none mb-1">
                     {selectedDate.toLocaleDateString(i18n.language === 'en' ? 'en-US' : 'es-ES', { month: 'short' }).replace('.', '')}
                   </span>
-                  <span className="text-xl font-black text-brand-text-main leading-none">
+                  <span className="text-xl font-black text-brand-text-main dark:text-dark-text-main leading-none">
                     {selectedDate.getDate()}
                   </span>
                 </div>
                 <div>
                   <p className="text-[10px] uppercase tracking-widest font-black text-brand-primary">{t('sections.date_confirmation')}</p>
-                  <p className="text-brand-text-main font-bold text-sm md:text-base capitalize">
+                  <p className="text-brand-text-main dark:text-dark-text-main font-bold text-sm md:text-base capitalize">
                     {formatDateLegible(selectedDate)}
                   </p>
                   {isHoliday(selectedDate) && (
-                    <span className="inline-block mt-1 px-2 py-0.5 bg-red-100 text-red-600 text-[9px] font-black uppercase rounded-full">
+                    <span className="inline-block mt-1 px-2 py-0.5 bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 text-[9px] font-black uppercase rounded-full">
                       {t('sections.holiday_tag')}
                     </span>
                   )}
@@ -396,13 +396,13 @@ const DateSelectionSection = ({ onSelect, selectedDate, errors, sectionRef }) =>
 
               {/* Weekday Price Notice */}
               {dateSelectionData.puede_variar_precio && (
-                <div className="bg-amber-50 border border-amber-100 rounded-xl p-3 flex items-start gap-3 animate-in zoom-in-95 duration-300">
+                <div className="bg-amber-50 dark:bg-amber-900/10 border border-amber-100 dark:border-amber-900/20 rounded-xl p-3 flex items-start gap-3 animate-in zoom-in-95 duration-300">
                   <div className="flex-shrink-0 mt-0.5">
-                    <div className="w-5 h-5 bg-amber-200 rounded-full flex items-center justify-center">
-                      <span className="text-amber-700 text-[10px] font-black">!</span>
+                    <div className="w-5 h-5 bg-amber-200 dark:bg-amber-900/30 rounded-full flex items-center justify-center">
+                      <span className="text-amber-700 dark:text-amber-500 text-[10px] font-black">!</span>
                     </div>
                   </div>
-                  <p className="text-amber-800 text-xs md:text-sm font-medium leading-relaxed">
+                  <p className="text-amber-800 dark:text-amber-500 text-xs md:text-sm font-medium leading-relaxed">
                     {t('sections.price_variation_notice')}
                   </p>
                 </div>

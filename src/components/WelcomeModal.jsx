@@ -106,8 +106,8 @@ const WelcomeModal = ({ isOpen, onComplete, onClose, tours = [], loading = false
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[999] flex items-center justify-center p-4 bg-brand-dark/40 backdrop-blur-md animate-in fade-in duration-300">
-      <div className="w-full max-w-lg bg-white rounded-[2.5rem] shadow-2xl overflow-hidden relative border border-brand-border animate-in zoom-in-95 duration-300">
+    <div className="fixed inset-0 z-[999] flex items-center justify-center p-4 bg-brand-dark/40 dark:bg-black/60 backdrop-blur-md animate-in fade-in duration-300">
+      <div className="w-full max-w-lg bg-white dark:bg-dark-bg-card rounded-[2.5rem] shadow-2xl overflow-hidden relative border border-brand-border dark:border-dark-border animate-in zoom-in-95 duration-300">
         {/* Header Accent */}
         <div className="h-2 w-full bg-brand-primary"></div>
         
@@ -115,7 +115,7 @@ const WelcomeModal = ({ isOpen, onComplete, onClose, tours = [], loading = false
         {initialPhone && (
           <button 
             onClick={onClose}
-            className="absolute top-6 right-6 p-2 text-brand-text-secondary hover:text-brand-primary transition-colors z-10"
+            className="absolute top-6 right-6 p-2 text-brand-text-secondary dark:text-dark-text-secondary hover:text-brand-primary transition-colors z-10"
           >
             <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
               <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -125,10 +125,10 @@ const WelcomeModal = ({ isOpen, onComplete, onClose, tours = [], loading = false
 
         <div className="px-6 py-8 md:p-10 space-y-8">
           <div className="text-center space-y-2">
-            <h2 className="text-2xl md:text-3xl font-black text-brand-text-main uppercase tracking-tight">
+            <h2 className="text-2xl md:text-3xl font-black text-brand-text-main dark:text-dark-text-main uppercase tracking-tight">
               {t('welcome.title')}
             </h2>
-            <p className="text-sm md:text-base text-brand-text-secondary font-medium">
+            <p className="text-sm md:text-base text-brand-text-secondary dark:text-dark-text-secondary font-medium">
               {t('welcome.subtitle')}
             </p>
           </div>
@@ -149,7 +149,7 @@ const WelcomeModal = ({ isOpen, onComplete, onClose, tours = [], loading = false
                   searchNotFound={t('welcome.search_not_found') || "País no encontrado"}
                   placeholder={t('welcome.phone_placeholder')}
                   containerClass="!w-full !font-sans"
-                  inputClass="!w-full !h-auto !py-4 !pl-[70px] !pr-5 !bg-brand-light/30 !border-2 !border-brand-border !rounded-full !text-brand-text-main !font-bold !text-base focus:!border-brand-primary focus:!ring-4 focus:!ring-brand-primary/5 !transition-all !duration-300"
+                  inputClass="!w-full !h-auto !py-4 !pl-[70px] !pr-5 !bg-brand-light/30 dark:!bg-dark-bg-main/50 !border-2 !border-brand-border dark:!border-dark-border !rounded-full !text-brand-text-main dark:!text-dark-text-main !font-bold !text-base focus:!border-brand-primary focus:!ring-4 focus:!ring-brand-primary/5 !transition-all !duration-300"
                   buttonClass="!bg-transparent !border-none !rounded-l-full !pl-4 hover:!bg-brand-primary/5 !transition-colors"
                   dropdownClass="welcome-phone-dropdown"
                   searchClass="welcome-phone-search"
@@ -157,7 +157,7 @@ const WelcomeModal = ({ isOpen, onComplete, onClose, tours = [], loading = false
               </div>
               <div className="flex justify-between items-center px-4">
                 <div className="flex flex-col gap-0.5">
-                  <p className="text-[10px] text-brand-text-secondary/70 font-medium italic">
+                  <p className="text-[10px] text-brand-text-secondary/70 dark:text-dark-text-secondary font-medium italic">
                     {t('welcome.phone_hint')}
                   </p>
                   {/* Estados Visuales de Verificación */}
@@ -215,26 +215,26 @@ const WelcomeModal = ({ isOpen, onComplete, onClose, tours = [], loading = false
                 <button
                   type="button"
                   onClick={() => setIsTourDropdownOpen(!isTourDropdownOpen)}
-                  className={`w-full px-6 py-4 bg-brand-light/30 border-2 rounded-full text-left transition-all duration-300 flex items-center justify-between group ${
-                    isTourDropdownOpen ? 'border-brand-primary ring-4 ring-brand-primary/5' : 'border-brand-border hover:border-brand-primary/50'
+                  className={`w-full px-6 py-4 bg-brand-light/30 dark:bg-dark-bg-main/50 border-2 rounded-full text-left transition-all duration-300 flex items-center justify-between group ${
+                    isTourDropdownOpen ? 'border-brand-primary ring-4 ring-brand-primary/5' : 'border-brand-border dark:border-dark-border hover:border-brand-primary/50'
                   }`}
                 >
                   {selectedTour ? (
                     <div className="flex flex-col">
-                      <span className="text-brand-text-main font-bold text-sm md:text-base leading-tight">
+                      <span className="text-brand-text-main dark:text-dark-text-main font-bold text-sm md:text-base leading-tight">
                         {selectedTour.name}
                       </span>
                       <div className="flex items-center gap-2 mt-1">
                         <span className="text-brand-primary font-black text-sm">
                           ${selectedTour.price.toLocaleString('es-CO')}
                         </span>
-                        <span className="text-[9px] uppercase font-bold text-brand-text-secondary/60">
+                        <span className="text-[9px] uppercase font-bold text-brand-text-secondary/60 dark:text-dark-text-secondary/60">
                           {t('welcome.price_per_person')}
                         </span>
                       </div>
                     </div>
                   ) : (
-                    <span className="text-brand-text-secondary/60 font-bold text-sm md:text-base">
+                    <span className="text-brand-text-secondary/60 dark:text-dark-text-secondary/60 font-bold text-sm md:text-base">
                       {t('welcome.experience_placeholder')}
                     </span>
                   )}
@@ -251,12 +251,12 @@ const WelcomeModal = ({ isOpen, onComplete, onClose, tours = [], loading = false
 
                 {/* Custom Dropdown Options */}
                 {isTourDropdownOpen && (
-                  <div className="absolute left-0 right-0 mt-3 bg-white border-2 border-brand-border rounded-[1.5rem] shadow-2xl z-[1001] overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
+                  <div className="absolute left-0 right-0 mt-3 bg-white dark:bg-dark-bg-card border-2 border-brand-border dark:border-dark-border rounded-[1.5rem] shadow-2xl z-[1001] overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
                     <div className="max-h-[300px] overflow-y-auto welcome-tour-list">
                       {loading ? (
                         <div className="p-10 text-center">
                           <div className="w-8 h-8 border-4 border-brand-primary border-t-transparent rounded-full animate-spin mx-auto mb-3"></div>
-                          <p className="text-xs font-bold text-brand-text-secondary uppercase tracking-widest">{t('welcome.loading_tours')}</p>
+                          <p className="text-xs font-bold text-brand-text-secondary dark:text-dark-text-secondary uppercase tracking-widest">{t('welcome.loading_tours')}</p>
                         </div>
                       ) : tours.length > 0 ? (
                         tours.map((tour) => (
@@ -267,14 +267,14 @@ const WelcomeModal = ({ isOpen, onComplete, onClose, tours = [], loading = false
                               setSelectedTourId(tour.id.toString());
                               setIsTourDropdownOpen(false);
                             }}
-                            className={`w-full px-6 py-4 text-left transition-all duration-200 border-b border-brand-light last:border-0 flex flex-col gap-1 group ${
+                            className={`w-full px-6 py-4 text-left transition-all duration-200 border-b border-brand-light dark:border-dark-border last:border-0 flex flex-col gap-1 group ${
                               selectedTourId === tour.id.toString() 
                                 ? 'bg-brand-primary/10 border-l-4 border-l-brand-primary pl-5' 
-                                : 'hover:bg-brand-light/50 border-l-4 border-l-transparent'
+                                : 'hover:bg-brand-light/50 dark:hover:bg-dark-bg-main/50 border-l-4 border-l-transparent'
                             }`}
                           >
                             <span className={`font-bold text-sm md:text-base transition-colors ${
-                              selectedTourId === tour.id.toString() ? 'text-brand-primary' : 'text-brand-text-main'
+                              selectedTourId === tour.id.toString() ? 'text-brand-primary' : 'text-brand-text-main dark:text-dark-text-main'
                             }`}>
                               {tour.name}
                             </span>
@@ -283,7 +283,7 @@ const WelcomeModal = ({ isOpen, onComplete, onClose, tours = [], loading = false
                                 <span className="text-brand-primary font-black text-base md:text-lg">
                                   ${tour.price.toLocaleString('es-CO')}
                                 </span>
-                                <span className="text-[10px] uppercase font-bold text-brand-text-secondary/60 tracking-wider">
+                                <span className="text-[10px] uppercase font-bold text-brand-text-secondary/60 dark:text-dark-text-secondary/60 tracking-wider">
                                   {t('welcome.price_per_person')}
                                 </span>
                               </div>
@@ -310,7 +310,7 @@ const WelcomeModal = ({ isOpen, onComplete, onClose, tours = [], loading = false
 
             {/* Terms Checkbox */}
             <div className="space-y-4 pt-2">
-              <p className="text-[11px] text-brand-text-secondary leading-relaxed ml-1">
+              <p className="text-[11px] text-brand-text-secondary dark:text-dark-text-secondary leading-relaxed ml-1">
                 {t('welcome.terms_authorize')}
               </p>
               <label className="flex items-start gap-3 cursor-pointer group">
@@ -319,13 +319,13 @@ const WelcomeModal = ({ isOpen, onComplete, onClose, tours = [], loading = false
                     type="checkbox"
                     checked={acceptedTerms}
                     onChange={(e) => setAcceptedTerms(e.target.checked)}
-                    className="peer h-5 w-5 cursor-pointer appearance-none rounded-md border-2 border-brand-border transition-all checked:border-brand-primary checked:bg-brand-primary"
+                    className="peer h-5 w-5 cursor-pointer appearance-none rounded-md border-2 border-brand-border dark:border-dark-border transition-all checked:border-brand-primary checked:bg-brand-primary"
                   />
                   <svg className="absolute h-3.5 w-3.5 text-white opacity-0 peer-checked:opacity-100 transition-opacity top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="4">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                   </svg>
                 </div>
-                <span className="text-xs font-bold text-brand-text-main group-hover:text-brand-primary transition-colors">
+                <span className="text-xs font-bold text-brand-text-main dark:text-dark-text-main group-hover:text-brand-primary transition-colors">
                   {t('welcome.terms_accept')}
                 </span>
               </label>
@@ -338,7 +338,7 @@ const WelcomeModal = ({ isOpen, onComplete, onClose, tours = [], loading = false
             className={`w-full py-4 rounded-full font-black text-lg uppercase tracking-widest transition-all duration-300 shadow-lg ${
               canContinue 
                 ? 'bg-brand-primary text-white hover:bg-brand-dark shadow-brand-primary/20 scale-[1.02] active:scale-[0.98]' 
-                : 'bg-gray-100 text-gray-400 cursor-not-allowed shadow-none'
+                : 'bg-gray-100 dark:bg-dark-bg-main text-gray-400 dark:text-gray-600 cursor-not-allowed shadow-none'
             }`}
           >
             {t('welcome.continue')}

@@ -7,6 +7,13 @@
   --color-brand-text-main: #172033;
   --color-brand-text-secondary: #6B7280;
   --color-brand-border: #E5E7EB;
+
+  /* Dark Mode Brand Colors */
+  --color-dark-bg-main: #0F172A;
+  --color-dark-bg-card: #1E293B;
+  --color-dark-text-main: #F8FAFC;
+  --color-dark-text-secondary: #94A3B8;
+  --color-dark-border: #334155;
 }
 
 :root {
