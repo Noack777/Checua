@@ -1,22 +1,57 @@
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import PhoneInputPkg from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
 
 const PhoneInput = PhoneInputPkg.default || PhoneInputPkg;
 
+const DOCUMENT_TYPES = [
+  "Cédula de ciudadanía",
+  "Tarjeta de identidad",
+  "Cédula de extranjería",
+  "Pasaporte",
+  "Permiso por protección temporal (PPT)",
+  "Documento nacional de identidad extranjero",
+  "Otro"
+];
+
 const ReservationContactSection = ({ data, onChange, errors, sectionRef }) => {
+  const [isDocTypeOpen, setIsDocTypeOpen] = useState(false);
+  const dropdownRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsDocTypeOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
-    
-    // Validaciones inmediatas
     let cleanValue = value;
     
     if (name === 'nombre_jefe_reserva') {
-      // Solo letras, espacios y caracteres especiales de español (tildes, ñ)
       cleanValue = value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s]/g, '');
     }
 
+    if (name === 'numero_documento') {
+      // Solo permitir números y eliminar cualquier otro caracter
+      cleanValue = value.replace(/\D/g, '');
+    }
+
     onChange(name, cleanValue);
+  };
+
+  const formatNumber = (num) => {
+    if (!num) return '';
+    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+  };
+
+  const handleDocTypeSelect = (type) => {
+    onChange('tipo_documento', type);
+    setIsDocTypeOpen(false);
   };
 
   return (
@@ -56,6 +91,69 @@ const ReservationContactSection = ({ data, onChange, errors, sectionRef }) => {
                 }`}
               />
               {errors.nombre_jefe_reserva && <p className="text-[10px] text-red-500 mt-1 ml-4 font-bold uppercase tracking-wider">{errors.nombre_jefe_reserva}</p>}
+            </div>
+
+            {/* Fila para Tipo y Número de Documento */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 ml-0 md:ml-9">
+              {/* Tipo de Documento */}
+              <div className="relative" ref={dropdownRef}>
+                <button
+                  type="button"
+                  onClick={() => setIsDocTypeOpen(!isDocTypeOpen)}
+                  className={`w-full px-5 py-3.5 bg-white border-2 rounded-full text-left transition-all duration-300 flex items-center justify-between group ${
+                    isDocTypeOpen ? 'border-brand-primary ring-4 ring-brand-primary/5' : errors.tipo_documento ? 'border-red-200' : 'border-brand-border hover:border-brand-primary/50'
+                  }`}
+                >
+                  <span className={`text-sm md:text-base font-medium truncate ${data.tipo_documento ? 'text-brand-text-main' : 'text-brand-text-secondary/40'}`}>
+                    {data.tipo_documento || 'Tipo de documento'}
+                  </span>
+                  <svg 
+                    className={`w-4 h-4 text-brand-primary transition-transform duration-300 ${isDocTypeOpen ? 'rotate-180' : ''}`} 
+                    fill="none" 
+                    viewBox="0 0 24 24" 
+                    stroke="currentColor" 
+                    strokeWidth="3"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+
+                {isDocTypeOpen && (
+                  <div className="absolute left-0 right-0 mt-2 bg-white border-2 border-brand-border rounded-[1.2rem] shadow-xl z-[50] overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
+                    <div className="max-h-[200px] overflow-y-auto custom-scrollbar">
+                      {DOCUMENT_TYPES.map((type) => (
+                        <button
+                          key={type}
+                          type="button"
+                          onClick={() => handleDocTypeSelect(type)}
+                          className={`w-full px-5 py-3 text-left text-sm font-medium transition-colors hover:bg-brand-light/50 ${
+                            data.tipo_documento === type ? 'text-brand-primary bg-brand-primary/5' : 'text-brand-text-main'
+                          }`}
+                        >
+                          {type}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                {errors.tipo_documento && <p className="text-[10px] text-red-500 mt-1 ml-4 font-bold uppercase tracking-wider">{errors.tipo_documento}</p>}
+              </div>
+
+              {/* Número de Documento */}
+              <div className="relative group">
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  name="numero_documento"
+                  placeholder="Número de documento"
+                  value={formatNumber(data.numero_documento)}
+                  onChange={handleChange}
+                  className={`w-full px-5 py-3.5 bg-white border-2 rounded-full text-brand-text-main placeholder-brand-text-secondary/40 focus:outline-none focus:ring-4 transition-all duration-300 font-medium text-sm md:text-base ${
+                    errors.numero_documento ? 'border-red-200 focus:border-red-400 focus:ring-red-400/5' : 'border-brand-border focus:border-brand-primary focus:ring-brand-primary/5'
+                  }`}
+                />
+                {errors.numero_documento && <p className="text-[10px] text-red-500 mt-1 ml-4 font-bold uppercase tracking-wider">{errors.numero_documento}</p>}
+              </div>
             </div>
 
             <div className="relative group ml-0 md:ml-9 verified-phone-display">
