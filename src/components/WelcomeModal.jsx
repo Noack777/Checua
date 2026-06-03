@@ -6,9 +6,9 @@ import { findOrCreateClient, updateClientPlan } from '../services/clientService'
 
 const PhoneInput = PhoneInputPkg.default || PhoneInputPkg;
 
-const WelcomeModal = ({ isOpen, onComplete, tours = [], loading = false }) => {
-  const [phone, setPhone] = useState('');
-  const [selectedTourId, setSelectedTourId] = useState('');
+const WelcomeModal = ({ isOpen, onComplete, onClose, tours = [], loading = false, initialPhone = '', initialTourId = '' }) => {
+  const [phone, setPhone] = useState(initialPhone);
+  const [selectedTourId, setSelectedTourId] = useState(initialTourId);
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [isValid, setIsValid] = useState(false);
   const [isTourDropdownOpen, setIsTourDropdownOpen] = useState(false);
@@ -19,6 +19,19 @@ const WelcomeModal = ({ isOpen, onComplete, tours = [], loading = false }) => {
   const [clientData, setClientData] = useState(null);
   const [clientError, setClientError] = useState(null);
   const debounceTimer = useRef(null);
+
+  // Sincronizar estados locales con props cuando el modal se abre
+  useEffect(() => {
+    if (isOpen) {
+      if (initialPhone) {
+        setPhone(initialPhone);
+        const phoneWithPlus = initialPhone.startsWith('+') ? initialPhone : `+${initialPhone}`;
+        setIsValid(isValidPhoneNumber(phoneWithPlus));
+        setClientStatus('found'); // Asumimos found porque ya pasó por aquí
+      }
+      if (initialTourId) setSelectedTourId(initialTourId);
+    }
+  }, [isOpen, initialPhone, initialTourId]);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -96,6 +109,18 @@ const WelcomeModal = ({ isOpen, onComplete, tours = [], loading = false }) => {
         {/* Header Accent */}
         <div className="h-2 w-full bg-brand-primary"></div>
         
+        {/* Close Button (only if already has data) */}
+        {initialPhone && (
+          <button 
+            onClick={onClose}
+            className="absolute top-6 right-6 p-2 text-brand-text-secondary hover:text-brand-primary transition-colors z-10"
+          >
+            <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        )}
+
         <div className="px-6 py-8 md:p-10 space-y-8">
           <div className="text-center space-y-2">
             <h2 className="text-2xl md:text-3xl font-black text-brand-text-main uppercase tracking-tight">

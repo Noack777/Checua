@@ -8,6 +8,8 @@ import WelcomeModal from '../components/WelcomeModal';
 const HomePage = ({
   isModalOpen,
   onModalComplete,
+  onCloseModal,
+  onOpenModal,
   tours,
   loadingTours,
   reservationData,
@@ -31,8 +33,11 @@ const HomePage = ({
       <WelcomeModal 
         isOpen={isModalOpen} 
         onComplete={onModalComplete} 
+        onClose={onCloseModal}
         tours={tours}
         loading={loadingTours}
+        initialPhone={reservationData.contact.telefono_cliente}
+        initialTourId={reservationData.tour.id_plan}
       />
       
       {/* Header Titles */}
@@ -50,6 +55,27 @@ const HomePage = ({
       </div>
 
       <div className="w-full max-w-xl space-y-6">
+        {/* Botón para volver al Welcome Modal */}
+        {!isModalOpen && (
+          <div className="flex justify-start">
+            <button
+              onClick={onOpenModal}
+              className="flex items-center gap-2 px-4 py-2 text-xs font-bold text-brand-primary hover:text-brand-dark transition-colors group"
+            >
+              <svg 
+                className="w-4 h-4 transition-transform group-hover:-translate-x-1" 
+                fill="none" 
+                viewBox="0 0 24 24" 
+                stroke="currentColor" 
+                strokeWidth="2.5"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+              </svg>
+              CAMBIAR PLAN O TELÉFONO
+            </button>
+          </div>
+        )}
+
         <ReservationContactSection 
           sectionRef={contactRef}
           data={reservationData.contact}
