@@ -7,8 +7,8 @@ import { findOrCreateClient, updateClientPlan } from '../services/clientService'
 
 const PhoneInput = PhoneInputPkg.default || PhoneInputPkg;
 
-const WelcomeModal = ({ isOpen, onComplete, onClose, tours = [], loading = false, initialPhone = '', initialTourId = '' }) => {
-  const { t } = useTranslation();
+const WelcomeModal = ({ isOpen, onComplete, onClose, tours = [], loading = false, initialPhone = '', initialTourId = '', theme, toggleTheme }) => {
+  const { t, i18n } = useTranslation();
   const [phone, setPhone] = useState(initialPhone);
   const [selectedTourId, setSelectedTourId] = useState(initialTourId);
   const [acceptedTerms, setAcceptedTerms] = useState(false);
@@ -101,6 +101,10 @@ const WelcomeModal = ({ isOpen, onComplete, onClose, tours = [], loading = false
     }
   };
 
+  const changeLanguage = (lng) => {
+    i18n.changeLanguage(lng);
+  };
+
   const selectedTour = tours.find(t => t.id.toString() === selectedTourId);
 
   if (!isOpen) return null;
@@ -111,17 +115,53 @@ const WelcomeModal = ({ isOpen, onComplete, onClose, tours = [], loading = false
         {/* Header Accent */}
         <div className="h-2 w-full bg-brand-primary"></div>
         
-        {/* Close Button (only if already has data) */}
-        {initialPhone && (
-          <button 
-            onClick={onClose}
-            className="absolute top-6 right-6 p-2 text-brand-text-secondary dark:text-dark-text-secondary hover:text-brand-primary transition-colors z-10"
+        {/* Selectors and Close Button Container */}
+        <div className="absolute top-6 right-6 flex items-center gap-3 z-20">
+          {/* Theme Toggle */}
+          <button
+            onClick={toggleTheme}
+            className="p-2 rounded-full bg-brand-light dark:bg-dark-bg-main border border-brand-border dark:border-dark-border text-brand-primary transition-all shadow-sm hover:scale-110"
+            title={theme === 'light' ? 'Modo Oscuro' : 'Modo Claro'}
           >
-            <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-            </svg>
+            {theme === 'light' ? (
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+              </svg>
+            ) : (
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707M16.243 17.657l-.707-.707M7.05 7.05l-.707-.707M12 8a4 4 0 100 8 4 4 0 000-8z" />
+              </svg>
+            )}
           </button>
-        )}
+
+          {/* Language Selector */}
+          <div className="flex gap-1.5">
+            <button 
+              onClick={() => changeLanguage('es')}
+              className={`px-2.5 py-1 rounded-full text-[9px] font-black transition-all ${i18n.language.startsWith('es') ? 'bg-brand-primary text-white shadow-md' : 'bg-brand-light dark:bg-dark-bg-main text-brand-text-secondary dark:text-dark-text-secondary border border-brand-border dark:border-dark-border hover:border-brand-primary'}`}
+            >
+              ES
+            </button>
+            <button 
+              onClick={() => changeLanguage('en')}
+              className={`px-2.5 py-1 rounded-full text-[9px] font-black transition-all ${i18n.language.startsWith('en') ? 'bg-brand-primary text-white shadow-md' : 'bg-brand-light dark:bg-dark-bg-main text-brand-text-secondary dark:text-dark-text-secondary border border-brand-border dark:border-dark-border hover:border-brand-primary'}`}
+            >
+              EN
+            </button>
+          </div>
+
+          {/* Close Button (only if already has data) */}
+          {initialPhone && (
+            <button 
+              onClick={onClose}
+              className="p-2 text-brand-text-secondary dark:text-dark-text-secondary hover:text-brand-primary transition-colors"
+            >
+              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          )}
+        </div>
 
         <div className="px-6 py-8 md:p-10 space-y-8">
           <div className="text-center space-y-2">

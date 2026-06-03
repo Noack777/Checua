@@ -47,6 +47,8 @@ const HomePage = ({
         loading={loadingTours}
         initialPhone={reservationData.contact.telefono_cliente}
         initialTourId={reservationData.tour.id_plan}
+        theme={theme}
+        toggleTheme={toggleTheme}
       />
       
       {/* Header Titles */}
