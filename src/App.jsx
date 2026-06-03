@@ -222,6 +222,14 @@ function App() {
     setIsModalOpen(false);
   };
 
+  const handleOpenModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
+
   return (
     <Router>
       <Routes>
@@ -231,9 +239,12 @@ function App() {
             <HomePage 
               isModalOpen={isModalOpen}
               onModalComplete={onModalComplete}
+              onCloseModal={handleCloseModal}
+              onOpenModal={handleOpenModal}
               tours={tours}
               loadingTours={loadingTours}
               reservationData={reservationData}
+              setReservationData={setReservationData}
               handleContactChange={handleContactChange}
               handleTourSelect={handleTourSelect}
               handleDateSelect={handleDateSelect}

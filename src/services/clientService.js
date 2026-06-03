@@ -71,3 +71,24 @@ export const findOrCreateClient = async (phone) => {
 
   return { data: newClient, status: 'created', error: null }
 }
+
+/**
+ * Actualiza el plan seleccionado por un cliente
+ * @param {string} phone Número de teléfono con indicativo
+ * @param {string|number} planId ID del plan seleccionado
+ * @returns {Promise<{data: any, error: any}>}
+ */
+export const updateClientPlan = async (phone, planId) => {
+  try {
+    const { data, error } = await supabase
+      .from('cliente')
+      .update({ id_plan: planId })
+      .eq('telefono', phone)
+      .select()
+      .single()
+
+    return { data, error }
+  } catch (err) {
+    return { data: null, error: err }
+  }
+}
