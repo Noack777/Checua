@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import PhoneInputPkg from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
 import { isValidPhoneNumber } from 'libphonenumber-js';
-import { findOrCreateClient } from '../services/clientService';
+import { findOrCreateClient, updateClientPlan } from '../services/clientService';
 
 const PhoneInput = PhoneInputPkg.default || PhoneInputPkg;
 
@@ -50,6 +50,11 @@ const WelcomeModal = ({ isOpen, onComplete, tours = [], loading = false }) => {
           setClientStatus(status);
           setClientData(data);
           setClientError(null);
+
+          // Si el cliente ya tiene un plan asignado, lo precargamos
+          if (data && data.id_plan) {
+            setSelectedTourId(data.id_plan.toString());
+          }
         }
       }, 800);
     } else {
@@ -60,10 +65,19 @@ const WelcomeModal = ({ isOpen, onComplete, tours = [], loading = false }) => {
 
   const canContinue = acceptedTerms && isValid && selectedTourId && (clientStatus === 'found' || clientStatus === 'created');
 
-  const handleContinue = () => {
+  const handleContinue = async () => {
     if (canContinue) {
       const tour = tours.find(t => t.id.toString() === selectedTourId);
       const phoneWithPlus = phone.startsWith('+') ? phone : `+${phone}`;
+
+      // Actualizar el plan del cliente en la base de datos si es necesario
+      // Lo hacemos antes de completar para asegurar que la DB esté sincronizada
+      try {
+        await updateClientPlan(phoneWithPlus, selectedTourId);
+      } catch (err) {
+        console.error("Error al actualizar el plan del cliente:", err);
+      }
+
       onComplete({
         phone: phoneWithPlus,
         tour,
