@@ -26,7 +26,7 @@
 
 @layer components {
   .card-premium {
-    @apply bg-white dark:bg-dark-bg-card rounded-[2.5rem] shadow-premium dark:shadow-premium-dark border border-brand-border dark:border-dark-border transition-all duration-300 relative overflow-hidden;
+    @apply bg-white dark:bg-dark-bg-card rounded-[2.5rem] shadow-premium dark:shadow-premium-dark border border-brand-border dark:border-dark-border transition-all duration-300 relative;
   }
 
   .card-accent-line {

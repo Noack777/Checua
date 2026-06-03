@@ -9,8 +9,34 @@ const ReservationContactSection = ({ data, onChange, errors, sectionRef }) => {
   const { t } = useTranslation();
   const [isDocTypeOpen, setIsDocTypeOpen] = useState(false);
   const [isRHOpen, setIsRHOpen] = useState(false);
+  const [rhDropdownPosition, setRhDropdownPosition] = useState('down');
+  const [docDropdownPosition, setDocDropdownPosition] = useState('down');
   const dropdownRef = useRef(null);
   const rhDropdownRef = useRef(null);
+
+  useEffect(() => {
+    if (isRHOpen && rhDropdownRef.current) {
+      const rect = rhDropdownRef.current.getBoundingClientRect();
+      const spaceBelow = window.innerHeight - rect.bottom;
+      if (spaceBelow < 250) {
+        setRhDropdownPosition('up');
+      } else {
+        setRhDropdownPosition('down');
+      }
+    }
+  }, [isRHOpen]);
+
+  useEffect(() => {
+    if (isDocTypeOpen && dropdownRef.current) {
+      const rect = dropdownRef.current.getBoundingClientRect();
+      const spaceBelow = window.innerHeight - rect.bottom;
+      if (spaceBelow < 250) {
+        setDocDropdownPosition('up');
+      } else {
+        setDocDropdownPosition('down');
+      }
+    }
+  }, [isDocTypeOpen]);
 
   const DOCUMENT_TYPES = [
     t('doc_types.cc'),
@@ -87,6 +113,7 @@ const ReservationContactSection = ({ data, onChange, errors, sectionRef }) => {
     <div 
       ref={sectionRef}
       className={`card-premium ${errors.contact ? 'border-red-400 ring-2 ring-red-50' : ''}`}
+      style={{ zIndex: isDocTypeOpen || isRHOpen ? 50 : 1 }}
     >
       <div className={`card-accent-line ${errors.contact ? 'bg-red-400' : ''}`}></div>
       
@@ -130,7 +157,7 @@ const ReservationContactSection = ({ data, onChange, errors, sectionRef }) => {
                 </button>
 
                 {isDocTypeOpen && (
-                  <div className="absolute left-0 right-0 mt-3 bg-white dark:bg-dark-bg-card border-2 border-brand-border dark:border-dark-border rounded-[1.5rem] shadow-2xl z-[50] overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
+                  <div className={`absolute left-0 right-0 ${docDropdownPosition === 'up' ? 'bottom-full mb-3 animate-in fade-in slide-in-from-bottom-2' : 'top-full mt-3 animate-in fade-in slide-in-from-top-2'} bg-white dark:bg-dark-bg-card border-2 border-brand-border dark:border-dark-border rounded-[1.5rem] shadow-2xl z-[50] overflow-hidden duration-200`}>
                     <div className="max-h-[250px] overflow-y-auto custom-scrollbar">
                       {DOCUMENT_TYPES.map((type) => (
                         <button
@@ -223,14 +250,14 @@ const ReservationContactSection = ({ data, onChange, errors, sectionRef }) => {
                 </button>
 
                 {isRHOpen && (
-                  <div className="absolute left-0 right-0 mt-3 bg-white dark:bg-dark-bg-card border-2 border-brand-border dark:border-dark-border rounded-[1.5rem] shadow-2xl z-[50] overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
-                    <div className="max-h-[250px] overflow-y-auto custom-scrollbar">
+                  <div className={`absolute left-0 right-0 min-w-[80px] ${rhDropdownPosition === 'up' ? 'bottom-full mb-3 animate-in fade-in slide-in-from-bottom-2' : 'top-full mt-3 animate-in fade-in slide-in-from-top-2'} bg-white dark:bg-dark-bg-card border-2 border-brand-border dark:border-dark-border rounded-[1.5rem] shadow-2xl z-[50] overflow-hidden duration-200`}>
+                    <div className="max-h-[200px] overflow-y-auto custom-scrollbar">
                       {RH_TYPES.map((type) => (
                         <button
                           key={type}
                           type="button"
                           onClick={() => handleRHSelect(type)}
-                          className={`w-full px-6 py-4 text-left text-sm md:text-base font-bold transition-colors hover:bg-brand-light/50 dark:hover:bg-dark-bg-main/50 border-b border-brand-light dark:border-dark-border last:border-0 ${
+                          className={`w-full px-2 py-4 text-center text-sm md:text-base font-bold transition-colors hover:bg-brand-light/50 dark:hover:bg-dark-bg-main/50 border-b border-brand-light dark:border-dark-border last:border-0 ${
                             data.rh === type ? 'text-brand-primary bg-brand-primary/5' : 'text-brand-text-main dark:text-dark-text-main'
                           }`}
                         >

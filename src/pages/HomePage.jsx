@@ -267,7 +267,7 @@ const HomePage = ({
                 </div>
 
                 {/* Detalles de la Experiencia y Fecha */}
-                <div className="grid md:grid-cols-2 gap-6">
+                <div className="grid md:grid-cols-2 gap-8 md:gap-10">
                   <div className="space-y-4">
                     <p className="section-title-premium !ml-0">{t('summary.experience')}</p>
                     <div className="bg-brand-light/30 dark:bg-dark-bg-main/30 rounded-[2rem] p-6 border border-brand-primary/10 h-full flex flex-col justify-center">
@@ -279,7 +279,7 @@ const HomePage = ({
                     </div>
                   </div>
                   
-                  <div className="space-y-4">
+                  <div className="space-y-4 pt-4 md:pt-0">
                     <p className="section-title-premium !ml-0">{t('summary.date_time')}</p>
                     <div className="bg-brand-light/30 dark:bg-dark-bg-main/30 rounded-[2rem] p-6 border border-brand-primary/10 h-full flex flex-col justify-center">
                       <p className="text-brand-text-main dark:text-dark-text-main font-black text-base md:text-lg capitalize mb-1">
