@@ -225,24 +225,24 @@ const ReservationContactSection = ({ data, onChange, errors, sectionRef }) => {
             </div>
 
             {/* Fila de Salud: RH, Peso, Estatura */}
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-12 gap-2 sm:gap-3 items-start">
               {/* RH */}
-              <div className="relative" ref={rhDropdownRef}>
-                <label className="text-[9px] font-black text-brand-primary uppercase tracking-widest mb-1.5 ml-4 block opacity-70">
+              <div className="col-span-3 relative" ref={rhDropdownRef}>
+                <label className="text-[8px] sm:text-[9px] font-black text-brand-primary uppercase tracking-widest mb-1.5 ml-2 sm:ml-4 block opacity-70 whitespace-nowrap">
                   {t('sections.rh')}
                 </label>
                 <button
                   type="button"
                   onClick={() => setIsRHOpen(!isRHOpen)}
-                  className={`input-premium !px-4 text-left flex items-center justify-between group ${
+                  className={`input-premium !px-2 sm:!px-4 text-left flex items-center justify-between group h-[52px] sm:h-[58px] ${
                     isRHOpen ? 'border-brand-primary ring-4 ring-brand-primary/5' : errors.rh ? 'border-red-200' : ''
                   }`}
                 >
-                  <span className={`truncate ${data.rh ? '' : 'text-brand-text-secondary/40'}`}>
+                  <span className={`truncate text-xs sm:text-base ${data.rh ? '' : 'text-brand-text-secondary/40'}`}>
                     {data.rh || 'RH'}
                   </span>
                   <svg 
-                    className={`w-4 h-4 text-brand-primary transition-transform duration-300 ${isRHOpen ? 'rotate-180' : ''}`} 
+                    className={`w-3 h-3 sm:w-4 sm:h-4 text-brand-primary transition-transform duration-300 ${isRHOpen ? 'rotate-180' : ''}`} 
                     fill="none" 
                     viewBox="0 0 24 24" 
                     stroke="currentColor" 
@@ -253,14 +253,14 @@ const ReservationContactSection = ({ data, onChange, errors, sectionRef }) => {
                 </button>
 
                 {isRHOpen && (
-                  <div className={`absolute left-0 right-0 min-w-[80px] ${rhDropdownPosition === 'up' ? 'bottom-full mb-3 animate-in fade-in slide-in-from-bottom-2' : 'top-full mt-3 animate-in fade-in slide-in-from-top-2'} bg-white dark:bg-dark-bg-card border-2 border-brand-border dark:border-dark-border rounded-[1.5rem] shadow-2xl z-[50] overflow-hidden duration-200`}>
+                  <div className={`absolute left-0 right-0 min-w-[70px] sm:min-w-[80px] ${rhDropdownPosition === 'up' ? 'bottom-full mb-3 animate-in fade-in slide-in-from-bottom-2' : 'top-full mt-3 animate-in fade-in slide-in-from-top-2'} bg-white dark:bg-dark-bg-card border-2 border-brand-border dark:border-dark-border rounded-[1.5rem] shadow-2xl z-[50] overflow-hidden duration-200`}>
                     <div className="max-h-[200px] overflow-y-auto custom-scrollbar">
                       {RH_TYPES.map((type) => (
                         <button
                           key={type}
                           type="button"
                           onClick={() => handleRHSelect(type)}
-                          className={`w-full px-2 py-4 text-center text-sm md:text-base font-bold transition-colors hover:bg-brand-light/50 dark:hover:bg-dark-bg-main/50 border-b border-brand-light dark:border-dark-border last:border-0 ${
+                          className={`w-full px-2 py-3 sm:py-4 text-center text-xs sm:text-base font-bold transition-colors hover:bg-brand-light/50 dark:hover:bg-dark-bg-main/50 border-b border-brand-light dark:border-dark-border last:border-0 ${
                             data.rh === type ? 'text-brand-primary bg-brand-primary/5' : 'text-brand-text-main dark:text-dark-text-main'
                           }`}
                         >
@@ -270,12 +270,12 @@ const ReservationContactSection = ({ data, onChange, errors, sectionRef }) => {
                     </div>
                   </div>
                 )}
-                {errors.rh && <p className="text-[9px] text-red-500 mt-1.5 ml-2 font-bold uppercase tracking-wider leading-tight">{errors.rh}</p>}
+                {errors.rh && <p className="text-[8px] text-red-500 mt-1 ml-1 font-bold uppercase tracking-tight leading-tight">{errors.rh}</p>}
               </div>
 
               {/* Peso */}
-              <div className="relative group">
-                <label className="text-[9px] font-black text-brand-primary uppercase tracking-widest mb-1.5 ml-4 block opacity-70">
+              <div className="col-span-4 relative group">
+                <label className="text-[8px] sm:text-[9px] font-black text-brand-primary uppercase tracking-widest mb-1.5 ml-2 sm:ml-4 block opacity-70 whitespace-nowrap">
                   {t('sections.weight')}
                 </label>
                 <div className="relative">
@@ -283,24 +283,24 @@ const ReservationContactSection = ({ data, onChange, errors, sectionRef }) => {
                     type="text"
                     inputMode="numeric"
                     name="peso_kg"
-                    placeholder="000"
+                    placeholder="70"
                     maxLength={3}
                     value={data.peso_kg}
                     onChange={handleChange}
-                    className={`input-premium !pr-10 md:!pr-12 ${
+                    className={`input-premium !px-2 sm:!px-4 text-center h-[52px] sm:h-[58px] text-xs sm:text-base !pr-8 sm:!pr-12 ${
                       errors.peso_kg ? 'border-red-200 focus:border-red-400 focus:ring-red-400/5' : ''
                     }`}
                   />
-                  <div className="absolute right-4 md:right-6 top-1/2 -translate-y-1/2 pointer-events-none">
-                    <span className="text-[10px] md:text-xs font-black text-brand-primary/60 uppercase tracking-widest">kg</span>
+                  <div className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 pointer-events-none">
+                    <span className="text-[8px] sm:text-[10px] font-black text-brand-primary/40 uppercase tracking-widest">kg</span>
                   </div>
                 </div>
-                {errors.peso_kg && <p className="text-[9px] text-red-500 mt-1.5 ml-2 font-bold uppercase tracking-wider leading-tight">{errors.peso_kg}</p>}
+                {errors.peso_kg && <p className="text-[8px] text-red-500 mt-1 ml-1 font-bold uppercase tracking-tight leading-tight">{errors.peso_kg}</p>}
               </div>
 
               {/* Estatura */}
-              <div className="relative group">
-                <label className="text-[9px] font-black text-brand-primary uppercase tracking-widest mb-1.5 ml-4 block opacity-70">
+              <div className="col-span-5 relative group">
+                <label className="text-[8px] sm:text-[9px] font-black text-brand-primary uppercase tracking-widest mb-1.5 ml-2 sm:ml-4 block opacity-70 whitespace-nowrap">
                   {t('sections.height')}
                 </label>
                 <div className="relative">
@@ -308,19 +308,19 @@ const ReservationContactSection = ({ data, onChange, errors, sectionRef }) => {
                     type="text"
                     inputMode="numeric"
                     name="estatura_m"
-                    placeholder="000"
+                    placeholder="1.75"
                     maxLength={4}
                     value={data.estatura_m}
                     onChange={handleChange}
-                    className={`input-premium !pr-8 md:!pr-10 ${
+                    className={`input-premium !px-2 sm:!px-4 text-center h-[52px] sm:h-[58px] text-xs sm:text-base !pr-6 sm:!pr-10 ${
                       errors.estatura_m ? 'border-red-200 focus:border-red-400 focus:ring-red-400/5' : ''
                     }`}
                   />
-                  <div className="absolute right-4 md:right-6 top-1/2 -translate-y-1/2 pointer-events-none">
-                    <span className="text-[10px] md:text-xs font-black text-brand-primary/60 uppercase tracking-widest">m</span>
+                  <div className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 pointer-events-none">
+                    <span className="text-[8px] sm:text-[10px] font-black text-brand-primary/40 uppercase tracking-widest">m</span>
                   </div>
                 </div>
-                {errors.estatura_m && <p className="text-[9px] text-red-500 mt-1.5 ml-2 font-bold uppercase tracking-wider leading-tight">{errors.estatura_m}</p>}
+                {errors.estatura_m && <p className="text-[8px] text-red-500 mt-1 ml-1 font-bold uppercase tracking-tight leading-tight">{errors.estatura_m}</p>}
               </div>
             </div>
           </div>
