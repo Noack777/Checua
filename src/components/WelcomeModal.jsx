@@ -14,7 +14,31 @@ const WelcomeModal = ({ isOpen, onComplete, onClose, tours = [], loading = false
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [isValid, setIsValid] = useState(false);
   const [isTourDropdownOpen, setIsTourDropdownOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
   const dropdownRef = useRef(null);
+  const searchInputRef = useRef(null);
+
+  // Filtrado de tours optimizado
+  const filteredTours = React.useMemo(() => {
+    if (!searchTerm.trim()) return tours;
+    
+    const term = searchTerm.toLowerCase().trim();
+    return tours.filter(tour => {
+      const nameMatch = tour.name?.toLowerCase().includes(term);
+      const descMatch = tour.description?.toLowerCase().includes(term);
+      const categoryMatch = tour.category?.toLowerCase().includes(term);
+      return nameMatch || descMatch || categoryMatch;
+    });
+  }, [tours, searchTerm]);
+
+  // Enfocar el buscador al abrir el dropdown
+  useEffect(() => {
+    if (isTourDropdownOpen && searchInputRef.current) {
+      setTimeout(() => {
+        searchInputRef.current?.focus();
+      }, 100);
+    }
+  }, [isTourDropdownOpen]);
 
   // Estados para la verificación del cliente
   const [clientStatus, setClientStatus] = useState('idle'); // idle, checking, found, created, error
@@ -305,21 +329,55 @@ const WelcomeModal = ({ isOpen, onComplete, onClose, tours = [], loading = false
 
                 {/* Custom Dropdown Options */}
                 {isTourDropdownOpen && (
-                  <div className="absolute left-0 right-0 mt-3 bg-white dark:bg-dark-bg-card border-2 border-brand-border dark:border-dark-border rounded-[1.5rem] shadow-2xl z-[1001] overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
+                  <div className="absolute left-0 right-0 mt-3 bg-white dark:bg-dark-bg-card border-2 border-brand-border dark:border-dark-border rounded-[1.5rem] shadow-2xl z-[1001] overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200 flex flex-col">
+                    {/* Search Input inside Dropdown */}
+                    <div className="p-3 border-b border-brand-light dark:border-dark-border bg-white dark:bg-dark-bg-card sticky top-0 z-10">
+                      <div className="relative">
+                        <svg 
+                          className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-brand-text-secondary/50 dark:text-dark-text-secondary/50" 
+                          fill="none" 
+                          viewBox="0 0 24 24" 
+                          stroke="currentColor" 
+                          strokeWidth="3"
+                        >
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                        <input
+                          ref={searchInputRef}
+                          type="text"
+                          value={searchTerm}
+                          onChange={(e) => setSearchTerm(e.target.value)}
+                          placeholder={t('welcome.search_tour_placeholder') || "🔍 Buscar experiencia..."}
+                          className="w-full pl-11 pr-4 py-2.5 bg-brand-light/30 dark:bg-dark-bg-main/50 border-2 border-transparent focus:border-brand-primary/30 rounded-xl text-sm font-bold text-brand-text-main dark:text-dark-text-main placeholder:text-brand-text-secondary/40 dark:placeholder:text-dark-text-secondary/40 transition-all outline-none"
+                        />
+                        {searchTerm && (
+                          <button 
+                            onClick={() => setSearchTerm('')}
+                            className="absolute right-3 top-1/2 -translate-y-1/2 p-1 hover:bg-brand-light dark:hover:bg-dark-bg-main rounded-full transition-colors"
+                          >
+                            <svg className="w-3 h-3 text-brand-text-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                          </button>
+                        )}
+                      </div>
+                    </div>
+
                     <div className="max-h-[300px] md:max-h-[350px] overflow-y-auto welcome-tour-list">
                       {loading ? (
                         <div className="p-10 text-center">
                           <div className="w-8 h-8 border-4 border-brand-primary border-t-transparent rounded-full animate-spin mx-auto mb-3"></div>
                           <p className="text-xs font-bold text-brand-text-secondary dark:text-dark-text-secondary uppercase tracking-widest">{t('welcome.loading_tours')}</p>
                         </div>
-                      ) : tours.length > 0 ? (
-                        tours.map((tour) => (
+                      ) : filteredTours.length > 0 ? (
+                        filteredTours.map((tour) => (
                           <button
                             key={tour.id}
                             type="button"
                             onClick={() => {
                               setSelectedTourId(tour.id.toString());
                               setIsTourDropdownOpen(false);
+                              setSearchTerm(''); // Limpiar búsqueda al seleccionar
                             }}
                             className={`w-full px-6 py-4 text-left transition-all duration-200 border-b border-brand-light dark:border-dark-border last:border-0 flex flex-col gap-1 group ${
                               selectedTourId === tour.id.toString() 
@@ -332,6 +390,11 @@ const WelcomeModal = ({ isOpen, onComplete, onClose, tours = [], loading = false
                             }`}>
                               {tour.name}
                             </span>
+                            {tour.description && (
+                              <p className="text-[10px] md:text-xs text-brand-text-secondary/70 dark:text-dark-text-secondary/70 line-clamp-1 font-medium italic mb-1">
+                                {tour.description}
+                              </p>
+                            )}
                             <div className="flex items-center justify-between">
                               <div className="flex flex-col">
                                 <span className="text-brand-primary font-black text-base md:text-lg">
@@ -352,8 +415,21 @@ const WelcomeModal = ({ isOpen, onComplete, onClose, tours = [], loading = false
                           </button>
                         ))
                       ) : (
-                        <div className="p-8 text-center">
-                          <p className="text-sm font-bold text-brand-text-secondary italic">{t('welcome.no_tours')}</p>
+                        <div className="p-10 text-center space-y-3">
+                          <div className="w-12 h-12 bg-brand-light/50 dark:bg-dark-bg-main/50 rounded-full flex items-center justify-center mx-auto">
+                            <svg className="w-6 h-6 text-brand-text-secondary/40" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                            </svg>
+                          </div>
+                          <p className="text-sm font-bold text-brand-text-secondary dark:text-dark-text-secondary italic px-4">
+                            {t('welcome.no_tours_found') || "No encontramos experiencias que coincidan con tu búsqueda."}
+                          </p>
+                          <button 
+                            onClick={() => setSearchTerm('')}
+                            className="text-xs font-black text-brand-primary uppercase tracking-widest hover:underline"
+                          >
+                            {t('welcome.clear_search') || "Ver todas"}
+                          </button>
                         </div>
                       )}
                     </div>
