@@ -270,24 +270,14 @@ const DateSelectionSection = ({ onSelect, selectedDate, errors, sectionRef }) =>
   return (
     <div 
       ref={sectionRef}
-      className={`w-full max-w-xl bg-white dark:bg-dark-bg-card rounded-[1.5rem] shadow-lg shadow-brand-dark/5 border transition-all duration-300 relative ${
-        errors.date ? 'border-red-400 ring-2 ring-red-50' : 'border-brand-border dark:border-dark-border'
-      }`}
+      className={`card-premium ${errors.date ? 'border-red-400 ring-2 ring-red-50' : ''}`}
     >
-      {/* Visual Accent Line */}
-      <div className={`absolute top-0 left-0 w-full h-1.5 rounded-t-[1.5rem] ${errors.date ? 'bg-red-400' : 'bg-brand-primary'}`}></div>
+      <div className={`card-accent-line ${errors.date ? 'bg-red-400' : ''}`}></div>
       
-      <div className="px-5 py-6 md:p-10 space-y-6">
+      <div className="px-6 py-8 md:px-10 md:py-10 space-y-6">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
           <div>
-            <h3 className="text-base md:text-lg font-bold text-brand-text-main dark:text-dark-text-main flex items-center gap-2">
-              <span className={`flex items-center justify-center w-7 h-7 rounded-full text-xs font-black transition-colors ${
-                errors.date ? 'bg-red-100 text-red-600' : 'bg-brand-light dark:bg-dark-bg-main text-brand-dark dark:text-brand-primary'
-              }`}>3</span>
-              {t('sections.select_day')}
-              <span className="text-brand-primary ml-1 text-xl leading-none">*</span>
-            </h3>
-            <p className="text-sm md:text-base text-brand-text-secondary dark:text-dark-text-secondary mt-1.5 ml-0 md:ml-9">
+            <p className="text-sm md:text-base text-brand-text-secondary dark:text-dark-text-secondary font-medium">
               {t('sections.availability_next_months')}
             </p>
           </div>
@@ -298,118 +288,80 @@ const DateSelectionSection = ({ onSelect, selectedDate, errors, sectionRef }) =>
               type="button"
               disabled={currentMonthIndex === 0}
               onClick={() => scrollToMonth(currentMonthIndex - 1)}
-              className={`p-2 rounded-full border border-brand-border dark:border-dark-border transition-all duration-300 ${
-                currentMonthIndex === 0 ? 'opacity-30 cursor-not-allowed' : 'hover:bg-brand-light dark:hover:bg-dark-bg-main text-brand-primary'
-              }`}
+              className="p-3 rounded-full bg-brand-light dark:bg-dark-bg-main text-brand-primary disabled:opacity-30 disabled:cursor-not-allowed transition-all hover:scale-110 active:scale-95 border border-brand-primary/10 shadow-sm"
             >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 19l-7-7 7-7" />
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M15 19l-7-7 7-7" />
               </svg>
             </button>
             <button
               type="button"
               disabled={currentMonthIndex === monthsToDisplay.length - 1}
               onClick={() => scrollToMonth(currentMonthIndex + 1)}
-              className={`p-2 rounded-full border border-brand-border dark:border-dark-border transition-all duration-300 ${
-                currentMonthIndex === monthsToDisplay.length - 1 ? 'opacity-30 cursor-not-allowed' : 'hover:bg-brand-light dark:hover:bg-dark-bg-main text-brand-primary'
-              }`}
+              className="p-3 rounded-full bg-brand-light dark:bg-dark-bg-main text-brand-primary disabled:opacity-30 disabled:cursor-not-allowed transition-all hover:scale-110 active:scale-95 border border-brand-primary/10 shadow-sm"
             >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7" />
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M9 5l7 7-7 7" />
               </svg>
             </button>
           </div>
         </div>
 
-        <div className="space-y-6">
-          {/* Carousel Container */}
-          <div className="relative">
-            <div 
-              ref={scrollRef}
-              onScroll={handleScroll}
-              className="flex overflow-x-auto snap-x snap-mandatory no-scrollbar scroll-smooth"
-              style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-            >
-              {monthsToDisplay.map((month, idx) => renderMonth(month, idx))}
-            </div>
-          </div>
+        {/* Carousel Container */}
+        <div 
+          ref={scrollRef}
+          onScroll={handleScroll}
+          className="flex overflow-x-auto snap-x snap-mandatory hide-scrollbar gap-0"
+          style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+        >
+          {monthsToDisplay.map((m, idx) => renderMonth(m, idx))}
+        </div>
 
-          {/* Indicators & Legend */}
-          <div className="flex flex-col items-center gap-6 pt-2">
-            {/* Carousel Dots */}
-            <div className="flex items-center gap-2">
-              {monthsToDisplay.map((_, idx) => (
-                <button
-                  key={`dot-${idx}`}
-                  onClick={() => scrollToMonth(idx)}
-                  className={`h-1.5 rounded-full transition-all duration-300 ${
-                    currentMonthIndex === idx ? 'w-6 bg-brand-primary' : 'w-2 bg-brand-border hover:bg-brand-primary/30'
-                  }`}
-                />
-              ))}
-            </div>
-
-            {/* Legend */}
-            <div className="flex flex-wrap items-center justify-center gap-4 text-[10px] font-bold uppercase tracking-wider text-brand-text-secondary/60">
-              <div className="flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-red-400"></span>
-                {t('sections.holiday')}
-              </div>
-              <div className="flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-full border-2 border-brand-primary"></span>
-                {t('sections.today')}
-              </div>
-              <div className="flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-brand-primary"></span>
-                {t('sections.selected')}
-              </div>
-            </div>
-          </div>
-
-          <input type="hidden" name="fecha_reserva" value={formatDateISO(selectedDate)} />
-
-          {/* Selection Summary & Price Warning */}
-          {selectedDate && (
-            <div className="space-y-4 animate-in fade-in slide-in-from-top-2 duration-300">
-              {/* Date Summary */}
-              <div className="bg-brand-light/50 dark:bg-dark-bg-main/50 border border-brand-primary/20 dark:border-dark-border rounded-2xl p-4 flex items-center gap-4 shadow-sm">
-                <div className="flex-shrink-0 w-12 h-12 bg-white dark:bg-dark-bg-card rounded-xl flex flex-col items-center justify-center border border-brand-primary/10 dark:border-dark-border shadow-sm">
-                  <span className="text-[10px] font-black text-brand-primary uppercase leading-none mb-1">
-                    {selectedDate.toLocaleDateString(i18n.language === 'en' ? 'en-US' : 'es-ES', { month: 'short' }).replace('.', '')}
-                  </span>
-                  <span className="text-xl font-black text-brand-text-main dark:text-dark-text-main leading-none">
-                    {selectedDate.getDate()}
-                  </span>
+        {/* Selected Date Summary */}
+        <div className="space-y-4">
+          {selectedDate ? (
+            <div className="animate-in fade-in slide-in-from-top-2 duration-300">
+              <div className="bg-brand-light/30 dark:bg-dark-bg-main/40 border border-brand-primary/20 rounded-[2rem] p-6 flex flex-col md:flex-row items-center justify-between gap-4">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 bg-white dark:bg-dark-bg-card rounded-2xl border border-brand-primary/10 shadow-sm flex items-center justify-center text-brand-primary">
+                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <p className="text-[10px] uppercase tracking-widest font-black text-brand-primary">Fecha seleccionada</p>
+                    <p className="text-brand-text-main dark:text-dark-text-main font-bold text-sm md:text-base capitalize">
+                      {formatDateLegible(selectedDate)}
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <p className="text-[10px] uppercase tracking-widest font-black text-brand-primary">{t('sections.date_confirmation')}</p>
-                  <p className="text-brand-text-main dark:text-dark-text-main font-bold text-sm md:text-base capitalize">
-                    {formatDateLegible(selectedDate)}
-                  </p>
+                <div className="flex flex-wrap gap-2 justify-center">
                   {isHoliday(selectedDate) && (
-                    <span className="inline-block mt-1 px-2 py-0.5 bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 text-[9px] font-black uppercase rounded-full">
+                    <span className="px-3 py-1 bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 text-[9px] font-black uppercase rounded-full border border-red-200 dark:border-red-900/50">
                       {t('sections.holiday_tag')}
+                    </span>
+                  )}
+                  {isWeekend(selectedDate) && (
+                    <span className="px-3 py-1 bg-brand-primary/10 text-brand-primary text-[9px] font-black uppercase rounded-full border border-brand-primary/20">
+                      {t('sections.weekend')}
                     </span>
                   )}
                 </div>
               </div>
-
-              {/* Weekday Price Notice */}
-              {dateSelectionData.puede_variar_precio && (
-                <div className="bg-amber-50 dark:bg-amber-900/10 border border-amber-100 dark:border-amber-900/20 rounded-xl p-3 flex items-start gap-3 animate-in zoom-in-95 duration-300">
-                  <div className="flex-shrink-0 mt-0.5">
-                    <div className="w-5 h-5 bg-amber-200 dark:bg-amber-900/30 rounded-full flex items-center justify-center">
-                      <span className="text-amber-700 dark:text-amber-500 text-[10px] font-black">!</span>
-                    </div>
-                  </div>
-                  <p className="text-amber-800 dark:text-amber-500 text-xs md:text-sm font-medium leading-relaxed">
-                    {t('sections.price_variation_notice')}
-                  </p>
-                </div>
+              {!isWeekend(selectedDate) && !isHoliday(selectedDate) && (
+                <p className="text-[10px] text-brand-text-secondary/60 dark:text-dark-text-secondary/60 mt-3 font-medium italic text-center ml-6">
+                  {t('sections.price_variation_notice')}
+                </p>
               )}
             </div>
+          ) : (
+            <div className="bg-brand-light/10 dark:bg-dark-bg-main/30 border-2 border-dashed border-brand-border dark:border-dark-border rounded-[2rem] p-8 text-center">
+              <p className="text-sm text-brand-text-secondary/60 dark:text-dark-text-secondary/60 font-medium italic">
+                {t('sections.date_not_selected')}
+              </p>
+            </div>
           )}
-          {errors.date && <p className="text-[10px] text-red-500 mt-1 ml-4 md:ml-13 font-bold uppercase tracking-wider">{errors.date}</p>}
+          {errors.date && <p className="text-[10px] text-red-500 mt-1 ml-6 font-bold uppercase tracking-wider text-center">{errors.date}</p>}
         </div>
       </div>
     </div>

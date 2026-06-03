@@ -137,35 +137,47 @@ const HomePage = ({
            </div>
         )}
 
-        <ReservationContactSection 
-          sectionRef={contactRef}
-          data={reservationData.contact}
-          onChange={handleContactChange}
-          errors={errors}
-        />
+        <div className="section-container">
+          <label className="section-title-premium">{t('sections.responsible_info')}</label>
+          <ReservationContactSection 
+            sectionRef={contactRef}
+            data={reservationData.contact}
+            onChange={handleContactChange}
+            errors={errors}
+          />
+        </div>
         
-        <TourSelectionSection 
-          sectionRef={tourRef}
-          selectedTourId={reservationData.tour.id_plan}
-          onSelect={handleTourSelect}
-          errors={errors}
-          tours={tours}
-          loading={loadingTours}
-        />
+        <div className="section-container">
+          <label className="section-title-premium">{t('sections.tour')}</label>
+          <TourSelectionSection 
+            sectionRef={tourRef}
+            selectedTourId={reservationData.tour.id_plan}
+            onSelect={handleTourSelect}
+            errors={errors}
+            tours={tours}
+            loading={loadingTours}
+          />
+        </div>
         
-        <DateSelectionSection 
-          sectionRef={dateRef}
-          selectedDate={reservationData.date.rawDate}
-          onSelect={handleDateSelect}
-          errors={errors}
-        />
+        <div className="section-container">
+          <label className="section-title-premium">{t('sections.date')}</label>
+          <DateSelectionSection 
+            sectionRef={dateRef}
+            selectedDate={reservationData.date.rawDate}
+            onSelect={handleDateSelect}
+            errors={errors}
+          />
+        </div>
         
-        <TimeSelectionSection 
-          sectionRef={timeRef}
-          selectedTime={reservationData.time.hora_reserva ? { value: reservationData.time.hora_reserva, label: reservationData.time.label, period: reservationData.time.period } : null}
-          onSelect={handleTimeSelect}
-          errors={errors}
-        />
+        <div className="section-container">
+          <label className="section-title-premium">{t('sections.time')}</label>
+          <TimeSelectionSection 
+            sectionRef={timeRef}
+            selectedTime={reservationData.time.hora_reserva ? { value: reservationData.time.hora_reserva, label: reservationData.time.label, period: reservationData.time.period } : null}
+            onSelect={handleTimeSelect}
+            errors={errors}
+          />
+        </div>
 
         {/* Botón Continuar */}
         <div className="pt-4">
@@ -204,79 +216,79 @@ const HomePage = ({
         {showSummary && (
           <div 
             id="reservation-summary"
-            className="animate-in fade-in slide-in-from-bottom-4 duration-500 pt-6"
+            className="animate-in fade-in slide-in-from-bottom-4 duration-500 pt-10"
           >
-            <div className="bg-brand-light/30 border-2 border-brand-primary/20 rounded-[2rem] p-6 md:p-8 space-y-6 relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-brand-primary/5 rounded-full -mr-16 -mt-16"></div>
+            <div className="card-premium p-6 md:p-10 space-y-8">
+              <div className="card-accent-line"></div>
               
-              <div className="text-center relative">
-                <h3 className="text-xl md:text-2xl font-black text-brand-text-main uppercase tracking-tight">
+              <div className="text-center relative pt-4">
+                <h3 className="text-2xl md:text-3xl font-black text-brand-text-main dark:text-dark-text-main uppercase tracking-tight">
                   {t('summary.title')}
                 </h3>
-                <div className="h-1 w-12 bg-brand-primary mx-auto mt-2 rounded-full"></div>
+                <div className="h-1.5 w-16 bg-brand-primary mx-auto mt-3 rounded-full"></div>
               </div>
 
-              <div className="grid gap-6">
+              <div className="grid gap-8">
                 {/* Datos de Contacto */}
-                <div className="space-y-3">
-                  <p className="text-[10px] font-black text-brand-primary uppercase tracking-[0.2em]">{t('summary.responsible')}</p>
-                  <div className="bg-white/60 rounded-2xl p-4 border border-brand-border/50">
-                    <p className="text-brand-text-main font-bold text-base">{reservationData.contact.nombre_jefe_reserva}</p>
-                    <div className="flex flex-wrap gap-x-4 gap-y-1 mt-1">
-                      <p className="text-brand-text-secondary text-sm flex items-center gap-1.5">
-                        <span className="w-1 h-1 bg-brand-primary rounded-full"></span>
-                        {reservationData.contact.tipo_documento}: {reservationData.contact.numero_documento}
-                      </p>
-                      <p className="text-brand-text-secondary text-sm flex items-center gap-1.5">
-                        <span className="w-1 h-1 bg-brand-primary rounded-full"></span>
-                        {reservationData.contact.telefono_cliente}
-                      </p>
-                      <p className="text-brand-text-secondary text-sm flex items-center gap-1.5">
-                        <span className="w-1 h-1 bg-brand-primary rounded-full"></span>
-                        {reservationData.contact.correo_contacto}
-                      </p>
-                    </div>
-                    {/* Fila de Salud en Resumen */}
-                    <div className="flex flex-wrap gap-x-4 gap-y-1 mt-2 pt-2 border-t border-brand-border/30">
-                      <p className="text-brand-text-secondary text-sm flex items-center gap-1.5">
-                        <span className="text-[10px] font-black text-brand-primary/60">RH:</span>
-                        <span className="font-bold">{reservationData.contact.rh}</span>
-                      </p>
-                      <p className="text-brand-text-secondary text-sm flex items-center gap-1.5">
-                        <span className="text-[10px] font-black text-brand-primary/60">PESO:</span>
-                        <span className="font-bold">{reservationData.contact.peso_kg} kg</span>
-                      </p>
-                      <p className="text-brand-text-secondary text-sm flex items-center gap-1.5">
-                        <span className="text-[10px] font-black text-brand-primary/60">ESTATURA:</span>
-                        <span className="font-bold">{reservationData.contact.estatura_m} m</span>
-                      </p>
+                <div className="space-y-4">
+                  <p className="section-title-premium !ml-0">{t('summary.responsible')}</p>
+                  <div className="bg-brand-light/30 dark:bg-dark-bg-main/30 rounded-[2rem] p-6 border border-brand-primary/10">
+                    <p className="text-brand-text-main dark:text-dark-text-main font-black text-lg md:text-xl mb-3">{reservationData.contact.nombre_jefe_reserva}</p>
+                    <div className="grid sm:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <p className="text-brand-text-secondary dark:text-dark-text-secondary text-sm flex items-center gap-2">
+                          <span className="w-1.5 h-1.5 bg-brand-primary rounded-full"></span>
+                          <span className="font-bold">{reservationData.contact.tipo_documento}:</span> {reservationData.contact.numero_documento}
+                        </p>
+                        <p className="text-brand-text-secondary dark:text-dark-text-secondary text-sm flex items-center gap-2">
+                          <span className="w-1.5 h-1.5 bg-brand-primary rounded-full"></span>
+                          <span className="font-bold">{t('welcome.phone_label').replace('*', '')}:</span> {reservationData.contact.telefono_cliente}
+                        </p>
+                      </div>
+                      <div className="space-y-2">
+                        <p className="text-brand-text-secondary dark:text-dark-text-secondary text-sm flex items-center gap-2">
+                          <span className="w-1.5 h-1.5 bg-brand-primary rounded-full"></span>
+                          <span className="font-bold">{t('sections.email')}:</span> {reservationData.contact.correo_contacto}
+                        </p>
+                        <div className="flex gap-4 pt-1">
+                          <p className="text-brand-text-secondary dark:text-dark-text-secondary text-xs">
+                            <span className="font-black text-brand-primary/60 mr-1">RH:</span> {reservationData.contact.rh}
+                          </p>
+                          <p className="text-brand-text-secondary dark:text-dark-text-secondary text-xs">
+                            <span className="font-black text-brand-primary/60 mr-1">PESO:</span> {reservationData.contact.peso_kg}kg
+                          </p>
+                          <p className="text-brand-text-secondary dark:text-dark-text-secondary text-xs">
+                            <span className="font-black text-brand-primary/60 mr-1">ALTURA:</span> {reservationData.contact.estatura_m}m
+                          </p>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
 
-                {/* Detalles de la Experiencia */}
-                <div className="grid md:grid-cols-2 gap-4">
-                  <div className="space-y-3">
-                    <p className="text-[10px] font-black text-brand-primary uppercase tracking-[0.2em]">{t('summary.experience')}</p>
-                    <div className="bg-white/60 rounded-2xl p-4 border border-brand-border/50 h-full">
-                      <p className="text-brand-text-main font-bold text-sm leading-tight">{reservationData.tour.tour_reserva}</p>
-                      <p className="text-brand-primary font-black text-lg mt-1">
+                {/* Detalles de la Experiencia y Fecha */}
+                <div className="grid md:grid-cols-2 gap-6">
+                  <div className="space-y-4">
+                    <p className="section-title-premium !ml-0">{t('summary.experience')}</p>
+                    <div className="bg-brand-light/30 dark:bg-dark-bg-main/30 rounded-[2rem] p-6 border border-brand-primary/10 h-full flex flex-col justify-center">
+                      <p className="text-brand-text-main dark:text-dark-text-main font-black text-base md:text-lg leading-tight mb-2">{reservationData.tour.tour_reserva}</p>
+                      <p className="text-brand-primary font-black text-2xl">
                         ${reservationData.tour.precio_por_persona?.toLocaleString('es-CO')}
-                        <span className="text-[10px] ml-1 font-bold text-brand-text-secondary uppercase">COP</span>
+                        <span className="text-xs ml-2 font-bold text-brand-text-secondary dark:text-dark-text-secondary uppercase">COP</span>
                       </p>
                     </div>
                   </div>
                   
-                  <div className="space-y-3">
-                    <p className="text-[10px] font-black text-brand-primary uppercase tracking-[0.2em]">{t('summary.date_time')}</p>
-                    <div className="bg-white/60 rounded-2xl p-4 border border-brand-border/50 h-full">
-                      <p className="text-brand-text-main font-bold text-sm capitalize">
+                  <div className="space-y-4">
+                    <p className="section-title-premium !ml-0">{t('summary.date_time')}</p>
+                    <div className="bg-brand-light/30 dark:bg-dark-bg-main/30 rounded-[2rem] p-6 border border-brand-primary/10 h-full flex flex-col justify-center">
+                      <p className="text-brand-text-main dark:text-dark-text-main font-black text-base md:text-lg capitalize mb-1">
                         {reservationData.date.rawDate?.toLocaleDateString(i18n.language === 'en' ? 'en-US' : 'es-ES', { weekday: 'long', day: 'numeric', month: 'long' })}
                       </p>
-                      <p className="text-brand-dark font-black text-base mt-0.5">
+                      <p className="text-brand-primary font-black text-xl">
                         {reservationData.time.label}
                       </p>
-                      <p className="text-[10px] text-brand-text-secondary font-bold uppercase mt-1">
+                      <p className="text-[10px] text-brand-text-secondary/60 dark:text-dark-text-secondary/60 font-black uppercase mt-2 tracking-widest">
                         {reservationData.date.puede_variar_precio ? "⚠️ " + t('summary.subject_to_availability') : "✅ " + t('summary.confirmed')}
                       </p>
                     </div>
@@ -285,22 +297,22 @@ const HomePage = ({
               </div>
 
               {/* Botones de Acción del Resumen */}
-              <div className="flex flex-col sm:flex-row gap-3 pt-4">
+              <div className="flex flex-col sm:flex-row gap-4 pt-4">
                 <button
                   onClick={handleEditInformation}
-                  className="flex-1 py-3 px-6 border-2 border-brand-border hover:border-brand-primary/40 text-brand-text-secondary hover:text-brand-dark font-bold text-sm rounded-full transition-all duration-300 flex items-center justify-center gap-2 group"
+                  className="flex-1 py-4 px-6 border-2 border-brand-border dark:border-dark-border hover:border-brand-primary/40 text-brand-text-secondary dark:text-dark-text-secondary hover:text-brand-primary font-black text-xs uppercase tracking-widest rounded-full transition-all duration-300 flex items-center justify-center gap-2 group"
                 >
                   <svg className="w-4 h-4 transition-transform group-hover:-translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                   </svg>
                   {t('summary.edit')}
                 </button>
                 <button
                   onClick={handleAddCompanions}
-                  className="flex-1 py-3 px-6 bg-brand-light border-2 border-brand-primary/20 hover:border-brand-primary text-brand-dark font-bold text-sm rounded-full transition-all duration-300 flex items-center justify-center gap-2 shadow-sm"
+                  className="flex-1 py-4 px-6 bg-brand-light dark:bg-dark-bg-main border-2 border-brand-primary/20 hover:border-brand-primary text-brand-dark dark:text-brand-primary font-black text-xs uppercase tracking-widest rounded-full transition-all duration-300 flex items-center justify-center gap-2 shadow-sm"
                 >
                   <svg className="w-4 h-4 text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M12 4v16m8-8H4" />
                   </svg>
                   {t('summary.add_companions')}
                 </button>
@@ -310,9 +322,9 @@ const HomePage = ({
               {showCompanionsNotice && (
                 <div 
                   id="companions-notice"
-                  className="animate-in fade-in zoom-in-95 duration-300 bg-white/80 border border-brand-primary/30 rounded-2xl p-4 text-center shadow-sm"
+                  className="animate-in fade-in zoom-in-95 duration-300 bg-brand-primary/5 border border-brand-primary/20 rounded-[2rem] p-6 text-center shadow-sm"
                 >
-                  <p className="text-xs md:text-sm font-medium text-brand-dark">
+                  <p className="text-xs md:text-sm font-bold text-brand-dark dark:text-brand-primary uppercase tracking-widest">
                     <span className="mr-2">✨</span>
                     {t('summary.companions_notice')}
                   </p>
@@ -320,7 +332,7 @@ const HomePage = ({
               )}
 
               <div className="pt-4 text-center">
-                <p className="text-[11px] text-brand-text-secondary font-medium italic">
+                <p className="text-[11px] text-brand-text-secondary/40 dark:text-dark-text-secondary/40 font-bold uppercase tracking-[0.2em] italic">
                   {t('summary.verify_data_hint')}
                 </p>
               </div>

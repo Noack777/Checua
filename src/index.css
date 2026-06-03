@@ -16,6 +16,34 @@
   --color-dark-text-main: #F8FAFC;
   --color-dark-text-secondary: #94A3B8;
   --color-dark-border: #334155;
+
+  /* UI Tokens */
+  --radius-card: 2.5rem;
+  --radius-input: 9999px;
+  --shadow-premium: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+  --shadow-premium-dark: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
+}
+
+@layer components {
+  .card-premium {
+    @apply bg-white dark:bg-dark-bg-card rounded-[2.5rem] shadow-premium dark:shadow-premium-dark border border-brand-border dark:border-dark-border transition-all duration-300 relative overflow-hidden;
+  }
+
+  .card-accent-line {
+    @apply absolute top-0 left-0 w-full h-2 bg-brand-primary rounded-t-[2.5rem] z-10;
+  }
+
+  .input-premium {
+    @apply w-full px-6 py-4 bg-brand-light/30 dark:bg-dark-bg-main/50 border-2 border-brand-border dark:border-dark-border rounded-full text-brand-text-main dark:text-dark-text-main placeholder-brand-text-secondary/40 font-bold text-base focus:border-brand-primary focus:ring-4 focus:ring-brand-primary/5 outline-none transition-all duration-300;
+  }
+
+  .section-title-premium {
+    @apply text-[10px] font-black text-brand-primary uppercase tracking-[0.2em] mb-3 ml-6 block;
+  }
+
+  .section-container {
+    @apply space-y-4 mb-12;
+  }
 }
 
 :root {
@@ -23,7 +51,7 @@
 }
 
 body {
-  @apply bg-white dark:bg-dark-bg-main text-brand-text-main dark:text-dark-text-main transition-colors duration-300;
+  @apply bg-brand-light/20 dark:bg-dark-bg-main text-brand-text-main dark:text-dark-text-main transition-colors duration-300;
 }
 
 /* Continuar Button Animation - Adapted from Uiverse.io */
