@@ -209,21 +209,21 @@ const ReservationContactSection = ({ data, onChange, errors, sectionRef }) => {
             </div>
 
             {/* Fila de Salud: RH, Peso, Estatura */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 ml-0 md:ml-9">
+            <div className="grid grid-cols-3 gap-3 ml-0 md:ml-9">
               {/* RH */}
               <div className="relative" ref={rhDropdownRef}>
                 <button
                   type="button"
                   onClick={() => setIsRHOpen(!isRHOpen)}
-                  className={`w-full px-5 py-3.5 bg-white dark:bg-dark-bg-main/50 border-2 rounded-full text-left transition-all duration-300 flex items-center justify-between group ${
+                  className={`w-full px-3 md:px-5 py-3.5 bg-white dark:bg-dark-bg-main/50 border-2 rounded-full text-left transition-all duration-300 flex items-center justify-between group ${
                     isRHOpen ? 'border-brand-primary ring-4 ring-brand-primary/5' : errors.rh ? 'border-red-200' : 'border-brand-border dark:border-dark-border hover:border-brand-primary/50'
                   }`}
                 >
-                  <span className={`text-sm md:text-base font-medium truncate ${data.rh ? 'text-brand-text-main dark:text-dark-text-main' : 'text-brand-text-secondary/40'}`}>
+                  <span className={`text-xs md:text-base font-bold truncate ${data.rh ? 'text-brand-text-main dark:text-dark-text-main' : 'text-brand-text-secondary/40'}`}>
                     {data.rh || 'RH'}
                   </span>
                   <svg 
-                    className={`w-4 h-4 text-brand-primary transition-transform duration-300 ${isRHOpen ? 'rotate-180' : ''}`} 
+                    className={`w-3 h-3 md:w-4 md:h-4 text-brand-primary transition-transform duration-300 ${isRHOpen ? 'rotate-180' : ''}`} 
                     fill="none" 
                     viewBox="0 0 24 24" 
                     stroke="currentColor" 
@@ -241,7 +241,7 @@ const ReservationContactSection = ({ data, onChange, errors, sectionRef }) => {
                           key={type}
                           type="button"
                           onClick={() => handleRHSelect(type)}
-                          className={`w-full px-5 py-3 text-left text-sm font-medium transition-colors hover:bg-brand-light/50 dark:hover:bg-dark-bg-main/50 ${
+                          className={`w-full px-5 py-3 text-left text-xs md:text-sm font-bold transition-colors hover:bg-brand-light/50 dark:hover:bg-dark-bg-main/50 ${
                             data.rh === type ? 'text-brand-primary bg-brand-primary/5' : 'text-brand-text-main dark:text-dark-text-main'
                           }`}
                         >
@@ -251,7 +251,7 @@ const ReservationContactSection = ({ data, onChange, errors, sectionRef }) => {
                     </div>
                   </div>
                 )}
-                {errors.rh && <p className="text-[10px] text-red-500 mt-1 ml-4 font-bold uppercase tracking-wider">{errors.rh}</p>}
+                {errors.rh && <p className="text-[9px] text-red-500 mt-1 ml-2 font-bold uppercase tracking-wider leading-tight">{errors.rh}</p>}
               </div>
 
               {/* Peso */}
@@ -264,15 +264,15 @@ const ReservationContactSection = ({ data, onChange, errors, sectionRef }) => {
                     placeholder="0.0"
                     value={data.peso_kg}
                     onChange={handleChange}
-                    className={`w-full px-5 py-3.5 bg-white dark:bg-dark-bg-main/50 border-2 rounded-full text-brand-text-main dark:text-dark-text-main placeholder-brand-text-secondary/40 focus:outline-none focus:ring-4 transition-all duration-300 font-medium text-sm md:text-base pr-12 ${
+                    className={`w-full px-3 md:px-5 py-3.5 bg-white dark:bg-dark-bg-main/50 border-2 rounded-full text-brand-text-main dark:text-dark-text-main placeholder-brand-text-secondary/40 focus:outline-none focus:ring-4 transition-all duration-300 font-bold text-xs md:text-base pr-8 md:pr-12 ${
                       errors.peso_kg ? 'border-red-200 focus:border-red-400 focus:ring-red-400/5' : 'border-brand-border dark:border-dark-border focus:border-brand-primary focus:ring-brand-primary/5'
                     }`}
                   />
-                  <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none">
-                    <span className="text-xs font-bold text-brand-text-secondary/50 uppercase tracking-widest">kg</span>
+                  <div className="absolute right-3 md:right-5 top-1/2 -translate-y-1/2 pointer-events-none">
+                    <span className="text-[9px] md:text-xs font-black text-brand-primary/40 uppercase tracking-widest">kg</span>
                   </div>
                 </div>
-                {errors.peso_kg && <p className="text-[10px] text-red-500 mt-1 ml-4 font-bold uppercase tracking-wider">{errors.peso_kg}</p>}
+                {errors.peso_kg && <p className="text-[9px] text-red-500 mt-1 ml-2 font-bold uppercase tracking-wider leading-tight">{errors.peso_kg}</p>}
               </div>
 
               {/* Estatura */}
@@ -285,15 +285,15 @@ const ReservationContactSection = ({ data, onChange, errors, sectionRef }) => {
                     placeholder="0.00"
                     value={data.estatura_m}
                     onChange={handleChange}
-                    className={`w-full px-5 py-3.5 bg-white dark:bg-dark-bg-main/50 border-2 rounded-full text-brand-text-main dark:text-dark-text-main placeholder-brand-text-secondary/40 focus:outline-none focus:ring-4 transition-all duration-300 font-medium text-sm md:text-base pr-10 ${
+                    className={`w-full px-3 md:px-5 py-3.5 bg-white dark:bg-dark-bg-main/50 border-2 rounded-full text-brand-text-main dark:text-dark-text-main placeholder-brand-text-secondary/40 focus:outline-none focus:ring-4 transition-all duration-300 font-bold text-xs md:text-base pr-7 md:pr-10 ${
                       errors.estatura_m ? 'border-red-200 focus:border-red-400 focus:ring-red-400/5' : 'border-brand-border dark:border-dark-border focus:border-brand-primary focus:ring-brand-primary/5'
                     }`}
                   />
-                  <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none">
-                    <span className="text-xs font-bold text-brand-text-secondary/50 uppercase tracking-widest">m</span>
+                  <div className="absolute right-3 md:right-5 top-1/2 -translate-y-1/2 pointer-events-none">
+                    <span className="text-[9px] md:text-xs font-black text-brand-primary/40 uppercase tracking-widest">m</span>
                   </div>
                 </div>
-                {errors.estatura_m && <p className="text-[10px] text-red-500 mt-1 ml-4 font-bold uppercase tracking-wider">{errors.estatura_m}</p>}
+                {errors.estatura_m && <p className="text-[9px] text-red-500 mt-1 ml-2 font-bold uppercase tracking-wider leading-tight">{errors.estatura_m}</p>}
               </div>
             </div>
           </div>

@@ -52,36 +52,48 @@ const HomePage = ({
       />
       
       {/* Header Titles */}
-      <div className="w-full max-w-xl text-center mb-8 relative">
+      <div className="w-full max-w-xl text-center mb-10 pt-16 md:pt-20 relative">
         {/* Theme & Language Selectors */}
-        <div className="absolute -top-4 right-0 flex items-center gap-3">
+        <div className="absolute top-0 right-0 flex items-center gap-4">
           {/* Theme Toggle */}
           <button
             onClick={toggleTheme}
-            className="p-2 rounded-full bg-white dark:bg-dark-bg-card border border-brand-border dark:border-dark-border text-brand-primary transition-all shadow-sm hover:scale-110"
-            title={theme === 'light' ? 'Modo Oscuro' : 'Modo Claro'}
+            className={`w-11 h-11 flex items-center justify-center rounded-2xl transition-all duration-300 shadow-sm border-2 ${
+              theme === 'light' 
+                ? 'bg-white border-brand-border text-amber-500 hover:border-amber-400 hover:bg-amber-50/50' 
+                : 'bg-dark-bg-card border-dark-border text-brand-primary hover:border-brand-primary/50 hover:bg-brand-primary/10'
+            }`}
+            title={theme === 'light' ? t('welcome.switch_dark') || 'Cambiar a modo oscuro' : t('welcome.switch_light') || 'Cambiar a modo claro'}
           >
             {theme === 'light' ? (
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707M16.243 17.657l-.707-.707M7.05 7.05l-.707-.707M12 8a4 4 0 100 8 4 4 0 000-8z" />
               </svg>
             ) : (
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707M16.243 17.657l-.707-.707M7.05 7.05l-.707-.707M12 8a4 4 0 100 8 4 4 0 000-8z" />
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
               </svg>
             )}
           </button>
 
-          <div className="flex gap-2">
+          <div className="flex bg-white/50 dark:bg-dark-bg-card/50 p-1.5 rounded-2xl border-2 border-brand-border dark:border-dark-border gap-1.5">
             <button 
               onClick={() => changeLanguage('es')}
-              className={`px-3 py-1 rounded-full text-[10px] font-black transition-all ${i18n.language.startsWith('es') ? 'bg-brand-primary text-white shadow-md' : 'bg-white dark:bg-dark-bg-card text-brand-text-secondary dark:text-dark-text-secondary border border-brand-border dark:border-dark-border hover:border-brand-primary'}`}
+              className={`px-4 py-2 rounded-xl text-[11px] font-black transition-all duration-300 uppercase tracking-wider ${
+                i18n.language.startsWith('es') 
+                  ? 'bg-brand-primary text-white shadow-lg scale-105' 
+                  : 'text-brand-text-secondary dark:text-dark-text-secondary hover:text-brand-primary dark:hover:text-brand-primary'
+              }`}
             >
               ES
             </button>
             <button 
               onClick={() => changeLanguage('en')}
-              className={`px-3 py-1 rounded-full text-[10px] font-black transition-all ${i18n.language.startsWith('en') ? 'bg-brand-primary text-white shadow-md' : 'bg-white dark:bg-dark-bg-card text-brand-text-secondary dark:text-dark-text-secondary border border-brand-border dark:border-dark-border hover:border-brand-primary'}`}
+              className={`px-4 py-2 rounded-xl text-[11px] font-black transition-all duration-300 uppercase tracking-wider ${
+                i18n.language.startsWith('en') 
+                  ? 'bg-brand-primary text-white shadow-lg scale-105' 
+                  : 'text-brand-text-secondary dark:text-dark-text-secondary hover:text-brand-primary dark:hover:text-brand-primary'
+              }`}
             >
               EN
             </button>
