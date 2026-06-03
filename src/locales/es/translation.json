@@ -66,7 +66,10 @@
     "doc_number": "Número de documento",
     "verified": "Verificado",
     "verified_hint": "Este número fue verificado al inicio.",
-    "email": "Correo electrónico"
+    "email": "Correo electrónico",
+    "rh": "RH",
+    "weight": "Peso (kg)",
+    "height": "Estatura (m)"
   },
   "doc_types": {
     "cc": "Cédula de ciudadanía",

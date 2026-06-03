@@ -228,6 +228,9 @@ const ReservationContactSection = ({ data, onChange, errors, sectionRef }) => {
             <div className="grid grid-cols-3 gap-3">
               {/* RH */}
               <div className="relative" ref={rhDropdownRef}>
+                <label className="text-[9px] font-black text-brand-primary uppercase tracking-widest mb-1.5 ml-4 block opacity-70">
+                  {t('sections.rh')}
+                </label>
                 <button
                   type="button"
                   onClick={() => setIsRHOpen(!isRHOpen)}
@@ -272,6 +275,9 @@ const ReservationContactSection = ({ data, onChange, errors, sectionRef }) => {
 
               {/* Peso */}
               <div className="relative group">
+                <label className="text-[9px] font-black text-brand-primary uppercase tracking-widest mb-1.5 ml-4 block opacity-70">
+                  {t('sections.weight')}
+                </label>
                 <div className="relative">
                   <input
                     type="text"
@@ -294,6 +300,9 @@ const ReservationContactSection = ({ data, onChange, errors, sectionRef }) => {
 
               {/* Estatura */}
               <div className="relative group">
+                <label className="text-[9px] font-black text-brand-primary uppercase tracking-widest mb-1.5 ml-4 block opacity-70">
+                  {t('sections.height')}
+                </label>
                 <div className="relative">
                   <input
                     type="text"
