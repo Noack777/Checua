@@ -307,7 +307,7 @@ const HomePage = ({
                         </p>
                         <div className="flex items-center gap-2">
                           <span className="text-brand-primary font-black text-lg">
-                            ${formatCurrency(reservationData.tour.precio_por_persona)}
+                            {formatCurrency(reservationData.tour.precio_por_persona)}
                           </span>
                           <span className="text-[10px] font-bold text-brand-text-secondary/60 dark:text-dark-text-secondary/60 uppercase tracking-wider">
                             {t('welcome.price_per_person')}
@@ -337,7 +337,7 @@ const HomePage = ({
                             </span>
                             <div className="text-right">
                               <p className="text-2xl md:text-3xl font-black text-brand-primary leading-none">
-                                ${formatCurrency(totalPrice)}
+                                {formatCurrency(totalPrice)}
                               </p>
                               <span className="text-[10px] font-black text-brand-primary/40 uppercase tracking-widest">
                                 COP
