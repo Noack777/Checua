@@ -70,8 +70,13 @@ const PaymentModal = ({ isOpen, onClose, experience, participants, totalAmount, 
             {/* Bancolombia */}
             <div className="p-4 bg-white dark:bg-dark-bg-card border-2 border-brand-border dark:border-dark-border rounded-3xl space-y-3">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-[#FDDA24] rounded-xl flex items-center justify-center p-1 overflow-hidden">
-                  <img src={PAYMENT_CONFIG.bancolombia.logo} alt="Bancolombia" className="w-full h-full object-contain" />
+                <div className="w-10 h-10 bg-white dark:bg-dark-bg-card rounded-xl flex items-center justify-center p-1 overflow-hidden border border-brand-border dark:border-dark-border">
+                  <img 
+                    src={PAYMENT_CONFIG.bancolombia.logo} 
+                    alt="Bancolombia" 
+                    className="w-full h-full object-contain"
+                    loading="lazy"
+                  />
                 </div>
                 <h3 className="font-black text-brand-text-main dark:text-dark-text-main uppercase text-sm tracking-wider">
                   {t('summary.payment.bancolombia_title')}
@@ -93,8 +98,13 @@ const PaymentModal = ({ isOpen, onClose, experience, participants, totalAmount, 
             {/* Nequi */}
             <div className="p-4 bg-white dark:bg-dark-bg-card border-2 border-brand-border dark:border-dark-border rounded-3xl space-y-3">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-[#330033] rounded-xl flex items-center justify-center p-1 overflow-hidden">
-                  <img src={PAYMENT_CONFIG.nequi.logo} alt="Nequi" className="w-full h-full object-contain" />
+                <div className="w-10 h-10 bg-white dark:bg-dark-bg-card rounded-xl flex items-center justify-center p-1 overflow-hidden border border-brand-border dark:border-dark-border">
+                  <img 
+                    src={PAYMENT_CONFIG.nequi.logo} 
+                    alt="Nequi" 
+                    className="w-full h-full object-contain"
+                    loading="lazy"
+                  />
                 </div>
                 <h3 className="font-black text-brand-text-main dark:text-dark-text-main uppercase text-sm tracking-wider">
                   {t('summary.payment.nequi_title')}
@@ -116,8 +126,13 @@ const PaymentModal = ({ isOpen, onClose, experience, participants, totalAmount, 
             {/* Bre-B */}
             <div className="p-4 bg-white dark:bg-dark-bg-card border-2 border-brand-border dark:border-dark-border rounded-3xl space-y-3">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-brand-primary rounded-xl flex items-center justify-center p-1 overflow-hidden">
-                  <img src={PAYMENT_CONFIG.breb.logo} alt="Bre-B" className="w-full h-full object-contain" />
+                <div className="w-10 h-10 bg-white dark:bg-dark-bg-card rounded-xl flex items-center justify-center p-1 overflow-hidden border border-brand-border dark:border-dark-border">
+                  <img 
+                    src={PAYMENT_CONFIG.breb.logo} 
+                    alt="Bre-B" 
+                    className="w-full h-full object-contain"
+                    loading="lazy"
+                  />
                 </div>
                 <h3 className="font-black text-brand-text-main dark:text-dark-text-main uppercase text-sm tracking-wider">
                   {t('summary.payment.breb_title')}
@@ -156,9 +171,12 @@ const PaymentModal = ({ isOpen, onClose, experience, participants, totalAmount, 
               onClick={handleWhatsApp}
               className="w-full py-4 bg-[#25D366] text-white font-black text-xs uppercase tracking-widest rounded-full shadow-lg hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-3"
             >
-              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.246 2.248 3.484 5.232 3.484 8.412-.003 6.557-5.338 11.892-11.893 11.892-1.997-.001-3.951-.5-5.688-1.448l-6.309 1.656zm6.224-3.82c1.516.903 3.136 1.379 4.79 1.38h.005c5.454 0 9.894-4.44 9.897-9.896.001-2.644-1.029-5.131-2.901-7.003-1.871-1.872-4.358-2.903-7.003-2.904-5.456 0-9.896 4.439-9.899 9.896-.001 1.75.459 3.456 1.33 4.947l-1.01 3.687 3.791-.994z" />
-              </svg>
+              <img 
+                src={PAYMENT_CONFIG.whatsapp.logo} 
+                alt="WhatsApp" 
+                className="w-6 h-6 object-contain"
+                loading="lazy"
+              />
               {t('summary.payment.send_whatsapp')}
             </button>
           </div>
