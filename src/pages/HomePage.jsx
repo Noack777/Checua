@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import ReservationContactSection from '../components/ReservationContactSection';
 import TourSelectionSection from '../components/TourSelectionSection';
 import DateSelectionSection from '../components/DateSelectionSection';
 import TimeSelectionSection from '../components/TimeSelectionSection';
 import CompanionFormSection from '../components/CompanionFormSection';
+import PaymentModal from '../components/PaymentModal';
 import WelcomeModal from '../components/WelcomeModal';
 
 const HomePage = ({
@@ -36,6 +37,7 @@ const HomePage = ({
   timeRef
 }) => {
   const { t, i18n } = useTranslation();
+  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
 
   const totalParticipants = 1 + (reservationData.companions?.length || 0);
   const totalPrice = (reservationData.tour.precio_por_persona || 0) * totalParticipants;
@@ -419,10 +421,58 @@ const HomePage = ({
                   {t('summary.verify_data_hint')}
                 </p>
               </div>
+
+              {/* Botón Proceder al Pago */}
+              <div className="pt-6 border-t border-brand-light dark:border-dark-border mt-8">
+                <button
+                  onClick={() => setIsPaymentModalOpen(true)}
+                  className="btn-animate-continue w-full !bg-brand-primary group relative overflow-hidden"
+                >
+                  <div className="dots_border !border-white/30"></div>
+                  <div className="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
+                  <svg
+                    className="sparkle"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      className="path !stroke-white"
+                      d="M12 2L14.5 9L22 11.5L14.5 14L12 21L9.5 14L2 11.5L9.5 9L12 2Z"
+                    ></path>
+                  </svg>
+                  <span className="text_button !text-white flex items-center justify-center gap-3">
+                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
+                    </svg>
+                    {t('summary.proceed_to_payment')}
+                  </span>
+                  <svg
+                    className="sparkle"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      className="path !stroke-white"
+                      d="M12 2L14.5 9L22 11.5L14.5 14L12 21L9.5 14L2 11.5L9.5 9L12 2Z"
+                    ></path>
+                  </svg>
+                </button>
+              </div>
             </div>
           </div>
         )}
       </div>
+
+      <PaymentModal 
+        isOpen={isPaymentModalOpen}
+        onClose={() => setIsPaymentModalOpen(false)}
+        experience={reservationData.tour.tour_reserva}
+        participants={totalParticipants}
+        totalAmount={totalPrice}
+        formatCurrency={formatCurrency}
+      />
     </>
   )}
 

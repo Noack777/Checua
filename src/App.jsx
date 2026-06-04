@@ -8,12 +8,7 @@ function App() {
   const { t } = useTranslation();
   
   // --- ESTADO DEL TEMA ---
-  const [theme, setTheme] = useState(() => {
-    if (typeof window !== 'undefined') {
-      return localStorage.getItem('theme') || 'dark';
-    }
-    return 'dark';
-  });
+  const [theme, setTheme] = useState('dark');
 
   useEffect(() => {
     const root = window.document.documentElement;
@@ -22,7 +17,6 @@ function App() {
     } else {
       root.classList.remove('dark');
     }
-    localStorage.setItem('theme', theme);
   }, [theme]);
 
   const toggleTheme = () => {

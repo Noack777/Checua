@@ -98,7 +98,25 @@
     "companions_info": "Información de los acompañantes",
     "registered_companions": "Acompañantes registrados",
     "companions_notice": "Pronto podrás registrar los acompañantes de la reserva.",
-    "verify_data_hint": "* Por favor verifica que todos los datos sean correctos antes de proceder."
+    "verify_data_hint": "* Por favor verifica que todos los datos sean correctos antes de proceder.",
+    "proceed_to_payment": "Proceder con el pago",
+    "payment": {
+      "title": "Información para realizar el pago",
+      "experience": "Experiencia seleccionada",
+      "participants": "Participantes",
+      "total": "Total",
+      "bancolombia_title": "Cuenta Bancolombia",
+      "nequi_title": "Nequi",
+      "breb_title": "Llave oficial Bre-B",
+      "copy_number": "Copiar número",
+      "copy_key": "Copiar llave",
+      "copied": "¡Copiado!",
+      "beneficiary_label": "Beneficiario",
+      "beneficiary_name": "Adrenaline Colombia",
+      "beneficiary_hint": "El nombre que debe aparecer al realizar la transacción es:",
+      "whatsapp_instruction": "Una vez realizado el pago, por favor envía el comprobante o captura de pantalla al chat de WhatsApp para validar tu reserva.",
+      "send_whatsapp": "Enviar comprobante por WhatsApp"
+    }
   },
   "errors": {
     "required_name": "El nombre es obligatorio",
