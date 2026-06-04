@@ -198,7 +198,7 @@ const HomePage = ({
         {/* Sección de Acompañantes */}
         {showCompanionsSection && (
           <div className="section-container">
-            <label className="section-title-premium">Información de los acompañantes</label>
+            <label className="section-title-premium">{t('summary.companions_info') || 'Información de los acompañantes'}</label>
             <CompanionFormSection 
               companions={reservationData.companions}
               onCompanionChange={handleCompanionChange}
@@ -318,14 +318,14 @@ const HomePage = ({
                       <div className="pt-3 border-t border-brand-primary/10 space-y-3">
                         <div className="flex justify-between items-center">
                           <span className="text-xs font-bold text-brand-text-secondary dark:text-dark-text-secondary uppercase tracking-widest">
-                            Participantes
+                            {t('summary.participants')}
                           </span>
                           <div className="text-right">
                             <p className="text-sm font-black text-brand-text-main dark:text-dark-text-main">
-                              {totalParticipants} {totalParticipants === 1 ? 'Persona' : 'Personas'}
+                              {totalParticipants} {totalParticipants === 1 ? t('summary.person') : t('summary.people')}
                             </p>
                             <p className="text-[9px] font-bold text-brand-text-secondary/50 dark:text-dark-text-secondary/50 italic">
-                              (1 responsable {reservationData.companions.length > 0 ? `+ ${reservationData.companions.length} acompañantes` : ''})
+                              (1 {t('summary.responsible').toLowerCase()} {reservationData.companions.length > 0 ? `+ ${reservationData.companions.length} ${t('summary.companions')}` : ''})
                             </p>
                           </div>
                         </div>
@@ -333,7 +333,7 @@ const HomePage = ({
                         <div className="pt-3 border-t-2 border-dashed border-brand-primary/20">
                           <div className="flex justify-between items-end">
                             <span className="text-xs font-black text-brand-primary uppercase tracking-[0.2em]">
-                              Total Estimado
+                              {t('summary.estimated_total')}
                             </span>
                             <div className="text-right">
                               <p className="text-2xl md:text-3xl font-black text-brand-primary leading-none">
@@ -391,7 +391,9 @@ const HomePage = ({
               {/* Lista de Acompañantes en el Resumen */}
               {reservationData.companions.length > 0 && (
                 <div className="space-y-4 pt-4 border-t border-brand-light dark:border-dark-border">
-                  <p className="section-title-premium !ml-0">Acompañantes registrados ({reservationData.companions.length})</p>
+                  <p className="section-title-premium !ml-0">
+                    {t('summary.registered_companions')} ({reservationData.companions.length})
+                  </p>
                   <div className="grid gap-4">
                     {reservationData.companions.map((comp, idx) => (
                       <div key={idx} className="bg-brand-light/30 dark:bg-dark-bg-main/30 rounded-[1.5rem] p-4 border border-brand-primary/10 flex items-center justify-between group hover:border-brand-primary/30 transition-all">
