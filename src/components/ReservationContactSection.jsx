@@ -228,7 +228,7 @@ const ReservationContactSection = ({ data, onChange, errors, sectionRef }) => {
             <div className="grid grid-cols-12 gap-2 sm:gap-3 items-start">
               {/* RH */}
               <div className="col-span-3 relative" ref={rhDropdownRef}>
-                <label className="text-[8px] sm:text-[9px] font-black text-brand-primary uppercase tracking-widest mb-1.5 ml-2 sm:ml-4 block opacity-70 whitespace-nowrap">
+                <label className="text-[8px] sm:text-[9px] font-black text-brand-primary uppercase tracking-widest mb-1.5 block opacity-70 whitespace-nowrap text-center w-full">
                   {t('sections.rh')}
                 </label>
                 <button
@@ -275,7 +275,7 @@ const ReservationContactSection = ({ data, onChange, errors, sectionRef }) => {
 
               {/* Peso */}
               <div className="col-span-4 relative group">
-                <label className="text-[8px] sm:text-[9px] font-black text-brand-primary uppercase tracking-widest mb-1.5 ml-2 sm:ml-4 block opacity-70 whitespace-nowrap">
+                <label className="text-[8px] sm:text-[9px] font-black text-brand-primary uppercase tracking-widest mb-1.5 block opacity-70 whitespace-nowrap text-center w-full">
                   {t('sections.weight')}
                 </label>
                 <div className="relative">
@@ -300,7 +300,7 @@ const ReservationContactSection = ({ data, onChange, errors, sectionRef }) => {
 
               {/* Estatura */}
               <div className="col-span-5 relative group">
-                <label className="text-[8px] sm:text-[9px] font-black text-brand-primary uppercase tracking-widest mb-1.5 ml-2 sm:ml-4 block opacity-70 whitespace-nowrap">
+                <label className="text-[8px] sm:text-[9px] font-black text-brand-primary uppercase tracking-widest mb-1.5 block opacity-70 whitespace-nowrap text-center w-full">
                   {t('sections.height')}
                 </label>
                 <div className="relative">

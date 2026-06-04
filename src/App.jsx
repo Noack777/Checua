@@ -73,13 +73,14 @@ function App() {
       hora_reserva: '',
       periodo: '',
       label: ''
-    }
+    },
+    companions: []
   });
 
   // --- ESTADO DE VALIDACIÓN ---
   const [errors, setErrors] = useState({});
   const [showSummary, setShowSummary] = useState(false);
-  const [showCompanionsNotice, setShowCompanionsNotice] = useState(false);
+  const [showCompanionsSection, setShowCompanionsSection] = useState(false);
 
   // --- REFS PARA SCROLL ---
   const contactRef = useRef(null);
@@ -158,6 +159,57 @@ function App() {
     if (errors.time) setErrors(prev => {
       const newErrors = { ...prev };
       delete newErrors.time;
+      return newErrors;
+    });
+  };
+
+  const handleCompanionChange = (index, field, value) => {
+    setReservationData(prev => {
+      const newCompanions = [...prev.companions];
+      newCompanions[index] = { ...newCompanions[index], [field]: value };
+      return { ...prev, companions: newCompanions };
+    });
+
+    // Limpiar errores del acompañante específico
+    const errorKey = `companion_${index}_${field}`;
+    if (errors[errorKey]) {
+      setErrors(prev => {
+        const newErrors = { ...prev };
+        delete newErrors[errorKey];
+        return newErrors;
+      });
+    }
+  };
+
+  const addCompanion = () => {
+    setReservationData(prev => ({
+      ...prev,
+      companions: [
+        ...prev.companions,
+        {
+          nombre: '',
+          tipo_documento: '',
+          numero_documento: '',
+          parentesco: ''
+        }
+      ]
+    }));
+    setShowCompanionsSection(true);
+  };
+
+  const removeCompanion = (index) => {
+    setReservationData(prev => ({
+      ...prev,
+      companions: prev.companions.filter((_, i) => i !== index)
+    }));
+    // Limpiar errores asociados a este acompañante
+    setErrors(prev => {
+      const newErrors = { ...prev };
+      Object.keys(newErrors).forEach(key => {
+        if (key.startsWith(`companion_${index}_`)) {
+          delete newErrors[key];
+        }
+      });
       return newErrors;
     });
   };
@@ -248,6 +300,22 @@ function App() {
       newErrors.time_key = 'required_time';
     }
 
+    // Validar acompañantes
+    reservationData.companions.forEach((companion, index) => {
+      if (!companion.nombre.trim()) {
+        newErrors[`companion_${index}_nombre`] = t('errors.required_name');
+      }
+      if (!companion.tipo_documento) {
+        newErrors[`companion_${index}_tipo_documento`] = t('errors.required_doc_type');
+      }
+      if (!companion.numero_documento) {
+        newErrors[`companion_${index}_numero_documento`] = t('errors.required_doc_number');
+      }
+      if (!companion.parentesco.trim()) {
+        newErrors[`companion_${index}_parentesco`] = "El parentesco es obligatorio";
+      }
+    });
+
     setErrors(newErrors);
 
     if (Object.keys(newErrors).length > 0) {
@@ -262,14 +330,14 @@ function App() {
 
   const handleEditInformation = () => {
     setShowSummary(false);
-    setShowCompanionsNotice(false);
+    setShowCompanionsSection(false);
     contactRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
   };
 
   const handleAddCompanions = () => {
-    setShowCompanionsNotice(true);
+    addCompanion();
     setTimeout(() => {
-      document.getElementById('companions-notice')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      document.getElementById('companions-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }, 100);
   };
 
@@ -336,7 +404,10 @@ function App() {
               showSummary={showSummary}
               handleEditInformation={handleEditInformation}
               handleAddCompanions={handleAddCompanions}
-              showCompanionsNotice={showCompanionsNotice}
+              showCompanionsSection={showCompanionsSection}
+              addCompanion={addCompanion}
+              removeCompanion={removeCompanion}
+              handleCompanionChange={handleCompanionChange}
               errors={errors}
               contactRef={contactRef}
               tourRef={tourRef}

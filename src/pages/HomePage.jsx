@@ -4,6 +4,7 @@ import ReservationContactSection from '../components/ReservationContactSection';
 import TourSelectionSection from '../components/TourSelectionSection';
 import DateSelectionSection from '../components/DateSelectionSection';
 import TimeSelectionSection from '../components/TimeSelectionSection';
+import CompanionFormSection from '../components/CompanionFormSection';
 import WelcomeModal from '../components/WelcomeModal';
 
 const HomePage = ({
@@ -24,7 +25,10 @@ const HomePage = ({
   showSummary,
   handleEditInformation,
   handleAddCompanions,
-  showCompanionsNotice,
+  showCompanionsSection,
+  addCompanion,
+  removeCompanion,
+  handleCompanionChange,
   errors,
   contactRef,
   tourRef,
@@ -179,6 +183,20 @@ const HomePage = ({
           />
         </div>
 
+        {/* Sección de Acompañantes */}
+        {showCompanionsSection && (
+          <div className="section-container">
+            <label className="section-title-premium">Información de los acompañantes</label>
+            <CompanionFormSection 
+              companions={reservationData.companions}
+              onCompanionChange={handleCompanionChange}
+              onRemoveCompanion={removeCompanion}
+              onAddCompanion={addCompanion}
+              errors={errors}
+            />
+          </div>
+        )}
+
         {/* Botón Continuar */}
         <div className="pt-4">
           <button
@@ -318,16 +336,27 @@ const HomePage = ({
                 </button>
               </div>
 
-              {/* Aviso Temporal de Acompañantes */}
-              {showCompanionsNotice && (
-                <div 
-                  id="companions-notice"
-                  className="animate-in fade-in zoom-in-95 duration-300 bg-brand-primary/5 border border-brand-primary/20 rounded-[2rem] p-6 text-center shadow-sm"
-                >
-                  <p className="text-xs md:text-sm font-bold text-brand-dark dark:text-brand-primary uppercase tracking-widest">
-                    <span className="mr-2">✨</span>
-                    {t('summary.companions_notice')}
-                  </p>
+              {/* Lista de Acompañantes en el Resumen */}
+              {reservationData.companions.length > 0 && (
+                <div className="space-y-4 pt-4 border-t border-brand-light dark:border-dark-border">
+                  <p className="section-title-premium !ml-0">Acompañantes registrados ({reservationData.companions.length})</p>
+                  <div className="grid gap-4">
+                    {reservationData.companions.map((comp, idx) => (
+                      <div key={idx} className="bg-brand-light/30 dark:bg-dark-bg-main/30 rounded-[1.5rem] p-4 border border-brand-primary/10 flex items-center justify-between group hover:border-brand-primary/30 transition-all">
+                        <div className="flex items-center gap-4">
+                          <div className="w-10 h-10 rounded-full bg-brand-primary/10 text-brand-primary flex items-center justify-center font-black text-sm">
+                            {idx + 1}
+                          </div>
+                          <div>
+                            <p className="text-brand-text-main dark:text-dark-text-main font-bold text-sm uppercase">{comp.nombre}</p>
+                            <p className="text-[10px] text-brand-text-secondary/60 dark:text-dark-text-secondary/60 font-bold uppercase tracking-widest">
+                              {comp.tipo_documento}: {comp.numero_documento} • <span className="text-brand-primary">{comp.parentesco}</span>
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               )}
 
