@@ -37,6 +37,18 @@ const HomePage = ({
 }) => {
   const { t, i18n } = useTranslation();
 
+  const totalParticipants = 1 + (reservationData.companions?.length || 0);
+  const totalPrice = (reservationData.tour.precio_por_persona || 0) * totalParticipants;
+
+  const formatCurrency = (amount) => {
+    return amount?.toLocaleString('es-CO', {
+      style: 'currency',
+      currency: 'COP',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0
+    }).replace('COP', '').trim();
+  };
+
   const changeLanguage = (lng) => {
     i18n.changeLanguage(lng);
   };
@@ -288,12 +300,52 @@ const HomePage = ({
                 <div className="grid md:grid-cols-2 gap-8 md:gap-10">
                   <div className="space-y-4">
                     <p className="section-title-premium !ml-0">{t('summary.experience')}</p>
-                    <div className="bg-brand-light/30 dark:bg-dark-bg-main/30 rounded-[2rem] p-6 border border-brand-primary/10 h-full flex flex-col justify-center">
-                      <p className="text-brand-text-main dark:text-dark-text-main font-black text-base md:text-lg leading-tight mb-2">{reservationData.tour.tour_reserva}</p>
-                      <p className="text-brand-primary font-black text-2xl">
-                        ${reservationData.tour.precio_por_persona?.toLocaleString('es-CO')}
-                        <span className="text-xs ml-2 font-bold text-brand-text-secondary dark:text-dark-text-secondary uppercase">COP</span>
-                      </p>
+                    <div className="bg-brand-light/30 dark:bg-dark-bg-main/30 rounded-[2rem] p-6 border border-brand-primary/10 h-full space-y-4">
+                      <div className="space-y-1">
+                        <p className="text-brand-text-main dark:text-dark-text-main font-black text-lg md:text-xl leading-tight">
+                          {reservationData.tour.tour_reserva}
+                        </p>
+                        <div className="flex items-center gap-2">
+                          <span className="text-brand-primary font-black text-lg">
+                            ${formatCurrency(reservationData.tour.precio_por_persona)}
+                          </span>
+                          <span className="text-[10px] font-bold text-brand-text-secondary/60 dark:text-dark-text-secondary/60 uppercase tracking-wider">
+                            {t('welcome.price_per_person')}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="pt-3 border-t border-brand-primary/10 space-y-3">
+                        <div className="flex justify-between items-center">
+                          <span className="text-xs font-bold text-brand-text-secondary dark:text-dark-text-secondary uppercase tracking-widest">
+                            Participantes
+                          </span>
+                          <div className="text-right">
+                            <p className="text-sm font-black text-brand-text-main dark:text-dark-text-main">
+                              {totalParticipants} {totalParticipants === 1 ? 'Persona' : 'Personas'}
+                            </p>
+                            <p className="text-[9px] font-bold text-brand-text-secondary/50 dark:text-dark-text-secondary/50 italic">
+                              (1 responsable {reservationData.companions.length > 0 ? `+ ${reservationData.companions.length} acompañantes` : ''})
+                            </p>
+                          </div>
+                        </div>
+
+                        <div className="pt-3 border-t-2 border-dashed border-brand-primary/20">
+                          <div className="flex justify-between items-end">
+                            <span className="text-xs font-black text-brand-primary uppercase tracking-[0.2em]">
+                              Total Estimado
+                            </span>
+                            <div className="text-right">
+                              <p className="text-2xl md:text-3xl font-black text-brand-primary leading-none">
+                                ${formatCurrency(totalPrice)}
+                              </p>
+                              <span className="text-[10px] font-black text-brand-primary/40 uppercase tracking-widest">
+                                COP
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                   
