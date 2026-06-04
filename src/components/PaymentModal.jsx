@@ -15,9 +15,7 @@ const PaymentModal = ({ isOpen, onClose, experience, participants, totalAmount, 
   };
 
   const handleWhatsApp = () => {
-    const message = encodeURIComponent(
-      `Hola Adrenaline Colombia! Acabo de realizar el pago de mi reserva para ${experience}. \nParticipantes: ${participants} \nTotal: ${formatCurrency(totalAmount)} COP`
-    );
+    const message = encodeURIComponent(t('summary.payment.whatsapp_message'));
     window.open(`https://wa.me/${PAYMENT_CONFIG.whatsapp.official_number}?text=${message}`, '_blank');
   };
 
@@ -72,7 +70,9 @@ const PaymentModal = ({ isOpen, onClose, experience, participants, totalAmount, 
             {/* Bancolombia */}
             <div className="p-4 bg-white dark:bg-dark-bg-card border-2 border-brand-border dark:border-dark-border rounded-3xl space-y-3">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-[#FDDA24] rounded-xl flex items-center justify-center font-black text-black text-xs">BC</div>
+                <div className="w-10 h-10 bg-[#FDDA24] rounded-xl flex items-center justify-center p-1 overflow-hidden">
+                  <img src={PAYMENT_CONFIG.bancolombia.logo} alt="Bancolombia" className="w-full h-full object-contain" />
+                </div>
                 <h3 className="font-black text-brand-text-main dark:text-dark-text-main uppercase text-sm tracking-wider">
                   {t('summary.payment.bancolombia_title')}
                 </h3>
@@ -93,7 +93,9 @@ const PaymentModal = ({ isOpen, onClose, experience, participants, totalAmount, 
             {/* Nequi */}
             <div className="p-4 bg-white dark:bg-dark-bg-card border-2 border-brand-border dark:border-dark-border rounded-3xl space-y-3">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-[#330033] rounded-xl flex items-center justify-center font-black text-white text-[10px]">NQ</div>
+                <div className="w-10 h-10 bg-[#330033] rounded-xl flex items-center justify-center p-1 overflow-hidden">
+                  <img src={PAYMENT_CONFIG.nequi.logo} alt="Nequi" className="w-full h-full object-contain" />
+                </div>
                 <h3 className="font-black text-brand-text-main dark:text-dark-text-main uppercase text-sm tracking-wider">
                   {t('summary.payment.nequi_title')}
                 </h3>
@@ -114,7 +116,9 @@ const PaymentModal = ({ isOpen, onClose, experience, participants, totalAmount, 
             {/* Bre-B */}
             <div className="p-4 bg-white dark:bg-dark-bg-card border-2 border-brand-border dark:border-dark-border rounded-3xl space-y-3">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-brand-primary rounded-xl flex items-center justify-center font-black text-white text-xs">B</div>
+                <div className="w-10 h-10 bg-brand-primary rounded-xl flex items-center justify-center p-1 overflow-hidden">
+                  <img src={PAYMENT_CONFIG.breb.logo} alt="Bre-B" className="w-full h-full object-contain" />
+                </div>
                 <h3 className="font-black text-brand-text-main dark:text-dark-text-main uppercase text-sm tracking-wider">
                   {t('summary.payment.breb_title')}
                 </h3>

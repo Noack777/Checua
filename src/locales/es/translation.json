@@ -115,7 +115,8 @@
       "beneficiary_name": "Adrenaline Colombia",
       "beneficiary_hint": "El nombre que debe aparecer al realizar la transacción es:",
       "whatsapp_instruction": "Una vez realizado el pago, por favor envía el comprobante o captura de pantalla al chat de WhatsApp para validar tu reserva.",
-      "send_whatsapp": "Enviar comprobante por WhatsApp"
+      "send_whatsapp": "Enviar comprobante por WhatsApp",
+      "whatsapp_message": "Hola, acabo de realizar el pago de mi reserva en Checua y adjuntaré el comprobante para su validación."
     }
   },
   "errors": {

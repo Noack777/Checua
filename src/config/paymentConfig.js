@@ -1,18 +1,21 @@
 export const PAYMENT_CONFIG = {
   bancolombia: {
     account_number: "000-000000-00", // PLACEHOLDER_BANCOLOMBIA
-    type: "Ahorros"
+    type: "Ahorros",
+    logo: "/logos/bancolombia.png"
   },
   nequi: {
-    number: "3000000000" // PLACEHOLDER_NEQUI
+    number: "3000000000", // PLACEHOLDER_NEQUI
+    logo: "/logos/nequi.png"
   },
   breb: {
-    key: "adrenaline@breb.com" // PLACEHOLDER_BREB
+    key: "adrenaline@breb.com", // PLACEHOLDER_BREB
+    logo: "/logos/breb.png"
   },
   beneficiary: {
     name: "Adrenaline Colombia"
   },
   whatsapp: {
-    official_number: "573000000000" // WHATSAPP_NUMBER_PLACEHOLDER
+    official_number: "573015119344"
   }
 };
