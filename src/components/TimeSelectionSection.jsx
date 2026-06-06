@@ -10,6 +10,16 @@ const TimeSelectionSection = ({ onSelect, selectedTime, schedules = [], loading 
   const morningSchedules = schedules.filter(s => s.period === 'mañana');
   const afternoonSchedules = schedules.filter(s => s.period === 'tarde');
 
+  const formatTime = (timeStr) => {
+    if (!timeStr) return "";
+    // Elimina los segundos si vienen de la base de datos (09:30:00 -> 09:30)
+    const parts = timeStr.split(':');
+    if (parts.length >= 2) {
+      return `${parts[0]}:${parts[1]}`;
+    }
+    return timeStr;
+  };
+
   const handleTimeSelect = (time) => {
     if (tipoHora === 'hora_fija') return; // No permitir cambios si es hora fija
     onSelect(time);
@@ -53,7 +63,7 @@ const TimeSelectionSection = ({ onSelect, selectedTime, schedules = [], loading 
                               : 'bg-brand-light/20 dark:bg-dark-bg-main/50 border-brand-border dark:border-dark-border text-brand-text-main dark:text-dark-text-main hover:border-brand-primary/50'
                         }`}
                       >
-                        {time.label}
+                        {formatTime(time.label)}
                       </button>
                     ))}
                   </div>
@@ -82,7 +92,7 @@ const TimeSelectionSection = ({ onSelect, selectedTime, schedules = [], loading 
                               : 'bg-brand-light/20 dark:bg-dark-bg-main/50 border-brand-border dark:border-dark-border text-brand-text-main dark:text-dark-text-main hover:border-brand-primary/50'
                         }`}
                       >
-                        {time.label}
+                        {formatTime(time.label)}
                       </button>
                     ))}
                   </div>
@@ -108,10 +118,10 @@ const TimeSelectionSection = ({ onSelect, selectedTime, schedules = [], loading 
                     </div>
                     <div>
                       <p className="text-[10px] uppercase tracking-widest font-black text-brand-primary">Hora seleccionada</p>
-                      <p className="text-brand-text-main dark:text-dark-text-main font-bold text-sm md:text-base">
-                        {selectedTime.label} 
-                        <span className="ml-2 text-xs font-medium text-brand-text-secondary/60 italic">
-                          ({selectedTime.period})
+                      <p className="text-brand-text-main dark:text-dark-text-main font-black text-xl md:text-2xl mt-0.5">
+                        {formatTime(selectedTime.label)}
+                        <span className="ml-2 text-[10px] font-black uppercase text-brand-text-secondary/50 dark:text-dark-text-secondary/50 tracking-widest">
+                          {selectedTime.period === 'mañana' ? 'AM' : 'PM'}
                         </span>
                       </p>
                     </div>

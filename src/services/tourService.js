@@ -65,11 +65,16 @@ export const getPlanHours = async (planId) => {
       .eq('id_plan', planId);
 
     if (error) throw error;
-    return data.map(d => ({
-      value: d.hora,
-      label: d.hora, // Podrías formatear si es necesario
-      period: parseInt(d.hora.split(':')[0]) >= 12 ? 'tarde' : 'mañana'
-    }));
+    return data.map(item => {
+      const hourPart = item.hora.split(':')[0];
+      const hour = parseInt(hourPart);
+      return {
+        id: item.id_hora,
+        value: item.hora,
+        label: item.hora,
+        period: hour >= 12 ? 'tarde' : 'mañana'
+      };
+    });
   } catch (err) {
     console.error('Error al cargar horas del plan:', err);
     return [];
