@@ -1,18 +1,12 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
-const MORNING_HOURS = [
-  { label: '9:30 AM', value: '09:30', period: 'mañana' },
-  { label: '10:30 AM', value: '10:30', period: 'mañana' },
-];
-
-const AFTERNOON_HOURS = [
-  { label: '1:30 PM', value: '13:30', period: 'tarde' },
-  { label: '2:30 PM', value: '14:30', period: 'tarde' },
-];
-
-const TimeSelectionSection = ({ onSelect, selectedTime, errors, sectionRef }) => {
+const TimeSelectionSection = ({ onSelect, selectedTime, schedules = [], loading = false, errors, sectionRef }) => {
   const { t } = useTranslation();
+  
+  const morningSchedules = schedules.filter(s => s.period === 'mañana');
+  const afternoonSchedules = schedules.filter(s => s.period === 'tarde');
+
   const handleTimeSelect = (time) => {
     onSelect(time);
   };
@@ -26,53 +20,70 @@ const TimeSelectionSection = ({ onSelect, selectedTime, errors, sectionRef }) =>
       
       <div className="px-6 py-8 md:px-10 md:py-10 space-y-6">
         <div className="space-y-8">
-          {/* Morning Section */}
-          <div className="space-y-4">
-            <div className="flex items-center gap-2">
-              <span className="text-[10px] font-black uppercase tracking-widest text-brand-text-secondary/60 dark:text-dark-text-secondary/60 whitespace-nowrap">{t('sections.morning')}</span>
-              <div className="h-[1px] flex-1 bg-brand-border/60 dark:bg-dark-border/60"></div>
+          {loading ? (
+            <div className="py-10 text-center">
+              <div className="w-8 h-8 border-4 border-brand-primary border-t-transparent rounded-full animate-spin mx-auto mb-3"></div>
+              <p className="text-sm text-brand-text-secondary font-medium italic uppercase tracking-widest opacity-60">Cargando horarios...</p>
             </div>
-            <div className="grid grid-cols-2 gap-3 max-w-sm mx-auto w-full">
-              {MORNING_HOURS.map((time) => (
-                <button
-                  key={time.value}
-                  type="button"
-                  onClick={() => handleTimeSelect(time)}
-                  className={`py-4 px-2 rounded-full text-sm md:text-base font-bold transition-all duration-300 border-2 w-full flex items-center justify-center ${
-                    selectedTime?.value === time.value
-                      ? 'bg-brand-primary border-brand-primary text-white shadow-lg shadow-brand-primary/20 scale-105'
-                      : 'bg-brand-light/20 dark:bg-dark-bg-main/50 border-brand-border dark:border-dark-border text-brand-text-main dark:text-dark-text-main hover:border-brand-primary/50'
-                  }`}
-                >
-                  {time.label}
-                </button>
-              ))}
-            </div>
-          </div>
+          ) : schedules.length > 0 ? (
+            <>
+              {/* Morning Section */}
+              {morningSchedules.length > 0 && (
+                <div className="space-y-4">
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] font-black uppercase tracking-widest text-brand-text-secondary/60 dark:text-dark-text-secondary/60 whitespace-nowrap">{t('sections.morning')}</span>
+                    <div className="h-[1px] flex-1 bg-brand-border/60 dark:bg-dark-border/60"></div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-3 max-w-sm mx-auto w-full">
+                    {morningSchedules.map((time) => (
+                      <button
+                        key={time.id || time.value}
+                        type="button"
+                        onClick={() => handleTimeSelect(time)}
+                        className={`py-4 px-2 rounded-full text-sm md:text-base font-bold transition-all duration-300 border-2 w-full flex items-center justify-center ${
+                          selectedTime?.hora_reserva === time.value || selectedTime?.value === time.value
+                            ? 'bg-brand-primary border-brand-primary text-white shadow-lg shadow-brand-primary/20 scale-105'
+                            : 'bg-brand-light/20 dark:bg-dark-bg-main/50 border-brand-border dark:border-dark-border text-brand-text-main dark:text-dark-text-main hover:border-brand-primary/50'
+                        }`}
+                      >
+                        {time.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
 
-          {/* Afternoon Section */}
-          <div className="space-y-4">
-            <div className="flex items-center gap-2">
-              <span className="text-[10px] font-black uppercase tracking-widest text-brand-text-secondary/60 dark:text-dark-text-secondary/60 whitespace-nowrap">{t('sections.afternoon')}</span>
-              <div className="h-[1px] flex-1 bg-brand-border/60 dark:bg-dark-border/60"></div>
+              {/* Afternoon Section */}
+              {afternoonSchedules.length > 0 && (
+                <div className="space-y-4">
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] font-black uppercase tracking-widest text-brand-text-secondary/60 dark:text-dark-text-secondary/60 whitespace-nowrap">{t('sections.afternoon')}</span>
+                    <div className="h-[1px] flex-1 bg-brand-border/60 dark:bg-dark-border/60"></div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-3 max-w-sm mx-auto w-full">
+                    {afternoonSchedules.map((time) => (
+                      <button
+                        key={time.id || time.value}
+                        type="button"
+                        onClick={() => handleTimeSelect(time)}
+                        className={`py-4 px-2 rounded-full text-sm md:text-base font-bold transition-all duration-300 border-2 w-full flex items-center justify-center ${
+                          selectedTime?.hora_reserva === time.value || selectedTime?.value === time.value
+                            ? 'bg-brand-primary border-brand-primary text-white shadow-lg shadow-brand-primary/20 scale-105'
+                            : 'bg-brand-light/20 dark:bg-dark-bg-main/50 border-brand-border dark:border-dark-border text-brand-text-main dark:text-dark-text-main hover:border-brand-primary/50'
+                        }`}
+                      >
+                        {time.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </>
+          ) : (
+            <div className="py-10 text-center bg-gray-50 dark:bg-dark-bg-main/20 rounded-3xl border-2 border-dashed border-gray-200 dark:border-dark-border">
+              <p className="text-sm text-brand-text-secondary font-medium italic">No hay horarios disponibles para esta fecha.</p>
             </div>
-            <div className="grid grid-cols-2 gap-3 max-w-sm mx-auto w-full">
-              {AFTERNOON_HOURS.map((time) => (
-                <button
-                  key={time.value}
-                  type="button"
-                  onClick={() => handleTimeSelect(time)}
-                  className={`py-4 px-2 rounded-full text-sm md:text-base font-bold transition-all duration-300 border-2 w-full flex items-center justify-center ${
-                    selectedTime?.value === time.value
-                      ? 'bg-brand-primary border-brand-primary text-white shadow-lg shadow-brand-primary/20 scale-105'
-                      : 'bg-brand-light/20 dark:bg-dark-bg-main/50 border-brand-border dark:border-dark-border text-brand-text-main dark:text-dark-text-main hover:border-brand-primary/50'
-                  }`}
-                >
-                  {time.label}
-                </button>
-              ))}
-            </div>
-          </div>
+          )}
 
           {/* Selection Summary Card */}
           <div className="space-y-4">

@@ -17,7 +17,8 @@ const HomePage = ({
   theme,
   toggleTheme,
   tours,
-  loadingTours,
+  schedules,
+  loadingData,
   reservationData,
   handleContactChange,
   handleTourSelect,
@@ -111,7 +112,7 @@ const HomePage = ({
         onComplete={onModalComplete} 
         onClose={onCloseModal}
         tours={tours}
-        loading={loadingTours}
+        loading={loadingData}
         initialPhone={reservationData.contact.telefono_cliente}
         initialTourId={reservationData.tour.id_plan}
         theme={theme}
@@ -222,7 +223,7 @@ const HomePage = ({
             onSelect={handleTourSelect}
             errors={errors}
             tours={tours}
-            loading={loadingTours}
+            loading={loadingData}
           />
         </div>
         
@@ -240,8 +241,10 @@ const HomePage = ({
           <label className="section-title-premium">{t('sections.time')}</label>
           <TimeSelectionSection 
             sectionRef={timeRef}
-            selectedTime={reservationData.time.hora_reserva ? { value: reservationData.time.hora_reserva, label: reservationData.time.label, period: reservationData.time.period } : null}
+            selectedTime={reservationData.time}
             onSelect={handleTimeSelect}
+            schedules={schedules}
+            loading={loadingData}
             errors={errors}
           />
         </div>

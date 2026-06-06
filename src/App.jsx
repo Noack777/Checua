@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { getTours } from './services/tourService';
+import { getTours, getSchedules } from './services/tourService';
 import HomePage from './pages/HomePage';
 
 function App() {
@@ -26,17 +26,27 @@ function App() {
   // --- ESTADO DEL MODAL ---
   const [isModalOpen, setIsModalOpen] = useState(true);
   const [tours, setTours] = useState([]);
-  const [loadingTours, setLoadingTours] = useState(true);
+  const [schedules, setSchedules] = useState([]);
+  const [loadingData, setLoadingData] = useState(true);
 
-  // --- CARGAR TOURS ---
+  // --- CARGAR DATOS (TOURS Y HORARIOS) ---
   useEffect(() => {
-    const fetchTours = async () => {
-      setLoadingTours(true);
-      const data = await getTours();
-      setTours(data);
-      setLoadingTours(false);
+    const fetchData = async () => {
+      setLoadingData(true);
+      try {
+        const [toursData, schedulesData] = await Promise.all([
+          getTours(),
+          getSchedules()
+        ]);
+        setTours(toursData);
+        setSchedules(schedulesData);
+      } catch (error) {
+        console.error("Error al cargar datos iniciales:", error);
+      } finally {
+        setLoadingData(false);
+      }
     };
-    fetchTours();
+    fetchData();
   }, []);
 
   // --- ESTADO GLOBAL DEL FORMULARIO ---
@@ -409,7 +419,8 @@ function App() {
               theme={theme}
               toggleTheme={toggleTheme}
               tours={tours}
-              loadingTours={loadingTours}
+              schedules={schedules}
+              loadingData={loadingData}
               reservationData={reservationData}
               setReservationData={setReservationData}
               handleContactChange={handleContactChange}
