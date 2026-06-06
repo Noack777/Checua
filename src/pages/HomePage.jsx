@@ -7,7 +7,7 @@ import TimeSelectionSection from '../components/TimeSelectionSection';
 import CompanionFormSection from '../components/CompanionFormSection';
 import PaymentModal from '../components/PaymentModal';
 import WelcomeModal from '../components/WelcomeModal';
-import { saveParticipants } from '../services/participantService';
+import { saveParticipantsForReservation } from '../services/participantService';
 import { createReservation } from '../services/reservationService';
 
 const HomePage = ({
@@ -70,6 +70,13 @@ const HomePage = ({
         return;
       }
 
+      const reservationId = reservationCreated?.id_reserva
+      if (!reservationId) {
+        console.error('Reserva creada sin id_reserva:', reservationCreated);
+        alert('No se pudo obtener el identificador de la reserva. Por favor intenta de nuevo.');
+        return;
+      }
+
       const headParticipant = {
         telefono_cliente: reservationData.contact.telefono_cliente,
         nombre: reservationData.contact.nombre_jefe_reserva,
@@ -96,7 +103,7 @@ const HomePage = ({
 
       const participantsToSave = [headParticipant, ...companionsParticipants];
 
-      const { data, error } = await saveParticipants(participantsToSave);
+      const { data, error } = await saveParticipantsForReservation(participantsToSave, reservationId);
 
       if (error) {
         console.error('Error al guardar participantes en Supabase:', error);

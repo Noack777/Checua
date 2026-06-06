@@ -58,3 +58,45 @@ export const saveParticipants = async (participants) => {
     return { data: null, error: err }
   }
 }
+
+export const saveParticipantsForReservation = async (participants, reservationId) => {
+  try {
+    const participantsWithReservation = participants.map(p => ({
+      ...p,
+      id_reserva: reservationId
+    }))
+
+    const { data, error } = await supabase
+      .from('participante')
+      .insert(participantsWithReservation)
+      .select()
+
+    if (!error) return { data, error: null }
+
+    if (error?.code !== '23505') {
+      return { data: null, error }
+    }
+
+    const results = []
+
+    for (const participant of participantsWithReservation) {
+      const { data: updatedData, error: updateError } = await supabase
+        .from('participante')
+        .update(participant)
+        .eq('id_reserva', participant.id_reserva)
+        .eq('numero_documento', participant.numero_documento)
+        .select()
+
+      if (updateError) {
+        return { data: null, error: updateError }
+      }
+
+      if (updatedData) results.push(...updatedData)
+    }
+
+    return { data: results, error: null }
+  } catch (err) {
+    console.error('Error in saveParticipantsForReservation service:', err)
+    return { data: null, error: err }
+  }
+}
