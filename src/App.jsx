@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { getTours, getSchedules, getPlanDates, getPlanHours } from './services/tourService';
+import { getTours, getPlanDates, getPlanHours } from './services/tourService';
 import HomePage from './pages/HomePage';
 
 function App() {
@@ -26,20 +26,15 @@ function App() {
   // --- ESTADO DEL MODAL ---
   const [isModalOpen, setIsModalOpen] = useState(true);
   const [tours, setTours] = useState([]);
-  const [schedules, setSchedules] = useState([]);
   const [loadingData, setLoadingData] = useState(true);
 
-  // --- CARGAR DATOS (TOURS Y HORARIOS) ---
+  // --- CARGAR DATOS (TOURS) ---
   useEffect(() => {
     const fetchData = async () => {
       setLoadingData(true);
       try {
-        const [toursData, schedulesData] = await Promise.all([
-          getTours(),
-          getSchedules()
-        ]);
+        const [toursData] = await Promise.all([getTours()]);
         setTours(toursData);
-        setSchedules(schedulesData);
       } catch (error) {
         console.error("Error al cargar datos iniciales:", error);
       } finally {
@@ -469,7 +464,6 @@ function App() {
               theme={theme}
               toggleTheme={toggleTheme}
               tours={tours}
-              schedules={schedules}
               loadingData={loadingData}
               reservationData={reservationData}
               setReservationData={setReservationData}

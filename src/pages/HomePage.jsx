@@ -18,7 +18,6 @@ const HomePage = ({
   theme,
   toggleTheme,
   tours,
-  schedules,
   loadingData,
   reservationData,
   handleContactChange,
