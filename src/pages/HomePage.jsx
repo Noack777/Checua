@@ -39,6 +39,7 @@ const HomePage = ({
 }) => {
   const { t, i18n } = useTranslation();
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
   const handleProceedToPayment = async () => {
     // 1. Revisar si existen acompañantes
@@ -47,6 +48,7 @@ const HomePage = ({
       return;
     }
 
+    setIsSaving(true);
     try {
       // 2. Construir el array para Supabase
       const participantsToSave = reservationData.companions.map(companion => ({
@@ -61,19 +63,28 @@ const HomePage = ({
         estatura_m: companion.estatura_m
       }));
 
+      console.log('Intentando guardar participantes:', participantsToSave);
+
       // 3. Guardar todos los participantes en Supabase
-      const { error } = await createParticipants(participantsToSave);
+      const { data, error } = await createParticipants(participantsToSave);
 
       if (error) {
         console.error('Error al guardar participantes en Supabase:', error);
-        // No abrir PaymentModal si hay error
+        // Opcional: Podrías mostrar una alerta aquí para que el usuario sepa por qué no avanza
+        alert('Hubo un error al guardar la información de los acompañantes. Por favor verifica tu conexión.');
+        setIsSaving(false);
         return;
       }
+
+      console.log('Participantes guardados exitosamente:', data);
 
       // 4. Si el guardado es exitoso, abrir PaymentModal normalmente
       setIsPaymentModalOpen(true);
     } catch (err) {
       console.error('Error inesperado al procesar participantes:', err);
+      alert('Ocurrió un error inesperado. Por favor intenta de nuevo.');
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -490,12 +501,13 @@ const HomePage = ({
               <div className="pt-6 border-t border-brand-light dark:border-dark-border mt-8">
                 <button
                   onClick={handleProceedToPayment}
-                  className="btn-animate-continue w-full !bg-brand-primary group relative overflow-hidden"
+                  disabled={isSaving}
+                  className={`btn-animate-continue w-full !bg-brand-primary group relative overflow-hidden ${isSaving ? 'opacity-70 cursor-not-allowed' : ''}`}
                 >
                   <div className="dots_border !border-white/30"></div>
                   <div className="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
                   <svg
-                    className="sparkle"
+                    className={`sparkle ${isSaving ? 'animate-spin' : ''}`}
                     viewBox="0 0 24 24"
                     fill="none"
                     xmlns="http://www.w3.org/2000/svg"
@@ -506,10 +518,22 @@ const HomePage = ({
                     ></path>
                   </svg>
                   <span className="text_button !text-white flex items-center justify-center gap-3">
-                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
-                    </svg>
-                    {t('summary.proceed_to_payment')}
+                    {isSaving ? (
+                      <span className="flex items-center gap-2">
+                        <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        Procesando...
+                      </span>
+                    ) : (
+                      <>
+                        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
+                        </svg>
+                        {t('summary.proceed_to_payment')}
+                      </>
+                    )}
                   </span>
                   <svg
                     className="sparkle"
