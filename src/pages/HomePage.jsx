@@ -60,7 +60,7 @@ const HomePage = ({
         correo: companion.correo,
         rh: companion.rh,
         peso_kg: companion.peso_kg,
-        estatura_m: companion.estatura_m
+        altura_m: companion.estatura_m
       }));
 
       console.log('Intentando guardar participantes:', participantsToSave);
