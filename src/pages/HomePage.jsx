@@ -50,17 +50,17 @@ const HomePage = ({
 
     setIsSaving(true);
     try {
-      // 2. Construir el array para Supabase
+      // 2. Construir el array para Supabase según la estructura real de la tabla 'participante'
       const participantsToSave = reservationData.companions.map(companion => ({
         telefono_cliente: reservationData.contact.telefono_cliente,
         nombre: companion.nombre,
         tipo_documento: companion.tipo_documento,
         numero_documento: companion.numero_documento,
-        telefono: companion.telefono,
+        telefono_participante: companion.telefono,
         correo: companion.correo,
         rh: companion.rh,
-        peso_kg: companion.peso_kg,
-        altura_m: companion.estatura_m
+        peso: companion.peso_kg ? parseFloat(companion.peso_kg) : null,
+        estatura: companion.estatura_m ? parseFloat(companion.estatura_m) : null
       }));
 
       console.log('Intentando guardar participantes:', participantsToSave);
