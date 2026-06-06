@@ -7,6 +7,7 @@ import TimeSelectionSection from '../components/TimeSelectionSection';
 import CompanionFormSection from '../components/CompanionFormSection';
 import PaymentModal from '../components/PaymentModal';
 import WelcomeModal from '../components/WelcomeModal';
+import { createParticipants } from '../services/participantService';
 
 const HomePage = ({
   isModalOpen,
@@ -38,6 +39,44 @@ const HomePage = ({
 }) => {
   const { t, i18n } = useTranslation();
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
+
+  const handleProceedToPayment = async () => {
+    // 1. Revisar si existen acompañantes
+    if (!reservationData.companions || reservationData.companions.length === 0) {
+      setIsPaymentModalOpen(true);
+      return;
+    }
+
+    try {
+      // 2. Construir el array para Supabase
+      const participantsToSave = reservationData.companions.map(companion => ({
+        telefono_cliente: reservationData.contact.telefono_cliente,
+        nombre: companion.nombre,
+        tipo_documento: companion.tipo_documento,
+        numero_documento: companion.numero_documento,
+        telefono: companion.telefono,
+        correo: companion.correo,
+        rh: companion.rh,
+        peso_kg: companion.peso_kg,
+        estatura_m: companion.estatura_m,
+        parentesco: companion.parentesco
+      }));
+
+      // 3. Guardar todos los participantes en Supabase
+      const { error } = await createParticipants(participantsToSave);
+
+      if (error) {
+        console.error('Error al guardar participantes en Supabase:', error);
+        // No abrir PaymentModal si hay error
+        return;
+      }
+
+      // 4. Si el guardado es exitoso, abrir PaymentModal normalmente
+      setIsPaymentModalOpen(true);
+    } catch (err) {
+      console.error('Error inesperado al procesar participantes:', err);
+    }
+  };
 
   const totalParticipants = 1 + (reservationData.companions?.length || 0);
   const totalPrice = (reservationData.tour.precio_por_persona || 0) * totalParticipants;
@@ -454,7 +493,7 @@ const HomePage = ({
               {/* Botón Proceder al Pago */}
               <div className="pt-6 border-t border-brand-light dark:border-dark-border mt-8">
                 <button
-                  onClick={() => setIsPaymentModalOpen(true)}
+                  onClick={handleProceedToPayment}
                   className="btn-animate-continue w-full !bg-brand-primary group relative overflow-hidden"
                 >
                   <div className="dots_border !border-white/30"></div>
