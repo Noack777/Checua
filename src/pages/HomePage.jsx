@@ -7,7 +7,8 @@ import TimeSelectionSection from '../components/TimeSelectionSection';
 import CompanionFormSection from '../components/CompanionFormSection';
 import PaymentModal from '../components/PaymentModal';
 import WelcomeModal from '../components/WelcomeModal';
-import { createParticipants } from '../services/participantService';
+import { saveParticipants } from '../services/participantService';
+import { createReservation } from '../services/reservationService';
 
 const HomePage = ({
   isModalOpen,
@@ -43,16 +44,39 @@ const HomePage = ({
   const [isSaving, setIsSaving] = useState(false);
 
   const handleProceedToPayment = async () => {
-    // 1. Revisar si existen acompañantes
-    if (!reservationData.companions || reservationData.companions.length === 0) {
-      setIsPaymentModalOpen(true);
-      return;
-    }
-
     setIsSaving(true);
     try {
-      // 2. Construir el array para Supabase según la estructura real de la tabla 'participante'
-      const participantsToSave = reservationData.companions.map(companion => ({
+      const totalParticipants = 1 + (reservationData.companions?.length || 0);
+      const totalPrice = (reservationData.tour.precio_por_persona || 0) * totalParticipants;
+
+      const reservationPayload = {
+        id_plan: reservationData.tour.id_plan,
+        telefono_cliente: reservationData.contact.telefono_cliente,
+        fecha_reserva: reservationData.date.fecha_reserva,
+        hora_reserva: reservationData.tour.tipo_hora === 'sin_hora' ? null : (reservationData.time.hora_reserva || null)
+      };
+
+      const { data: reservationCreated, error: reservationError } = await createReservation(reservationPayload);
+
+      if (reservationError) {
+        console.error('Error al crear la reserva en Supabase:', reservationError);
+        alert('Hubo un error al crear la reserva. Por favor intenta de nuevo.');
+        return;
+      }
+
+      const headParticipant = {
+        telefono_cliente: reservationData.contact.telefono_cliente,
+        nombre: reservationData.contact.nombre_jefe_reserva,
+        tipo_documento: reservationData.contact.tipo_documento,
+        numero_documento: reservationData.contact.numero_documento,
+        telefono_participante: reservationData.contact.telefono_cliente,
+        correo: reservationData.contact.correo_contacto,
+        rh: reservationData.contact.rh,
+        peso: reservationData.contact.peso_kg ? parseFloat(reservationData.contact.peso_kg) : null,
+        estatura: reservationData.contact.estatura_m ? parseFloat(reservationData.contact.estatura_m) : null
+      };
+
+      const companionsParticipants = (reservationData.companions || []).map(companion => ({
         telefono_cliente: reservationData.contact.telefono_cliente,
         nombre: companion.nombre,
         tipo_documento: companion.tipo_documento,
@@ -64,22 +88,20 @@ const HomePage = ({
         estatura: companion.estatura_m ? parseFloat(companion.estatura_m) : null
       }));
 
-      console.log('Intentando guardar participantes:', participantsToSave);
+      const participantsToSave = [headParticipant, ...companionsParticipants];
 
-      // 3. Guardar todos los participantes en Supabase
-      const { data, error } = await createParticipants(participantsToSave);
+      const { data, error } = await saveParticipants(participantsToSave);
 
       if (error) {
         console.error('Error al guardar participantes en Supabase:', error);
-        // Opcional: Podrías mostrar una alerta aquí para que el usuario sepa por qué no avanza
-        alert('Hubo un error al guardar la información de los acompañantes. Por favor verifica tu conexión.');
-        setIsSaving(false);
+        alert('Hubo un error al guardar la información de los participantes. Por favor intenta de nuevo.');
         return;
       }
 
-      console.log('Participantes guardados exitosamente:', data);
+      console.log('Reserva creada:', reservationCreated);
+      console.log('Participantes guardados:', data);
+      console.log('Total:', totalPrice);
 
-      // 4. Si el guardado es exitoso, abrir PaymentModal normalmente
       setIsPaymentModalOpen(true);
     } catch (err) {
       console.error('Error inesperado al procesar participantes:', err);
