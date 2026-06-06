@@ -51,8 +51,10 @@ const HomePage = ({
       const reservationPayload = {
         id_plan: reservationData.tour.id_plan,
         telefono_cliente: reservationData.contact.telefono_cliente,
-        fecha_reserva: reservationData.date.fecha_reserva,
-        hora_reserva: reservationData.tour.tipo_hora === 'sin_hora' ? null : (reservationData.time.hora_reserva || null)
+        cantidad_personas: totalParticipants,
+        aprobado: false,
+        fecha_solicitud: new Date().toISOString(),
+        fecha_aprobacion: null
       };
 
       const { data: reservationCreated, error: reservationError } = await createReservation(reservationPayload);
