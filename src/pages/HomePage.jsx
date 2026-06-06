@@ -234,6 +234,8 @@ const HomePage = ({
             selectedDate={reservationData.date.rawDate}
             onSelect={handleDateSelect}
             errors={errors}
+            availableDates={reservationData.tour.availableDates}
+            tipoFecha={reservationData.tour.tipo_fecha}
           />
         </div>
         
@@ -243,9 +245,10 @@ const HomePage = ({
             sectionRef={timeRef}
             selectedTime={reservationData.time}
             onSelect={handleTimeSelect}
-            schedules={schedules}
+            schedules={reservationData.tour.availableHours}
             loading={loadingData}
             errors={errors}
+            tipoHora={reservationData.tour.tipo_hora}
           />
         </div>
 

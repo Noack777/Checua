@@ -3,7 +3,7 @@ export const getTours = async () => {
   try {
     const { data, error } = await supabase
       .from('plan')
-      .select('id_plan, nombre_plan, precio_plan, descripcion_basica')
+      .select('id_plan, nombre_plan, precio_plan, descripcion_basica, tipo_fecha, tipo_hora, imagen_url, numero_plan')
       .order('id_plan', { ascending: true })
 
     if (error) {
@@ -20,13 +20,61 @@ export const getTours = async () => {
       id: item.id_plan,
       name: item.nombre_plan,
       price: item.precio_plan,
-      description: item.descripcion_basica
+      description: item.descripcion_basica,
+      tipo_fecha: item.tipo_fecha,
+      tipo_hora: item.tipo_hora,
+      imagen_url: item.imagen_url,
+      numero_plan: item.numero_plan
     }))
   } catch (err) {
     console.error('--- ERROR INESPERADO ---', err);
     return []
   }
 }
+
+/**
+ * Obtiene las fechas específicas de un plan
+ * @param {string|number} planId 
+ * @returns {Promise<Array>}
+ */
+export const getPlanDates = async (planId) => {
+  try {
+    const { data, error } = await supabase
+      .from('plan_fechas')
+      .select('fecha')
+      .eq('id_plan', planId);
+
+    if (error) throw error;
+    return data.map(d => d.fecha);
+  } catch (err) {
+    console.error('Error al cargar fechas del plan:', err);
+    return [];
+  }
+};
+
+/**
+ * Obtiene las horas específicas de un plan
+ * @param {string|number} planId 
+ * @returns {Promise<Array>}
+ */
+export const getPlanHours = async (planId) => {
+  try {
+    const { data, error } = await supabase
+      .from('plan_horas')
+      .select('hora')
+      .eq('id_plan', planId);
+
+    if (error) throw error;
+    return data.map(d => ({
+      value: d.hora,
+      label: d.hora, // Podrías formatear si es necesario
+      period: parseInt(d.hora.split(':')[0]) >= 12 ? 'tarde' : 'mañana'
+    }));
+  } catch (err) {
+    console.error('Error al cargar horas del plan:', err);
+    return [];
+  }
+};
 
 /**
  * Obtiene los horarios disponibles desde la base de datos

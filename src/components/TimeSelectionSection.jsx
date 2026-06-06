@@ -1,13 +1,17 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
-const TimeSelectionSection = ({ onSelect, selectedTime, schedules = [], loading = false, errors, sectionRef }) => {
+const TimeSelectionSection = ({ onSelect, selectedTime, schedules = [], loading = false, errors, sectionRef, tipoHora = 'varias_horas' }) => {
   const { t } = useTranslation();
   
+  // Si tipoHora es 'sin_hora', no renderizamos nada
+  if (tipoHora === 'sin_hora') return null;
+
   const morningSchedules = schedules.filter(s => s.period === 'mañana');
   const afternoonSchedules = schedules.filter(s => s.period === 'tarde');
 
   const handleTimeSelect = (time) => {
+    if (tipoHora === 'hora_fija') return; // No permitir cambios si es hora fija
     onSelect(time);
   };
 
@@ -39,11 +43,14 @@ const TimeSelectionSection = ({ onSelect, selectedTime, schedules = [], loading 
                       <button
                         key={time.id || time.value}
                         type="button"
+                        disabled={tipoHora === 'hora_fija'}
                         onClick={() => handleTimeSelect(time)}
                         className={`py-4 px-2 rounded-full text-sm md:text-base font-bold transition-all duration-300 border-2 w-full flex items-center justify-center ${
                           selectedTime?.hora_reserva === time.value || selectedTime?.value === time.value
                             ? 'bg-brand-primary border-brand-primary text-white shadow-lg shadow-brand-primary/20 scale-105'
-                            : 'bg-brand-light/20 dark:bg-dark-bg-main/50 border-brand-border dark:border-dark-border text-brand-text-main dark:text-dark-text-main hover:border-brand-primary/50'
+                            : tipoHora === 'hora_fija' 
+                              ? 'bg-gray-100 dark:bg-dark-bg-main/30 border-brand-border dark:border-dark-border text-gray-400 cursor-not-allowed'
+                              : 'bg-brand-light/20 dark:bg-dark-bg-main/50 border-brand-border dark:border-dark-border text-brand-text-main dark:text-dark-text-main hover:border-brand-primary/50'
                         }`}
                       >
                         {time.label}
@@ -65,11 +72,14 @@ const TimeSelectionSection = ({ onSelect, selectedTime, schedules = [], loading 
                       <button
                         key={time.id || time.value}
                         type="button"
+                        disabled={tipoHora === 'hora_fija'}
                         onClick={() => handleTimeSelect(time)}
                         className={`py-4 px-2 rounded-full text-sm md:text-base font-bold transition-all duration-300 border-2 w-full flex items-center justify-center ${
                           selectedTime?.hora_reserva === time.value || selectedTime?.value === time.value
                             ? 'bg-brand-primary border-brand-primary text-white shadow-lg shadow-brand-primary/20 scale-105'
-                            : 'bg-brand-light/20 dark:bg-dark-bg-main/50 border-brand-border dark:border-dark-border text-brand-text-main dark:text-dark-text-main hover:border-brand-primary/50'
+                            : tipoHora === 'hora_fija' 
+                              ? 'bg-gray-100 dark:bg-dark-bg-main/30 border-brand-border dark:border-dark-border text-gray-400 cursor-not-allowed'
+                              : 'bg-brand-light/20 dark:bg-dark-bg-main/50 border-brand-border dark:border-dark-border text-brand-text-main dark:text-dark-text-main hover:border-brand-primary/50'
                         }`}
                       >
                         {time.label}

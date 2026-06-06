@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { getTours, getSchedules } from './services/tourService';
+import { getTours, getSchedules, getPlanDates, getPlanHours } from './services/tourService';
 import HomePage from './pages/HomePage';
 
 function App() {
@@ -64,7 +64,11 @@ function App() {
     tour: {
       tour_reserva: '',
       precio_por_persona: null,
-      id_plan: null
+      id_plan: null,
+      tipo_fecha: 'cualquier_dia',
+      tipo_hora: 'sin_hora',
+      availableDates: [], // Fechas habilitadas si tipo_fecha === 'fechas_especificas'
+      availableHours: []  // Horas disponibles si tipo_hora === 'varias_horas' o 'hora_fija'
     },
     date: {
       fecha_reserva: '',
@@ -120,15 +124,56 @@ function App() {
     }
   };
 
-  const handleTourSelect = (tour) => {
-    setReservationData(prev => ({
-      ...prev,
-      tour: {
-        tour_reserva: tour.name,
-        precio_por_persona: tour.price,
-        id_plan: tour.id.toString()
-      }
-    }));
+  const handleTourSelect = async (tour) => {
+    setLoadingData(true);
+    try {
+      const [dates, hours] = await Promise.all([
+        tour.tipo_fecha === 'fechas_especificas' ? getPlanDates(tour.id) : Promise.resolve([]),
+        tour.tipo_hora !== 'sin_hora' ? getPlanHours(tour.id) : Promise.resolve([])
+      ]);
+
+      setReservationData(prev => {
+        const newTourData = {
+          tour_reserva: tour.name,
+          precio_por_persona: tour.price,
+          id_plan: tour.id.toString(),
+          tipo_fecha: tour.tipo_fecha,
+          tipo_hora: tour.tipo_hora,
+          availableDates: dates,
+          availableHours: hours
+        };
+
+        // Si es hora fija, seleccionamos automáticamente la única hora disponible
+        let newTimeData = { hora_reserva: '', periodo: '', label: '' };
+        if (tour.tipo_hora === 'hora_fija' && hours.length > 0) {
+          newTimeData = {
+            hora_reserva: hours[0].value,
+            periodo: hours[0].period,
+            label: hours[0].label
+          };
+        }
+
+        // Limpiar fecha si ya no es válida para el nuevo plan
+        let newDateData = prev.date;
+        if (tour.tipo_fecha === 'fechas_especificas' && prev.date.fecha_reserva) {
+          if (!dates.includes(prev.date.fecha_reserva)) {
+            newDateData = { fecha_reserva: '', es_fin_de_semana: false, es_festivo_colombia: false, puede_variar_precio: false, rawDate: null };
+          }
+        }
+
+        return {
+          ...prev,
+          tour: newTourData,
+          time: newTimeData,
+          date: newDateData
+        };
+      });
+    } catch (error) {
+      console.error("Error al cargar detalles del tour:", error);
+    } finally {
+      setLoadingData(false);
+    }
+
     if (errors.tour) setErrors(prev => {
       const newErrors = { ...prev };
       delete newErrors.tour;
@@ -303,9 +348,13 @@ function App() {
       newErrors.date = t('errors.required_date');
       newErrors.date_key = 'required_date';
     }
-    if (!time.hora_reserva) {
-      newErrors.time = t('errors.required_time');
-      newErrors.time_key = 'required_time';
+
+    // Validación de hora según el tipo de hora del plan
+    if (tour.tipo_hora === 'varias_horas' || tour.tipo_hora === 'hora_fija') {
+      if (!time.hora_reserva) {
+        newErrors.time = t('errors.required_time');
+        newErrors.time_key = 'required_time';
+      }
     }
 
     // Validar acompañantes
@@ -378,22 +427,23 @@ function App() {
     }
   };
 
-  const onModalComplete = (data) => {
-    // Actualizamos los datos del contacto con lo que viene del modal
+  const onModalComplete = async (data) => {
+    // 1. Primero actualizamos el tour seleccionado (esto carga fechas/horas dinámicas)
+    if (data.tour) {
+      await handleTourSelect(data.tour);
+    }
+
+    // 2. Actualizamos el resto de los datos del contacto
     setReservationData(prev => ({
       ...prev,
       contact: {
         ...prev.contact,
         telefono_cliente: data.phone,
-        // Si el cliente ya tenía nombre en la DB, lo podemos pre-cargar aquí en el futuro
         nombre_jefe_reserva: data.client?.nombre_cliente || prev.contact.nombre_jefe_reserva
-      },
-      tour: {
-        tour_reserva: data.tour.name || '',
-        precio_por_persona: data.tour.price || null,
-        id_plan: data.tour.id ? data.tour.id.toString() : null
       }
     }));
+
+    // 3. Cerramos el modal después de que handleTourSelect termine de cargar todo
     setIsModalOpen(false);
   };
 

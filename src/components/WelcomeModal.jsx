@@ -20,6 +20,13 @@ const WelcomeModal = ({ isOpen, onComplete, onClose, tours = [], loading = false
   const phoneContainerRef = useRef(null);
   const [phoneDropdownPosition, setPhoneDropdownPosition] = useState('down');
 
+  // Asegurar que si initialTourId cambia (ej: por precarga de cliente), se actualice el estado local
+  useEffect(() => {
+    if (initialTourId) {
+      setSelectedTourId(initialTourId);
+    }
+  }, [initialTourId]);
+
   // Detectar espacio para el dropdown de teléfono
   const handlePhoneDropdownClick = () => {
     if (phoneContainerRef.current) {
@@ -125,19 +132,20 @@ const WelcomeModal = ({ isOpen, onComplete, onClose, tours = [], loading = false
 
   const handleContinue = async () => {
     if (canContinue) {
-      const tour = tours.find(t => t.id.toString() === selectedTourId) || { name: '', price: 0, id: '' };
-      const phoneWithPlus = phone ? (phone.startsWith('+') ? phone : `+${phone}`) : '';
+      const tour = tours.find(t => t.id.toString() === selectedTourId);
+      const phoneWithPlus = phone.startsWith('+') ? phone : `+${phone}`;
 
       // Actualizar el plan del cliente en la base de datos si es necesario
       try {
-        if (selectedTourId && phoneWithPlus) {
-          await updateClientPlan(phoneWithPlus, selectedTourId);
-        }
+        await updateClientPlan(phoneWithPlus, selectedTourId);
       } catch (err) {
         console.error("Error al actualizar el plan del cliente:", err);
       }
 
-      onComplete({
+      // IMPORTANTE: Aquí NO cerramos el modal directamente.
+      // onComplete en App.jsx se encarga de llamar a handleTourSelect (async)
+      // y luego cerrar el modal.
+      await onComplete({
         phone: phoneWithPlus,
         tour,
         client: clientData

@@ -92,7 +92,7 @@ const getColombianHolidays = (year) => {
   return holidays;
 };
 
-const DateSelectionSection = ({ onSelect, selectedDate, errors, sectionRef }) => {
+const DateSelectionSection = ({ onSelect, selectedDate, errors, sectionRef, availableDates = [], tipoFecha = 'cualquier_dia' }) => {
   const { t, i18n } = useTranslation();
   const [currentMonthIndex, setCurrentMonthIndex] = useState(0);
   const scrollRef = useRef(null);
@@ -140,8 +140,20 @@ const DateSelectionSection = ({ onSelect, selectedDate, errors, sectionRef }) =>
   const isToday = (date) => date.toDateString() === today.toDateString();
   const isPast = (date) => date < today;
 
+  /**
+   * Verifica si una fecha es seleccionable según la lógica del plan
+   */
+  const isSelectable = (date) => {
+    if (isPast(date)) return false;
+    if (tipoFecha === 'fechas_especificas') {
+      const dateISO = formatDateISO(date);
+      return availableDates.includes(dateISO);
+    }
+    return true;
+  };
+
   const handleDateClick = (date) => {
-    if (isPast(date)) return;
+    if (!isSelectable(date)) return;
     
     // Lógica para backend
     const dateSelectionData = {
@@ -223,20 +235,22 @@ const DateSelectionSection = ({ onSelect, selectedDate, errors, sectionRef }) =>
       const weekend = isWeekend(date);
       const selected = selectedDate && date.toDateString() === selectedDate.toDateString();
       const current = isToday(date);
+      const selectable = isSelectable(date);
 
       days.push(
         <button
           key={`day-${year}-${month}-${day}`}
           type="button"
-          disabled={past}
+          disabled={!selectable}
           onClick={() => handleDateClick(date)}
           className={`relative h-10 w-10 md:h-11 md:w-11 rounded-full flex items-center justify-center text-sm font-bold transition-all duration-200
-            ${past ? 'text-gray-300 dark:text-gray-600 cursor-not-allowed' : 'hover:bg-brand-light dark:hover:bg-dark-bg-main cursor-pointer'}
+            ${!selectable ? 'text-gray-300 dark:text-gray-600 cursor-not-allowed' : 'hover:bg-brand-light dark:hover:bg-dark-bg-main cursor-pointer'}
             ${selected ? 'bg-brand-primary text-white hover:bg-brand-primary shadow-md scale-110 z-10' : ''}
-            ${!selected && holiday ? 'text-red-500 dark:text-red-400 bg-red-50 dark:bg-red-900/20' : ''}
-            ${!selected && !holiday && weekend ? 'text-brand-dark dark:text-brand-primary' : ''}
-            ${!selected && !holiday && !weekend && !past ? 'text-brand-text-main dark:text-dark-text-main' : ''}
-            ${current && !selected ? 'border-2 border-brand-primary' : ''}
+            ${!selected && holiday && selectable ? 'text-red-500 dark:text-red-400 bg-red-50 dark:bg-red-900/20' : ''}
+            ${!selected && !holiday && weekend && selectable ? 'text-brand-dark dark:text-brand-primary' : ''}
+            ${!selected && !holiday && !weekend && selectable ? 'text-brand-text-main dark:text-dark-text-main' : ''}
+            ${current && !selected && selectable ? 'border-2 border-brand-primary' : ''}
+            ${selectable && !selected && tipoFecha === 'fechas_especificas' ? 'ring-2 ring-brand-primary/30 ring-offset-2 dark:ring-offset-dark-bg-card' : ''}
           `}
         >
           {day}
