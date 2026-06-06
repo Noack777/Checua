@@ -184,6 +184,11 @@ function App() {
           nombre: '',
           tipo_documento: '',
           numero_documento: '',
+          telefono: '',
+          correo: '',
+          rh: '',
+          peso_kg: '',
+          estatura_m: '',
           parentesco: ''
         }
       ]
@@ -304,6 +309,27 @@ function App() {
       }
       if (!companion.numero_documento) {
         newErrors[`companion_${index}_numero_documento`] = t('errors.required_doc_number');
+      }
+      if (!companion.telefono.trim()) {
+        newErrors[`companion_${index}_telefono`] = t('errors.required_phone');
+      } else if (!/^\+?\d+$/.test(companion.telefono)) {
+        newErrors[`companion_${index}_telefono`] = t('errors.invalid_phone');
+      }
+      if (companion.correo.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(companion.correo)) {
+        newErrors[`companion_${index}_correo`] = t('errors.invalid_email');
+      }
+      if (!companion.rh) {
+        newErrors[`companion_${index}_rh`] = t('errors.required_rh');
+      }
+      if (!companion.peso_kg) {
+        newErrors[`companion_${index}_peso_kg`] = t('errors.required_weight');
+      } else if (isNaN(companion.peso_kg) || parseFloat(companion.peso_kg) <= 0) {
+        newErrors[`companion_${index}_peso_kg`] = t('errors.invalid_weight');
+      }
+      if (!companion.estatura_m) {
+        newErrors[`companion_${index}_estatura_m`] = t('errors.required_height');
+      } else if (isNaN(companion.estatura_m) || parseFloat(companion.estatura_m) <= 0) {
+        newErrors[`companion_${index}_estatura_m`] = t('errors.invalid_height');
       }
       if (!companion.parentesco.trim()) {
         newErrors[`companion_${index}_parentesco`] = "El parentesco es obligatorio";

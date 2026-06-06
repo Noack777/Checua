@@ -398,16 +398,45 @@ const HomePage = ({
                   </p>
                   <div className="grid gap-4">
                     {reservationData.companions.map((comp, idx) => (
-                      <div key={idx} className="bg-brand-light/30 dark:bg-dark-bg-main/30 rounded-[1.5rem] p-4 border border-brand-primary/10 flex items-center justify-between group hover:border-brand-primary/30 transition-all">
-                        <div className="flex items-center gap-4">
-                          <div className="w-10 h-10 rounded-full bg-brand-primary/10 text-brand-primary flex items-center justify-center font-black text-sm">
+                      <div key={idx} className="bg-brand-light/30 dark:bg-dark-bg-main/30 rounded-[1.5rem] p-6 border border-brand-primary/10 group hover:border-brand-primary/30 transition-all">
+                        <div className="flex items-start gap-4">
+                          <div className="w-10 h-10 rounded-full bg-brand-primary/10 text-brand-primary flex items-center justify-center font-black text-sm shrink-0">
                             {idx + 1}
                           </div>
-                          <div>
-                            <p className="text-brand-text-main dark:text-dark-text-main font-bold text-sm uppercase">{comp.nombre}</p>
-                            <p className="text-[10px] text-brand-text-secondary/60 dark:text-dark-text-secondary/60 font-bold uppercase tracking-widest">
-                              {comp.tipo_documento}: {comp.numero_documento} • <span className="text-brand-primary">{comp.parentesco}</span>
-                            </p>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex justify-between items-start mb-2">
+                              <p className="text-brand-text-main dark:text-dark-text-main font-black text-base uppercase truncate pr-2">{comp.nombre}</p>
+                              <span className="text-[10px] font-black text-brand-primary bg-brand-primary/10 px-3 py-1 rounded-full uppercase tracking-widest whitespace-nowrap">
+                                {comp.parentesco}
+                              </span>
+                            </div>
+                            
+                            <div className="grid sm:grid-cols-2 gap-y-2 gap-x-4">
+                              <p className="text-brand-text-secondary dark:text-dark-text-secondary text-xs flex items-center gap-2">
+                                <span className="w-1 h-1 bg-brand-primary/40 rounded-full"></span>
+                                <span className="font-bold">{comp.tipo_documento}:</span> {comp.numero_documento}
+                              </p>
+                              <p className="text-brand-text-secondary dark:text-dark-text-secondary text-xs flex items-center gap-2">
+                                <span className="w-1 h-1 bg-brand-primary/40 rounded-full"></span>
+                                <span className="font-bold">Tel:</span> {comp.telefono}
+                              </p>
+                              <p className="text-brand-text-secondary dark:text-dark-text-secondary text-xs flex items-center gap-2 sm:col-span-2 truncate">
+                                <span className="w-1 h-1 bg-brand-primary/40 rounded-full"></span>
+                                <span className="font-bold">Email:</span> {comp.correo || '---'}
+                              </p>
+                            </div>
+
+                            <div className="flex gap-4 pt-3 mt-3 border-t border-brand-primary/5">
+                              <p className="text-brand-text-secondary dark:text-dark-text-secondary text-[10px]">
+                                <span className="font-black text-brand-primary/40 mr-1 uppercase">RH:</span> {comp.rh}
+                              </p>
+                              <p className="text-brand-text-secondary dark:text-dark-text-secondary text-[10px]">
+                                <span className="font-black text-brand-primary/40 mr-1 uppercase">PESO:</span> {comp.peso_kg}kg
+                              </p>
+                              <p className="text-brand-text-secondary dark:text-dark-text-secondary text-[10px]">
+                                <span className="font-black text-brand-primary/40 mr-1 uppercase">ALTURA:</span> {comp.estatura_m}m
+                              </p>
+                            </div>
                           </div>
                         </div>
                       </div>
