@@ -45,6 +45,11 @@ const HomePage = ({
   const handleProceedToPayment = async () => {
     setIsSaving(true);
     try {
+      const normalizePhoneForParticipant = (phone) => {
+        if (!phone) return ''
+        return phone.toString().replace(/\s+/g, '').replace(/^\+/, '')
+      }
+
       const totalParticipants = 1 + (reservationData.companions?.length || 0);
       const totalPrice = (reservationData.tour.precio_por_persona || 0) * totalParticipants;
 
@@ -70,7 +75,7 @@ const HomePage = ({
         nombre: reservationData.contact.nombre_jefe_reserva,
         tipo_documento: reservationData.contact.tipo_documento,
         numero_documento: reservationData.contact.numero_documento,
-        telefono_participante: reservationData.contact.telefono_cliente,
+        telefono_participante: normalizePhoneForParticipant(reservationData.contact.telefono_cliente),
         correo: reservationData.contact.correo_contacto,
         rh: reservationData.contact.rh,
         peso: reservationData.contact.peso_kg ? parseFloat(reservationData.contact.peso_kg) : null,
