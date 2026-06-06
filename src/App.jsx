@@ -188,8 +188,7 @@ function App() {
           correo: '',
           rh: '',
           peso_kg: '',
-          estatura_m: '',
-          parentesco: ''
+          estatura_m: ''
         }
       ]
     }));
@@ -330,9 +329,6 @@ function App() {
         newErrors[`companion_${index}_estatura_m`] = t('errors.required_height');
       } else if (isNaN(companion.estatura_m) || parseFloat(companion.estatura_m) <= 0) {
         newErrors[`companion_${index}_estatura_m`] = t('errors.invalid_height');
-      }
-      if (!companion.parentesco.trim()) {
-        newErrors[`companion_${index}_parentesco`] = "El parentesco es obligatorio";
       }
     });
 

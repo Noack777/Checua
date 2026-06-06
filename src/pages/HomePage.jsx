@@ -58,8 +58,7 @@ const HomePage = ({
         correo: companion.correo,
         rh: companion.rh,
         peso_kg: companion.peso_kg,
-        estatura_m: companion.estatura_m,
-        parentesco: companion.parentesco
+        estatura_m: companion.estatura_m
       }));
 
       // 3. Guardar todos los participantes en Supabase
@@ -445,9 +444,6 @@ const HomePage = ({
                           <div className="flex-1 min-w-0">
                             <div className="flex justify-between items-start mb-2">
                               <p className="text-brand-text-main dark:text-dark-text-main font-black text-base uppercase truncate pr-2">{comp.nombre}</p>
-                              <span className="text-[10px] font-black text-brand-primary bg-brand-primary/10 px-3 py-1 rounded-full uppercase tracking-widest whitespace-nowrap">
-                                {comp.parentesco}
-                              </span>
                             </div>
                             
                             <div className="grid sm:grid-cols-2 gap-y-2 gap-x-4">

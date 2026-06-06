@@ -59,7 +59,7 @@ const CompanionFormSection = ({
       cleanValue = value.replace(/\D/g, '');
     }
     
-    if (field === 'nombre' || field === 'parentesco') {
+    if (field === 'nombre') {
       cleanValue = value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s]/g, '');
     }
     
@@ -342,22 +342,6 @@ const CompanionFormSection = ({
                   </p>
                 )}
               </div>
-            </div>
-
-            {/* Parentesco */}
-            <div className="relative group">
-              <input
-                type="text"
-                placeholder="Parentesco (Ej: Hermano, Esposa, Amigo)"
-                value={companion.parentesco}
-                onChange={(e) => handleInputChange(index, 'parentesco', e.target.value)}
-                className={`input-premium !py-3.5 sm:!py-4 text-sm sm:text-base ${errors[`companion_${index}_parentesco`] ? 'border-red-200 focus:border-red-400' : ''}`}
-              />
-              {errors[`companion_${index}_parentesco`] && (
-                <p className="text-[10px] text-red-500 mt-1.5 ml-6 font-bold uppercase tracking-wider">
-                  {errors[`companion_${index}_parentesco`]}
-                </p>
-              )}
             </div>
           </div>
         </div>
