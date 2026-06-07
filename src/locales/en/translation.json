@@ -100,6 +100,15 @@
     "companions_notice": "Soon you will be able to register the reservation companions.",
     "verify_data_hint": "* Please verify that all data is correct before proceeding.",
     "proceed_to_payment": "Proceed to payment",
+    "payment_block": {
+      "title": "💳 PAYMENT INFORMATION",
+      "subtitle": "Your reservation can be confirmed by paying only 30% of the total amount.",
+      "total": "📌 Total reservation amount:",
+      "deposit": "✅ Minimum deposit to confirm (30%):",
+      "remaining": "💰 Remaining balance to pay on the event day:",
+      "note": "The 30% deposit secures your spot. The remaining balance is paid on the day of the activity.",
+      "question": "Do you want to proceed with the reservation or do you have any questions?"
+    },
     "payment": {
       "title": "Payment Information",
       "experience": "Selected Experience",

@@ -100,6 +100,15 @@
     "companions_notice": "Pronto podrás registrar los acompañantes de la reserva.",
     "verify_data_hint": "* Por favor verifica que todos los datos sean correctos antes de proceder.",
     "proceed_to_payment": "Proceder con el pago",
+    "payment_block": {
+      "title": "💳 INFORMACIÓN DE PAGO",
+      "subtitle": "Tu reserva puede confirmarse pagando únicamente el 30% del valor total.",
+      "total": "📌 Valor total de la reserva:",
+      "deposit": "✅ Abono mínimo para confirmar (30%):",
+      "remaining": "💰 Saldo restante a pagar el día del evento:",
+      "note": "El abono del 30% garantiza tu cupo. El saldo restante se cancela el día de la actividad.",
+      "question": "¿Deseas proceder con la reserva o si tienes alguna duda?"
+    },
     "payment": {
       "title": "Información para realizar el pago",
       "experience": "Experiencia seleccionada",
