@@ -202,6 +202,22 @@ const DateSelectionSection = ({ onSelect, selectedDate, errors, sectionRef, avai
     });
   };
 
+  const availableDateItems = useMemo(() => {
+    if (tipoFecha !== 'fechas_especificas') return []
+
+    return (availableDates || [])
+      .map((iso) => {
+        if (!iso) return null
+        const safeIso = iso.toString().slice(0, 10)
+        const date = new Date(`${safeIso}T00:00:00`)
+        date.setHours(0, 0, 0, 0)
+        if (Number.isNaN(date.getTime())) return null
+        return { iso: safeIso, date }
+      })
+      .filter(Boolean)
+      .sort((a, b) => a.date.getTime() - b.date.getTime())
+  }, [availableDates, tipoFecha])
+
   // Lógica para backend
   const dateSelectionData = selectedDate ? {
     fecha_reserva: formatDateISO(selectedDate),
@@ -289,47 +305,113 @@ const DateSelectionSection = ({ onSelect, selectedDate, errors, sectionRef, avai
       <div className={`card-accent-line ${errors.date ? 'bg-red-400' : ''}`}></div>
       
       <div className="px-6 py-8 md:px-10 md:py-10 space-y-6">
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
-          <div>
+        {tipoFecha === 'fechas_especificas' ? (
+          <div className="space-y-4">
             <p className="text-sm md:text-base text-brand-text-secondary dark:text-dark-text-secondary font-medium">
-              {t('sections.availability_next_months')}
+              {t('sections.available_dates_plan')}
             </p>
-          </div>
-          
-          {/* Navigation Arrows */}
-          <div className="flex items-center gap-2 self-end md:self-center">
-            <button
-              type="button"
-              disabled={currentMonthIndex === 0}
-              onClick={() => scrollToMonth(currentMonthIndex - 1)}
-              className="p-3 rounded-full bg-brand-light dark:bg-dark-bg-main text-brand-primary disabled:opacity-30 disabled:cursor-not-allowed transition-all hover:scale-110 active:scale-95 border border-brand-primary/10 shadow-sm"
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M15 19l-7-7 7-7" />
-              </svg>
-            </button>
-            <button
-              type="button"
-              disabled={currentMonthIndex === monthsToDisplay.length - 1}
-              onClick={() => scrollToMonth(currentMonthIndex + 1)}
-              className="p-3 rounded-full bg-brand-light dark:bg-dark-bg-main text-brand-primary disabled:opacity-30 disabled:cursor-not-allowed transition-all hover:scale-110 active:scale-95 border border-brand-primary/10 shadow-sm"
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M9 5l7 7-7 7" />
-              </svg>
-            </button>
-          </div>
-        </div>
 
-        {/* Carousel Container */}
-        <div 
-          ref={scrollRef}
-          onScroll={handleScroll}
-          className="flex overflow-x-auto snap-x snap-mandatory hide-scrollbar gap-0"
-          style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-        >
-          {monthsToDisplay.map((m, idx) => renderMonth(m, idx))}
-        </div>
+            {availableDateItems.length === 0 ? (
+              <div className="bg-brand-light/10 dark:bg-dark-bg-main/30 border-2 border-dashed border-brand-border dark:border-dark-border rounded-[2rem] p-8 text-center">
+                <p className="text-sm text-brand-text-secondary/60 dark:text-dark-text-secondary/60 font-medium italic">
+                  {t('sections.no_dates_available_plan')}
+                </p>
+              </div>
+            ) : (
+              <div className="grid gap-3">
+                {availableDateItems.map(({ iso, date }) => {
+                  const selected = selectedDate && formatDateISO(selectedDate) === iso
+                  return (
+                    <button
+                      key={iso}
+                      type="button"
+                      onClick={() => handleDateClick(date)}
+                      className={`w-full text-left rounded-[1.5rem] p-5 border transition-all duration-300 ${
+                        selected
+                          ? 'bg-brand-primary/10 border-brand-primary/30'
+                          : 'bg-white/40 dark:bg-dark-bg-card/40 border-brand-border/60 dark:border-dark-border hover:border-brand-primary/40'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between gap-4">
+                        <div className="min-w-0">
+                          <p className="text-brand-text-main dark:text-dark-text-main font-black text-sm md:text-base capitalize truncate">
+                            {formatDateLegible(date)}
+                          </p>
+                          <div className="flex flex-wrap gap-2 mt-2">
+                            {isHoliday(date) && (
+                              <span className="px-3 py-1 bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 text-[9px] font-black uppercase rounded-full border border-red-200 dark:border-red-900/50">
+                                {t('sections.holiday')}
+                              </span>
+                            )}
+                            {isWeekend(date) && (
+                              <span className="px-3 py-1 bg-brand-primary/10 text-brand-primary text-[9px] font-black uppercase rounded-full border border-brand-primary/20">
+                                {t('sections.weekend')}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+
+                        <div className={`w-10 h-10 rounded-2xl flex items-center justify-center border ${
+                          selected
+                            ? 'bg-brand-primary text-white border-brand-primary'
+                            : 'bg-brand-light/30 dark:bg-dark-bg-main/30 text-brand-primary border-brand-primary/20'
+                        }`}>
+                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" />
+                          </svg>
+                        </div>
+                      </div>
+                    </button>
+                  )
+                })}
+              </div>
+            )}
+          </div>
+        ) : (
+          <>
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+              <div>
+                <p className="text-sm md:text-base text-brand-text-secondary dark:text-dark-text-secondary font-medium">
+                  {t('sections.availability_next_months')}
+                </p>
+              </div>
+              
+              {/* Navigation Arrows */}
+              <div className="flex items-center gap-2 self-end md:self-center">
+                <button
+                  type="button"
+                  disabled={currentMonthIndex === 0}
+                  onClick={() => scrollToMonth(currentMonthIndex - 1)}
+                  className="p-3 rounded-full bg-brand-light dark:bg-dark-bg-main text-brand-primary disabled:opacity-30 disabled:cursor-not-allowed transition-all hover:scale-110 active:scale-95 border border-brand-primary/10 shadow-sm"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M15 19l-7-7 7-7" />
+                  </svg>
+                </button>
+                <button
+                  type="button"
+                  disabled={currentMonthIndex === monthsToDisplay.length - 1}
+                  onClick={() => scrollToMonth(currentMonthIndex + 1)}
+                  className="p-3 rounded-full bg-brand-light dark:bg-dark-bg-main text-brand-primary disabled:opacity-30 disabled:cursor-not-allowed transition-all hover:scale-110 active:scale-95 border border-brand-primary/10 shadow-sm"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M9 5l7 7-7 7" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            {/* Carousel Container */}
+            <div 
+              ref={scrollRef}
+              onScroll={handleScroll}
+              className="flex overflow-x-auto snap-x snap-mandatory hide-scrollbar gap-0"
+              style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+            >
+              {monthsToDisplay.map((m, idx) => renderMonth(m, idx))}
+            </div>
+          </>
+        )}
 
         {/* Selected Date Summary */}
         <div className="space-y-4">

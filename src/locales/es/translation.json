@@ -45,6 +45,8 @@
     "price_variation_notice": "Al escoger un día entre semana, los precios pueden variar.",
     "select_day": "Seleccione el día de la reserva",
     "availability_next_months": "Disponibilidad para los próximos meses.",
+    "available_dates_plan": "Fechas disponibles para este plan.",
+    "no_dates_available_plan": "Este plan no tiene fechas disponibles.",
     "today": "Hoy",
     "selected": "Seleccionado",
     "holiday_tag": "¡Día Festivo!",

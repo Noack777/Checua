@@ -45,6 +45,8 @@
     "price_variation_notice": "When choosing a weekday, prices may vary.",
     "select_day": "Select the reservation day",
     "availability_next_months": "Availability for the next few months.",
+    "available_dates_plan": "Available dates for this plan.",
+    "no_dates_available_plan": "This plan has no available dates.",
     "today": "Today",
     "selected": "Selected",
     "holiday_tag": "Holiday!",
