@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
 const TimeSelectionSection = ({ onSelect, selectedTime, schedules = [], loading = false, errors, sectionRef, tipoHora = 'varias_horas' }) => {
@@ -7,18 +7,62 @@ const TimeSelectionSection = ({ onSelect, selectedTime, schedules = [], loading 
   // Si tipoHora es 'sin_hora', no renderizamos nada
   if (tipoHora === 'sin_hora') return null;
 
-  const morningSchedules = schedules.filter(s => s.period === 'mañana');
-  const afternoonSchedules = schedules.filter(s => s.period === 'tarde');
+  const getTimeValueStr = (timeValue) => {
+    if (!timeValue) return '';
+    if (typeof timeValue === 'string') return timeValue;
+    return timeValue.value || timeValue.hora_reserva || timeValue.hora || timeValue.label || '';
+  };
 
   const formatTime = (timeStr) => {
-    if (!timeStr) return "";
-    // Elimina los segundos si vienen de la base de datos (09:30:00 -> 09:30)
-    const parts = timeStr.split(':');
-    if (parts.length >= 2) {
-      return `${parts[0]}:${parts[1]}`;
-    }
-    return timeStr;
+    const raw = getTimeValueStr(timeStr);
+    if (!raw) return "";
+    const parts = raw.split(':');
+    if (parts.length >= 2) return `${parts[0]}:${parts[1]}`;
+    return raw;
   };
+
+  const getHourNumber = (timeStr) => {
+    const raw = getTimeValueStr(timeStr);
+    const [h] = (raw || '').split(':');
+    const hour = Number.parseInt(h, 10);
+    return Number.isNaN(hour) ? null : hour;
+  };
+
+  const getMeridiem = (timeStr) => {
+    const hour = getHourNumber(timeStr);
+    if (hour === null) return '';
+    return hour < 12 ? 'AM' : 'PM';
+  };
+
+  const getPeriod = (timeStr) => {
+    const hour = getHourNumber(timeStr);
+    if (hour === null) return '';
+    return hour < 12 ? 'mañana' : 'tarde';
+  };
+
+  const normalizedSchedules = useMemo(() => {
+    return (schedules || []).map((s) => {
+      const valueStr = getTimeValueStr(s);
+      const labelStr = s?.label || valueStr;
+      const period = s?.period || getPeriod(valueStr);
+      return { ...s, value: s?.value || valueStr, label: labelStr, period };
+    });
+  }, [schedules]);
+
+  const morningSchedules = normalizedSchedules.filter(s => s.period === 'mañana');
+  const afternoonSchedules = normalizedSchedules.filter(s => s.period === 'tarde');
+
+  const selectedValueStr = getTimeValueStr(selectedTime);
+  const fixedSchedule = tipoHora === 'hora_fija' ? normalizedSchedules[0] : null;
+  const fixedValueStr = fixedSchedule ? getTimeValueStr(fixedSchedule) : '';
+
+  useEffect(() => {
+    if (tipoHora !== 'hora_fija') return;
+    if (loading) return;
+    if (!fixedSchedule) return;
+    if (selectedValueStr && selectedValueStr === fixedValueStr) return;
+    onSelect(fixedSchedule);
+  }, [fixedSchedule, fixedValueStr, loading, onSelect, selectedValueStr, tipoHora]);
 
   const handleTimeSelect = (time) => {
     if (tipoHora === 'hora_fija') return; // No permitir cambios si es hora fija
@@ -37,9 +81,32 @@ const TimeSelectionSection = ({ onSelect, selectedTime, schedules = [], loading 
           {loading ? (
             <div className="py-10 text-center">
               <div className="w-8 h-8 border-4 border-brand-primary border-t-transparent rounded-full animate-spin mx-auto mb-3"></div>
-              <p className="text-sm text-brand-text-secondary font-medium italic uppercase tracking-widest opacity-60">Cargando horarios...</p>
+              <p className="text-sm text-brand-text-secondary font-medium italic uppercase tracking-widest opacity-60">{t('sections.loading_hours')}</p>
             </div>
-          ) : schedules.length > 0 ? (
+          ) : tipoHora === 'hora_fija' ? (
+            fixedSchedule ? (
+              <div className="max-w-sm mx-auto w-full">
+                <div className="bg-brand-light/30 dark:bg-dark-bg-main/40 border border-brand-primary/20 rounded-[2rem] p-6 shadow-sm space-y-3">
+                  <p className="text-[10px] uppercase tracking-widest font-black text-brand-primary">
+                    {t('sections.fixed_time_label')}
+                  </p>
+                  <p className="text-sm text-brand-text-secondary dark:text-dark-text-secondary font-medium leading-relaxed">
+                    {t('sections.fixed_time_notice')}
+                  </p>
+                  <p className="text-brand-text-main dark:text-dark-text-main font-black text-2xl md:text-3xl">
+                    {formatTime(fixedValueStr)}
+                    <span className="ml-2 text-[10px] font-black uppercase text-brand-text-secondary/50 dark:text-dark-text-secondary/50 tracking-widest">
+                      {getMeridiem(fixedValueStr)}
+                    </span>
+                  </p>
+                </div>
+              </div>
+            ) : (
+              <div className="py-10 text-center bg-gray-50 dark:bg-dark-bg-main/20 rounded-3xl border-2 border-dashed border-gray-200 dark:border-dark-border">
+                <p className="text-sm text-brand-text-secondary font-medium italic">{t('sections.no_hours_available_plan')}</p>
+              </div>
+            )
+          ) : normalizedSchedules.length > 0 ? (
             <>
               {/* Morning Section */}
               {morningSchedules.length > 0 && (
@@ -51,19 +118,19 @@ const TimeSelectionSection = ({ onSelect, selectedTime, schedules = [], loading 
                   <div className="grid grid-cols-2 gap-3 max-w-sm mx-auto w-full">
                     {morningSchedules.map((time) => (
                       <button
-                        key={time.id || time.value}
+                        key={time.id || time.value || time.hora || time.label}
                         type="button"
                         disabled={tipoHora === 'hora_fija'}
                         onClick={() => handleTimeSelect(time)}
                         className={`py-4 px-2 rounded-full text-sm md:text-base font-bold transition-all duration-300 border-2 w-full flex items-center justify-center ${
-                          selectedTime?.hora_reserva === time.value || selectedTime?.value === time.value
+                          selectedValueStr && selectedValueStr === getTimeValueStr(time)
                             ? 'bg-brand-primary border-brand-primary text-white shadow-lg shadow-brand-primary/20 scale-105'
                             : tipoHora === 'hora_fija' 
                               ? 'bg-gray-100 dark:bg-dark-bg-main/30 border-brand-border dark:border-dark-border text-gray-400 cursor-not-allowed'
                               : 'bg-brand-light/20 dark:bg-dark-bg-main/50 border-brand-border dark:border-dark-border text-brand-text-main dark:text-dark-text-main hover:border-brand-primary/50'
                         }`}
                       >
-                        {formatTime(time.label)}
+                        {formatTime(time)}
                       </button>
                     ))}
                   </div>
@@ -80,19 +147,19 @@ const TimeSelectionSection = ({ onSelect, selectedTime, schedules = [], loading 
                   <div className="grid grid-cols-2 gap-3 max-w-sm mx-auto w-full">
                     {afternoonSchedules.map((time) => (
                       <button
-                        key={time.id || time.value}
+                        key={time.id || time.value || time.hora || time.label}
                         type="button"
                         disabled={tipoHora === 'hora_fija'}
                         onClick={() => handleTimeSelect(time)}
                         className={`py-4 px-2 rounded-full text-sm md:text-base font-bold transition-all duration-300 border-2 w-full flex items-center justify-center ${
-                          selectedTime?.hora_reserva === time.value || selectedTime?.value === time.value
+                          selectedValueStr && selectedValueStr === getTimeValueStr(time)
                             ? 'bg-brand-primary border-brand-primary text-white shadow-lg shadow-brand-primary/20 scale-105'
                             : tipoHora === 'hora_fija' 
                               ? 'bg-gray-100 dark:bg-dark-bg-main/30 border-brand-border dark:border-dark-border text-gray-400 cursor-not-allowed'
                               : 'bg-brand-light/20 dark:bg-dark-bg-main/50 border-brand-border dark:border-dark-border text-brand-text-main dark:text-dark-text-main hover:border-brand-primary/50'
                         }`}
                       >
-                        {formatTime(time.label)}
+                        {formatTime(time)}
                       </button>
                     ))}
                   </div>
@@ -101,13 +168,13 @@ const TimeSelectionSection = ({ onSelect, selectedTime, schedules = [], loading 
             </>
           ) : (
             <div className="py-10 text-center bg-gray-50 dark:bg-dark-bg-main/20 rounded-3xl border-2 border-dashed border-gray-200 dark:border-dark-border">
-              <p className="text-sm text-brand-text-secondary font-medium italic">No hay horarios disponibles para esta fecha.</p>
+              <p className="text-sm text-brand-text-secondary font-medium italic">{t('sections.no_hours_available_plan')}</p>
             </div>
           )}
 
           {/* Selection Summary Card */}
           <div className="space-y-4">
-            {selectedTime ? (
+            {tipoHora !== 'hora_fija' && selectedValueStr ? (
               <div className="animate-in fade-in slide-in-from-top-2 duration-300 max-w-sm mx-auto w-full">
                 <div className="bg-brand-light/30 dark:bg-dark-bg-main/40 border border-brand-primary/20 rounded-[2rem] p-6 flex items-center justify-between shadow-sm">
                   <div className="flex items-center gap-4">
@@ -117,11 +184,11 @@ const TimeSelectionSection = ({ onSelect, selectedTime, schedules = [], loading 
                       </svg>
                     </div>
                     <div>
-                      <p className="text-[10px] uppercase tracking-widest font-black text-brand-primary">Hora seleccionada</p>
+                      <p className="text-[10px] uppercase tracking-widest font-black text-brand-primary">{t('sections.time_selected_label')}</p>
                       <p className="text-brand-text-main dark:text-dark-text-main font-black text-xl md:text-2xl mt-0.5">
-                        {formatTime(selectedTime.label)}
+                        {formatTime(selectedValueStr)}
                         <span className="ml-2 text-[10px] font-black uppercase text-brand-text-secondary/50 dark:text-dark-text-secondary/50 tracking-widest">
-                          {selectedTime.period === 'mañana' ? 'AM' : 'PM'}
+                          {getMeridiem(selectedValueStr)}
                         </span>
                       </p>
                     </div>
@@ -129,11 +196,13 @@ const TimeSelectionSection = ({ onSelect, selectedTime, schedules = [], loading 
                 </div>
               </div>
             ) : (
-              <div className="bg-brand-light/10 dark:bg-dark-bg-main/30 border-2 border-dashed border-brand-border dark:border-dark-border rounded-[2.5rem] p-8 text-center max-w-sm mx-auto w-full">
-                <p className="text-sm text-brand-text-secondary/60 dark:text-dark-text-secondary/60 font-medium italic">
-                  No se ha seleccionado hora aún
-                </p>
-              </div>
+              tipoHora !== 'hora_fija' ? (
+                <div className="bg-brand-light/10 dark:bg-dark-bg-main/30 border-2 border-dashed border-brand-border dark:border-dark-border rounded-[2.5rem] p-8 text-center max-w-sm mx-auto w-full">
+                  <p className="text-sm text-brand-text-secondary/60 dark:text-dark-text-secondary/60 font-medium italic">
+                    {t('sections.time_not_selected')}
+                  </p>
+                </div>
+              ) : null
             )}
             {errors.time && <p className="text-[10px] text-red-500 mt-1 ml-6 font-bold uppercase tracking-wider text-center">{errors.time}</p>}
           </div>
