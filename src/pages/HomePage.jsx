@@ -143,6 +143,16 @@ const HomePage = ({
     return `$${safeAmount.toLocaleString('es-CO', { minimumFractionDigits: 0, maximumFractionDigits: 0 })} COP`;
   };
 
+  const getPlanEmoji = (planName) => {
+    const name = (planName || '').toLowerCase();
+    if (name.includes('sender')) return '🌵';
+    if (name.includes('desiert')) return '🏜️';
+    if (name.includes('atv') || name.includes('cuatrimoto')) return '🏍️';
+    if (name.includes('cabalg')) return '🐎';
+    if (name.includes('camin') || name.includes('trek')) return '🥾';
+    return '✨';
+  };
+
   const changeLanguage = (lng) => {
     i18n.changeLanguage(lng);
   };
@@ -402,14 +412,15 @@ const HomePage = ({
                     <div className="bg-brand-light/30 dark:bg-dark-bg-main/30 rounded-[2rem] p-6 border border-brand-primary/10 h-full space-y-4">
                       <div className="space-y-1">
                         <p className="text-brand-text-main dark:text-dark-text-main font-black text-lg md:text-xl leading-tight">
-                          {reservationData.tour.tour_reserva}
+                          <span className="mr-2">{getPlanEmoji(reservationData.tour.tour_reserva)}</span>
+                          <span className="uppercase">{reservationData.tour.tour_reserva}</span>
                         </p>
                         <div className="flex items-center gap-2">
                           <span className="text-brand-primary font-black text-lg">
                             {formatCurrency(reservationData.tour.precio_por_persona)}
                           </span>
                           <span className="text-[10px] font-bold text-brand-text-secondary/60 dark:text-dark-text-secondary/60 uppercase tracking-wider">
-                            {t('welcome.price_per_person')}
+                            PRECIO POR PERSONA
                           </span>
                         </div>
                       </div>
@@ -417,30 +428,75 @@ const HomePage = ({
                       <div className="pt-3 border-t border-brand-primary/10 space-y-3">
                         <div className="flex justify-between items-center">
                           <span className="text-xs font-bold text-brand-text-secondary dark:text-dark-text-secondary uppercase tracking-widest">
-                            {t('summary.participants')}
+                            PARTICIPANTES
                           </span>
                           <div className="text-right">
                             <p className="text-sm font-black text-brand-text-main dark:text-dark-text-main">
-                              {totalParticipants} {totalParticipants === 1 ? t('summary.person') : t('summary.people')}
+                              {totalParticipants} Persona(s)
                             </p>
                             <p className="text-[9px] font-bold text-brand-text-secondary/50 dark:text-dark-text-secondary/50 italic">
-                              (1 {t('summary.responsible').toLowerCase()} {reservationData.companions.length > 0 ? `+ ${reservationData.companions.length} ${t('summary.companions')}` : ''})
+                              ({totalParticipants} responsable(s))
                             </p>
                           </div>
                         </div>
 
                         <div className="pt-3 border-t-2 border-dashed border-brand-primary/20">
-                          <div className="flex justify-between items-end">
+                          <div className="text-center text-brand-primary/60 font-black tracking-[0.2em] text-[10px] select-none">
+                            ──────────────────────────
+                          </div>
+                          <div className="flex justify-between items-center pt-2">
                             <span className="text-xs font-black text-brand-primary uppercase tracking-[0.2em]">
-                              {t('summary.estimated_total')}
+                              TOTAL ESTIMADO
                             </span>
                             <div className="text-right">
-                              <p className="text-2xl md:text-3xl font-black text-brand-primary leading-none">
-                                {formatCurrency(totalPrice)}
+                              <p className="text-xl md:text-2xl font-black text-brand-primary leading-none">
+                                {formatCOP(totalPrice)}
                               </p>
-                              <span className="text-[10px] font-black text-brand-primary/40 uppercase tracking-widest">
-                                COP
-                              </span>
+                            </div>
+                          </div>
+                          <div className="text-center text-brand-primary/60 font-black tracking-[0.2em] text-[10px] select-none pt-2">
+                            ──────────────────────────
+                          </div>
+
+                          <div className="pt-5 space-y-4">
+                            <p className="text-xs font-black text-brand-text-secondary dark:text-dark-text-secondary uppercase tracking-widest">
+                              INFORMACION DE PAGO
+                            </p>
+
+                            <p className="text-sm text-brand-text-secondary dark:text-dark-text-secondary font-medium leading-relaxed">
+                              Tu reserva se puede confirmar pagando desde el 30% del valor total.
+                            </p>
+
+                            <div className="space-y-2">
+                              <div className="flex items-start justify-between gap-4">
+                                <span className="text-[11px] font-black text-brand-text-secondary dark:text-dark-text-secondary uppercase tracking-wider">
+                                  VALOR TOTAL DE LA RESERVA:
+                                </span>
+                                <span className="text-[11px] font-black text-brand-text-main dark:text-dark-text-main">
+                                  {formatCOP(totalPrice)}
+                                </span>
+                              </div>
+                              <div className="flex items-start justify-between gap-4">
+                                <span className="text-[11px] font-black text-brand-text-secondary dark:text-dark-text-secondary uppercase tracking-wider">
+                                  ABONO MINIMO PARA CONFIRMAR:
+                                </span>
+                                <span className="text-[11px] font-black text-brand-primary">
+                                  {formatCOP(depositAmount)}
+                                </span>
+                              </div>
+                              <div className="flex items-start justify-between gap-4">
+                                <span className="text-[11px] font-black text-brand-text-secondary dark:text-dark-text-secondary uppercase tracking-wider">
+                                  SALDO RESTANTE EL DIA DEL EVENTO:
+                                </span>
+                                <span className="text-[11px] font-black text-brand-text-main dark:text-dark-text-main">
+                                  {formatCOP(remainingAmount)}
+                                </span>
+                              </div>
+                            </div>
+
+                            <div className="text-[11px] text-brand-text-secondary dark:text-dark-text-secondary font-medium leading-relaxed">
+                              <p>El abono del 30% garantiza tu cupo.</p>
+                              <p>El saldo restante se cancela el dia de la actividad.</p>
                             </div>
                           </div>
                         </div>
@@ -545,50 +601,10 @@ const HomePage = ({
                 </p>
               </div>
 
-              <div className="pt-6 border-t border-brand-light dark:border-dark-border">
-                <p className="section-title-premium !ml-0">
-                  {t('summary.payment_block.title')}
+              <div className="pt-6 text-center">
+                <p className="text-sm text-brand-text-main dark:text-dark-text-main font-black">
+                  Deseas proceder con la reserva o tienes alguna duda?
                 </p>
-                <div className="bg-brand-light/30 dark:bg-dark-bg-main/30 rounded-[2rem] p-6 border border-brand-primary/10 space-y-5">
-                  <p className="text-sm md:text-base text-brand-text-secondary dark:text-dark-text-secondary font-medium leading-relaxed">
-                    {t('summary.payment_block.subtitle')}
-                  </p>
-
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between gap-4">
-                      <span className="text-xs md:text-sm font-black text-brand-text-secondary dark:text-dark-text-secondary uppercase tracking-widest">
-                        {t('summary.payment_block.total')}
-                      </span>
-                      <span className="text-sm md:text-base font-black text-brand-text-main dark:text-dark-text-main">
-                        {formatCOP(totalPrice)}
-                      </span>
-                    </div>
-                    <div className="flex items-center justify-between gap-4">
-                      <span className="text-xs md:text-sm font-black text-brand-text-secondary dark:text-dark-text-secondary uppercase tracking-widest">
-                        {t('summary.payment_block.deposit')}
-                      </span>
-                      <span className="text-sm md:text-base font-black text-brand-primary">
-                        {formatCOP(depositAmount)}
-                      </span>
-                    </div>
-                    <div className="flex items-center justify-between gap-4">
-                      <span className="text-xs md:text-sm font-black text-brand-text-secondary dark:text-dark-text-secondary uppercase tracking-widest">
-                        {t('summary.payment_block.remaining')}
-                      </span>
-                      <span className="text-sm md:text-base font-black text-brand-text-main dark:text-dark-text-main">
-                        {formatCOP(remainingAmount)}
-                      </span>
-                    </div>
-                  </div>
-
-                  <p className="text-[11px] text-brand-text-secondary/60 dark:text-dark-text-secondary/60 font-bold italic leading-relaxed">
-                    {t('summary.payment_block.note')}
-                  </p>
-
-                  <p className="text-sm text-brand-text-main dark:text-dark-text-main font-black">
-                    {t('summary.payment_block.question')}
-                  </p>
-                </div>
               </div>
 
               {/* Botón Proceder al Pago */}
