@@ -546,29 +546,44 @@ const HomePage = ({
               </div>
 
               <div className="pt-6 border-t border-brand-light dark:border-dark-border">
-                <div className="bg-brand-light/30 dark:bg-dark-bg-main/30 rounded-[2rem] p-6 border border-brand-primary/15 space-y-4">
-                  <p className="text-sm md:text-base font-black text-brand-primary uppercase tracking-widest">
-                    {t('summary.payment_block.title')}
-                  </p>
-                  <p className="text-sm md:text-base text-brand-text-main dark:text-dark-text-main font-bold">
+                <p className="section-title-premium !ml-0">
+                  {t('summary.payment_block.title')}
+                </p>
+                <div className="bg-brand-light/30 dark:bg-dark-bg-main/30 rounded-[2rem] p-6 border border-brand-primary/10 space-y-5">
+                  <p className="text-sm md:text-base text-brand-text-secondary dark:text-dark-text-secondary font-medium leading-relaxed">
                     {t('summary.payment_block.subtitle')}
                   </p>
 
-                  <div className="space-y-2">
-                    <p className="text-sm md:text-base text-brand-text-secondary dark:text-dark-text-secondary font-bold">
-                      {t('summary.payment_block.total')} <span className="text-brand-text-main dark:text-dark-text-main font-black">{formatCOP(totalPrice)}</span>
-                    </p>
-                    <p className="text-sm md:text-base text-brand-text-secondary dark:text-dark-text-secondary font-bold">
-                      {t('summary.payment_block.deposit')} <span className="text-brand-text-main dark:text-dark-text-main font-black">{formatCOP(depositAmount)}</span>
-                    </p>
-                    <p className="text-sm md:text-base text-brand-text-secondary dark:text-dark-text-secondary font-bold">
-                      {t('summary.payment_block.remaining')} <span className="text-brand-text-main dark:text-dark-text-main font-black">{formatCOP(remainingAmount)}</span>
-                    </p>
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between gap-4">
+                      <span className="text-xs md:text-sm font-black text-brand-text-secondary dark:text-dark-text-secondary uppercase tracking-widest">
+                        {t('summary.payment_block.total')}
+                      </span>
+                      <span className="text-sm md:text-base font-black text-brand-text-main dark:text-dark-text-main">
+                        {formatCOP(totalPrice)}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between gap-4">
+                      <span className="text-xs md:text-sm font-black text-brand-text-secondary dark:text-dark-text-secondary uppercase tracking-widest">
+                        {t('summary.payment_block.deposit')}
+                      </span>
+                      <span className="text-sm md:text-base font-black text-brand-primary">
+                        {formatCOP(depositAmount)}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between gap-4">
+                      <span className="text-xs md:text-sm font-black text-brand-text-secondary dark:text-dark-text-secondary uppercase tracking-widest">
+                        {t('summary.payment_block.remaining')}
+                      </span>
+                      <span className="text-sm md:text-base font-black text-brand-text-main dark:text-dark-text-main">
+                        {formatCOP(remainingAmount)}
+                      </span>
+                    </div>
                   </div>
 
-                  <div className="bg-white/60 dark:bg-dark-bg-card/60 rounded-2xl p-4 border border-brand-border/60 dark:border-dark-border text-sm text-brand-text-secondary dark:text-dark-text-secondary font-medium leading-relaxed">
+                  <p className="text-[11px] text-brand-text-secondary/60 dark:text-dark-text-secondary/60 font-bold italic leading-relaxed">
                     {t('summary.payment_block.note')}
-                  </div>
+                  </p>
 
                   <p className="text-sm text-brand-text-main dark:text-dark-text-main font-black">
                     {t('summary.payment_block.question')}
