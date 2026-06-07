@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import PhoneInputPkg from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';

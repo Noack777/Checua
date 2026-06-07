@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useRef, useEffect } from 'react';
+import { useState, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 
 /**
@@ -218,14 +218,6 @@ const DateSelectionSection = ({ onSelect, selectedDate, errors, sectionRef, avai
       .sort((a, b) => a.date.getTime() - b.date.getTime())
   }, [availableDates, tipoFecha])
 
-  // Lógica para backend
-  const dateSelectionData = selectedDate ? {
-    fecha_reserva: formatDateISO(selectedDate),
-    es_fin_de_semana: isWeekend(selectedDate),
-    es_festivo_colombia: isHoliday(selectedDate),
-    puede_variar_precio: !isWeekend(selectedDate) && !isHoliday(selectedDate)
-  } : null;
-
   const renderMonth = (monthDate, monthIdx) => {
     const year = monthDate.getFullYear();
     const month = monthDate.getMonth();
@@ -246,7 +238,6 @@ const DateSelectionSection = ({ onSelect, selectedDate, errors, sectionRef, avai
     // Días del mes
     for (let day = 1; day <= daysInMonth; day++) {
       const date = new Date(year, month, day);
-      const past = isPast(date);
       const holiday = isHoliday(date);
       const weekend = isWeekend(date);
       const selected = selectedDate && date.toDateString() === selectedDate.toDateString();
@@ -418,15 +409,15 @@ const DateSelectionSection = ({ onSelect, selectedDate, errors, sectionRef, avai
           {selectedDate ? (
             <div className="animate-in fade-in slide-in-from-top-2 duration-300">
               <div className="bg-brand-light/30 dark:bg-dark-bg-main/40 border border-brand-primary/20 rounded-[2rem] p-6 flex flex-col md:flex-row items-center justify-between gap-4">
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-4 min-w-0">
                   <div className="w-12 h-12 bg-white dark:bg-dark-bg-card rounded-2xl border border-brand-primary/10 shadow-sm flex items-center justify-center text-brand-primary">
                     <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                     </svg>
                   </div>
-                  <div>
+                  <div className="min-w-0">
                     <p className="text-[10px] uppercase tracking-widest font-black text-brand-primary">Fecha seleccionada</p>
-                    <p className="text-brand-text-main dark:text-dark-text-main font-bold text-sm md:text-base capitalize">
+                    <p className="text-brand-text-main dark:text-dark-text-main font-bold text-sm md:text-base capitalize break-words whitespace-normal">
                       {formatDateLegible(selectedDate)}
                     </p>
                   </div>

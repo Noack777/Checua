@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import ReservationContactSection from '../components/ReservationContactSection';
 import TourSelectionSection from '../components/TourSelectionSection';
@@ -143,6 +143,30 @@ const HomePage = ({
     return `$${safeAmount.toLocaleString('es-CO', { minimumFractionDigits: 0, maximumFractionDigits: 0 })} COP`;
   };
 
+  const getTimeParts = (timeStr) => {
+    if (!timeStr) return null;
+    const raw = String(timeStr).trim();
+    const [h, m] = raw.split(':');
+    const hour = Number.parseInt(h, 10);
+    const minute = Number.parseInt(m ?? '0', 10);
+    if (Number.isNaN(hour) || Number.isNaN(minute)) return null;
+    return { hour, minute };
+  };
+
+  const formatTime12h = (timeStr) => {
+    const parts = getTimeParts(timeStr);
+    if (!parts) return '';
+    const hour12 = parts.hour % 12 === 0 ? 12 : parts.hour % 12;
+    const mm = String(parts.minute).padStart(2, '0');
+    return `${hour12}:${mm}`;
+  };
+
+  const getMeridiem = (timeStr) => {
+    const parts = getTimeParts(timeStr);
+    if (!parts) return '';
+    return parts.hour < 12 ? 'AM' : 'PM';
+  };
+
   const getPlanEmoji = (planName) => {
     const name = (planName || '').toLowerCase();
     if (name.includes('sender')) return '🌵';
@@ -159,17 +183,19 @@ const HomePage = ({
 
   return (
     <div className={`min-h-screen bg-gradient-to-b from-white to-brand-light/40 dark:from-dark-bg-main dark:to-dark-bg-main py-8 px-4 sm:px-6 lg:px-8 flex flex-col items-center transition-colors duration-300 ${isModalOpen ? 'overflow-hidden h-screen' : ''}`}>
-      <WelcomeModal 
-        isOpen={isModalOpen} 
-        onComplete={onModalComplete} 
-        onClose={onCloseModal}
-        tours={tours}
-        loading={loadingData}
-        initialPhone={reservationData.contact.telefono_cliente}
-        initialTourId={reservationData.tour.id_plan}
-        theme={theme}
-        toggleTheme={toggleTheme}
-      />
+      {isModalOpen ? (
+        <WelcomeModal 
+          isOpen={isModalOpen} 
+          onComplete={onModalComplete} 
+          onClose={onCloseModal}
+          tours={tours}
+          loading={loadingData}
+          initialPhone={reservationData.contact.telefono_cliente}
+          initialTourId={reservationData.tour.id_plan}
+          theme={theme}
+          toggleTheme={toggleTheme}
+        />
+      ) : null}
       
       {/* Contenido principal condicional: activar/desactivar ventana principal */}
       {!isModalOpen && (
@@ -177,7 +203,7 @@ const HomePage = ({
           {/* Header Titles */}
           <div className="w-full max-w-xl text-center mb-10 pt-16 md:pt-20 relative">
         {/* Theme & Language Selectors */}
-        <div className="absolute top-0 right-0 flex items-center gap-4">
+        <div className="flex items-center justify-center gap-3 flex-wrap sm:absolute sm:top-0 sm:right-0">
           {/* Theme Toggle */}
           <button
             onClick={toggleTheme}
@@ -372,22 +398,27 @@ const HomePage = ({
                 <div className="space-y-4">
                   <p className="section-title-premium !ml-0">{t('summary.responsible')}</p>
                   <div className="bg-brand-light/30 dark:bg-dark-bg-main/30 rounded-[2rem] p-6 border border-brand-primary/10">
-                    <p className="text-brand-text-main dark:text-dark-text-main font-black text-lg md:text-xl mb-3">{reservationData.contact.nombre_jefe_reserva}</p>
+                    <p className="text-brand-text-main dark:text-dark-text-main font-black text-lg md:text-xl mb-3 break-words whitespace-normal">
+                      {reservationData.contact.nombre_jefe_reserva}
+                    </p>
                     <div className="grid sm:grid-cols-2 gap-4">
                       <div className="space-y-2">
-                        <p className="text-brand-text-secondary dark:text-dark-text-secondary text-sm flex items-center gap-2">
-                          <span className="w-1.5 h-1.5 bg-brand-primary rounded-full"></span>
-                          <span className="font-bold">{reservationData.contact.tipo_documento}:</span> {reservationData.contact.numero_documento}
+                        <p className="text-brand-text-secondary dark:text-dark-text-secondary text-sm flex items-start gap-2 min-w-0">
+                          <span className="w-1.5 h-1.5 bg-brand-primary rounded-full mt-2 shrink-0"></span>
+                          <span className="font-bold shrink-0">{reservationData.contact.tipo_documento}:</span>
+                          <span className="min-w-0 break-all">{reservationData.contact.numero_documento}</span>
                         </p>
-                        <p className="text-brand-text-secondary dark:text-dark-text-secondary text-sm flex items-center gap-2">
-                          <span className="w-1.5 h-1.5 bg-brand-primary rounded-full"></span>
-                          <span className="font-bold">{t('welcome.phone_label').replace('*', '')}:</span> {reservationData.contact.telefono_cliente}
+                        <p className="text-brand-text-secondary dark:text-dark-text-secondary text-sm flex items-start gap-2 min-w-0">
+                          <span className="w-1.5 h-1.5 bg-brand-primary rounded-full mt-2 shrink-0"></span>
+                          <span className="font-bold shrink-0">{t('welcome.phone_label').replace('*', '')}:</span>
+                          <span className="min-w-0 break-all">{reservationData.contact.telefono_cliente}</span>
                         </p>
                       </div>
                       <div className="space-y-2">
-                        <p className="text-brand-text-secondary dark:text-dark-text-secondary text-sm flex items-center gap-2">
-                          <span className="w-1.5 h-1.5 bg-brand-primary rounded-full"></span>
-                          <span className="font-bold">{t('sections.email')}:</span> {reservationData.contact.correo_contacto}
+                        <p className="text-brand-text-secondary dark:text-dark-text-secondary text-sm flex items-start gap-2 min-w-0">
+                          <span className="w-1.5 h-1.5 bg-brand-primary rounded-full mt-2 shrink-0"></span>
+                          <span className="font-bold shrink-0">{t('sections.email')}:</span>
+                          <span className="min-w-0 break-all">{reservationData.contact.correo_contacto}</span>
                         </p>
                         <div className="flex gap-4 pt-1">
                           <p className="text-brand-text-secondary dark:text-dark-text-secondary text-xs">
@@ -406,12 +437,12 @@ const HomePage = ({
                 </div>
 
                 {/* Detalles de la Experiencia y Fecha */}
-                <div className="grid md:grid-cols-2 gap-8 md:gap-10">
+                <div className="grid lg:grid-cols-2 gap-8 lg:gap-10 items-start">
                   <div className="space-y-4">
                     <p className="section-title-premium !ml-0">{t('summary.experience')}</p>
                     <div className="bg-brand-light/30 dark:bg-dark-bg-main/30 rounded-[2rem] p-6 border border-brand-primary/10 h-full space-y-4">
                       <div className="space-y-1">
-                        <p className="text-brand-text-main dark:text-dark-text-main font-black text-lg md:text-xl leading-tight">
+                        <p className="text-brand-text-main dark:text-dark-text-main font-black text-base sm:text-lg md:text-xl leading-snug break-words whitespace-normal">
                           <span className="mr-2">{getPlanEmoji(reservationData.tour.tour_reserva)}</span>
                           <span className="uppercase">{reservationData.tour.tour_reserva}</span>
                         </p>
@@ -441,7 +472,7 @@ const HomePage = ({
                         </div>
 
                         <div className="pt-3 border-t-2 border-dashed border-brand-primary/20">
-                          <div className="text-center text-brand-primary/60 font-black tracking-[0.2em] text-[10px] select-none">
+                          <div className="text-center text-brand-primary/60 font-black tracking-[0.2em] text-[10px] select-none whitespace-nowrap overflow-hidden">
                             ──────────────────────────
                           </div>
                           <div className="flex justify-between items-center pt-2">
@@ -454,7 +485,7 @@ const HomePage = ({
                               </p>
                             </div>
                           </div>
-                          <div className="text-center text-brand-primary/60 font-black tracking-[0.2em] text-[10px] select-none pt-2">
+                          <div className="text-center text-brand-primary/60 font-black tracking-[0.2em] text-[10px] select-none pt-2 whitespace-nowrap overflow-hidden">
                             ──────────────────────────
                           </div>
 
@@ -468,27 +499,27 @@ const HomePage = ({
                             </p>
 
                             <div className="space-y-2">
-                              <div className="flex items-start justify-between gap-4">
-                                <span className="text-[11px] font-black text-brand-text-secondary dark:text-dark-text-secondary uppercase tracking-wider">
+                              <div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-3">
+                                <span className="text-[10px] sm:text-[11px] font-black text-brand-text-secondary dark:text-dark-text-secondary uppercase tracking-wider break-words leading-snug">
                                   VALOR TOTAL DE LA RESERVA:
                                 </span>
-                                <span className="text-[11px] font-black text-brand-text-main dark:text-dark-text-main">
+                                <span className="text-[11px] font-black text-brand-text-main dark:text-dark-text-main whitespace-nowrap">
                                   {formatCOP(totalPrice)}
                                 </span>
                               </div>
-                              <div className="flex items-start justify-between gap-4">
-                                <span className="text-[11px] font-black text-brand-text-secondary dark:text-dark-text-secondary uppercase tracking-wider">
+                              <div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-3">
+                                <span className="text-[10px] sm:text-[11px] font-black text-brand-text-secondary dark:text-dark-text-secondary uppercase tracking-wider break-words leading-snug">
                                   ABONO MINIMO PARA CONFIRMAR:
                                 </span>
-                                <span className="text-[11px] font-black text-brand-primary">
+                                <span className="text-[11px] font-black text-brand-primary whitespace-nowrap">
                                   {formatCOP(depositAmount)}
                                 </span>
                               </div>
-                              <div className="flex items-start justify-between gap-4">
-                                <span className="text-[11px] font-black text-brand-text-secondary dark:text-dark-text-secondary uppercase tracking-wider">
+                              <div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-3">
+                                <span className="text-[10px] sm:text-[11px] font-black text-brand-text-secondary dark:text-dark-text-secondary uppercase tracking-wider break-words leading-snug">
                                   SALDO RESTANTE EL DIA DEL EVENTO:
                                 </span>
-                                <span className="text-[11px] font-black text-brand-text-main dark:text-dark-text-main">
+                                <span className="text-[11px] font-black text-brand-text-main dark:text-dark-text-main whitespace-nowrap">
                                   {formatCOP(remainingAmount)}
                                 </span>
                               </div>
@@ -504,15 +535,22 @@ const HomePage = ({
                     </div>
                   </div>
                   
-                  <div className="space-y-4 pt-4 md:pt-0">
+                  <div className="space-y-4">
                     <p className="section-title-premium !ml-0">{t('summary.date_time')}</p>
-                    <div className="bg-brand-light/30 dark:bg-dark-bg-main/30 rounded-[2rem] p-6 border border-brand-primary/10 h-full flex flex-col justify-center">
-                      <p className="text-brand-text-main dark:text-dark-text-main font-black text-base md:text-lg capitalize mb-1">
+                    <div className="bg-brand-light/30 dark:bg-dark-bg-main/30 rounded-[2rem] p-6 border border-brand-primary/10 space-y-3 self-start">
+                      <p className="text-brand-text-main dark:text-dark-text-main font-black text-sm sm:text-base md:text-lg capitalize leading-snug break-words whitespace-normal">
                         {reservationData.date.rawDate?.toLocaleDateString(i18n.language === 'en' ? 'en-US' : 'es-ES', { weekday: 'long', day: 'numeric', month: 'long' })}
                       </p>
-                      <p className="text-brand-primary font-black text-xl">
-                        {reservationData.time.label}
-                      </p>
+                      {reservationData.time?.label ? (
+                        <div className="flex items-baseline gap-2 flex-wrap">
+                          <p className="text-brand-primary font-black text-xl md:text-2xl leading-none">
+                            {formatTime12h(reservationData.time.label)}
+                          </p>
+                          <span className="text-[10px] font-black uppercase text-brand-text-secondary/50 dark:text-dark-text-secondary/50 tracking-widest">
+                            {getMeridiem(reservationData.time.label)}
+                          </span>
+                        </div>
+                      ) : null}
                       <p className="text-[10px] text-brand-text-secondary/60 dark:text-dark-text-secondary/60 font-black uppercase mt-2 tracking-widest">
                         {reservationData.date.puede_variar_precio ? "⚠️ " + t('summary.subject_to_availability') : "✅ " + t('summary.confirmed')}
                       </p>
@@ -562,17 +600,20 @@ const HomePage = ({
                             </div>
                             
                             <div className="grid sm:grid-cols-2 gap-y-2 gap-x-4">
-                              <p className="text-brand-text-secondary dark:text-dark-text-secondary text-xs flex items-center gap-2">
-                                <span className="w-1 h-1 bg-brand-primary/40 rounded-full"></span>
-                                <span className="font-bold">{comp.tipo_documento}:</span> {comp.numero_documento}
+                              <p className="text-brand-text-secondary dark:text-dark-text-secondary text-xs flex items-start gap-2 min-w-0">
+                                <span className="w-1 h-1 bg-brand-primary/40 rounded-full mt-1.5 shrink-0"></span>
+                                <span className="font-bold shrink-0">{comp.tipo_documento}:</span>
+                                <span className="min-w-0 break-all">{comp.numero_documento}</span>
                               </p>
-                              <p className="text-brand-text-secondary dark:text-dark-text-secondary text-xs flex items-center gap-2">
-                                <span className="w-1 h-1 bg-brand-primary/40 rounded-full"></span>
-                                <span className="font-bold">Tel:</span> {comp.telefono}
+                              <p className="text-brand-text-secondary dark:text-dark-text-secondary text-xs flex items-start gap-2 min-w-0">
+                                <span className="w-1 h-1 bg-brand-primary/40 rounded-full mt-1.5 shrink-0"></span>
+                                <span className="font-bold shrink-0">Tel:</span>
+                                <span className="min-w-0 break-all">{comp.telefono}</span>
                               </p>
-                              <p className="text-brand-text-secondary dark:text-dark-text-secondary text-xs flex items-center gap-2 sm:col-span-2 truncate">
-                                <span className="w-1 h-1 bg-brand-primary/40 rounded-full"></span>
-                                <span className="font-bold">Email:</span> {comp.correo || '---'}
+                              <p className="text-brand-text-secondary dark:text-dark-text-secondary text-xs flex items-start gap-2 sm:col-span-2 min-w-0">
+                                <span className="w-1 h-1 bg-brand-primary/40 rounded-full mt-1.5 shrink-0"></span>
+                                <span className="font-bold shrink-0">Email:</span>
+                                <span className="min-w-0 break-all">{comp.correo || '---'}</span>
                               </p>
                             </div>
 

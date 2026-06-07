@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PAYMENT_CONFIG } from '../config/paymentConfig';
 
@@ -47,7 +47,7 @@ const PaymentModal = ({ isOpen, onClose, experience, participants, totalAmount, 
             <p className="text-xs font-black text-brand-primary uppercase tracking-widest opacity-60">
               {t('summary.payment.experience')}
             </p>
-            <p className="text-brand-text-main dark:text-dark-text-main font-black text-base md:text-lg leading-tight">
+            <p className="text-brand-text-main dark:text-dark-text-main font-black text-base md:text-lg leading-tight break-words whitespace-normal">
               {experience}
             </p>
             <div className="flex justify-between items-end pt-2 border-t border-brand-primary/10">
@@ -82,13 +82,13 @@ const PaymentModal = ({ isOpen, onClose, experience, participants, totalAmount, 
                   {t('summary.payment.bancolombia_title')}
                 </h3>
               </div>
-              <div className="flex items-center justify-between bg-brand-light/20 dark:bg-dark-bg-main/20 p-3 rounded-2xl">
-                <span className="font-mono font-bold text-brand-text-main dark:text-dark-text-main">
+              <div className="flex items-center justify-between gap-3 bg-brand-light/20 dark:bg-dark-bg-main/20 p-3 rounded-2xl min-w-0">
+                <span className="font-mono font-bold text-brand-text-main dark:text-dark-text-main min-w-0 break-all">
                   {PAYMENT_CONFIG.bancolombia.account_number}
                 </span>
                 <button 
                   onClick={() => handleCopy(PAYMENT_CONFIG.bancolombia.account_number, 'bc')}
-                  className="px-4 py-2 bg-brand-primary text-white text-[10px] font-black uppercase tracking-widest rounded-xl hover:scale-105 transition-transform"
+                  className="px-4 py-2 bg-brand-primary text-white text-[10px] font-black uppercase tracking-widest rounded-xl hover:scale-105 transition-transform shrink-0"
                 >
                   {copiedField === 'bc' ? t('summary.payment.copied') : t('summary.payment.copy_number')}
                 </button>
@@ -110,13 +110,13 @@ const PaymentModal = ({ isOpen, onClose, experience, participants, totalAmount, 
                   {t('summary.payment.nequi_title')}
                 </h3>
               </div>
-              <div className="flex items-center justify-between bg-brand-light/20 dark:bg-dark-bg-main/20 p-3 rounded-2xl">
-                <span className="font-mono font-bold text-brand-text-main dark:text-dark-text-main">
+              <div className="flex items-center justify-between gap-3 bg-brand-light/20 dark:bg-dark-bg-main/20 p-3 rounded-2xl min-w-0">
+                <span className="font-mono font-bold text-brand-text-main dark:text-dark-text-main min-w-0 break-all">
                   {PAYMENT_CONFIG.nequi.number}
                 </span>
                 <button 
                   onClick={() => handleCopy(PAYMENT_CONFIG.nequi.number, 'nq')}
-                  className="px-4 py-2 bg-brand-primary text-white text-[10px] font-black uppercase tracking-widest rounded-xl hover:scale-105 transition-transform"
+                  className="px-4 py-2 bg-brand-primary text-white text-[10px] font-black uppercase tracking-widest rounded-xl hover:scale-105 transition-transform shrink-0"
                 >
                   {copiedField === 'nq' ? t('summary.payment.copied') : t('summary.payment.copy_number')}
                 </button>
@@ -138,8 +138,8 @@ const PaymentModal = ({ isOpen, onClose, experience, participants, totalAmount, 
                   {t('summary.payment.breb_title')}
                 </h3>
               </div>
-              <div className="flex items-center justify-between bg-brand-light/20 dark:bg-dark-bg-main/20 p-3 rounded-2xl">
-                <span className="font-mono font-bold text-brand-text-main dark:text-dark-text-main truncate mr-2">
+              <div className="flex items-center justify-between gap-3 bg-brand-light/20 dark:bg-dark-bg-main/20 p-3 rounded-2xl min-w-0">
+                <span className="font-mono font-bold text-brand-text-main dark:text-dark-text-main min-w-0 break-all">
                   {PAYMENT_CONFIG.breb.key}
                 </span>
                 <button 

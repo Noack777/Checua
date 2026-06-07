@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { getTours, getPlanDates, getPlanHours } from './services/tourService';

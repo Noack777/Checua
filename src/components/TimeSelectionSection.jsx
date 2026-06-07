@@ -1,53 +1,53 @@
-import React, { useEffect, useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+
+const getTimeValueStr = (timeValue) => {
+  if (!timeValue) return '';
+  if (typeof timeValue === 'string') return timeValue;
+  return timeValue.value || timeValue.hora_reserva || timeValue.hora || timeValue.label || '';
+};
+
+const formatTime = (timeStr) => {
+  const raw = getTimeValueStr(timeStr);
+  if (!raw) return "";
+  const parts = raw.split(':');
+  if (parts.length >= 2) return `${parts[0]}:${parts[1]}`;
+  return raw;
+};
+
+const getHourNumber = (timeStr) => {
+  const raw = getTimeValueStr(timeStr);
+  const [h] = (raw || '').split(':');
+  const hour = Number.parseInt(h, 10);
+  return Number.isNaN(hour) ? null : hour;
+};
+
+const getMeridiem = (timeStr) => {
+  const hour = getHourNumber(timeStr);
+  if (hour === null) return '';
+  return hour < 12 ? 'AM' : 'PM';
+};
+
+const getPeriod = (timeStr) => {
+  const hour = getHourNumber(timeStr);
+  if (hour === null) return '';
+  return hour < 12 ? 'mañana' : 'tarde';
+};
 
 const TimeSelectionSection = ({ onSelect, selectedTime, schedules = [], loading = false, errors, sectionRef, tipoHora = 'varias_horas' }) => {
   const { t } = useTranslation();
   
-  // Si tipoHora es 'sin_hora', no renderizamos nada
-  if (tipoHora === 'sin_hora') return null;
-
-  const getTimeValueStr = (timeValue) => {
-    if (!timeValue) return '';
-    if (typeof timeValue === 'string') return timeValue;
-    return timeValue.value || timeValue.hora_reserva || timeValue.hora || timeValue.label || '';
-  };
-
-  const formatTime = (timeStr) => {
-    const raw = getTimeValueStr(timeStr);
-    if (!raw) return "";
-    const parts = raw.split(':');
-    if (parts.length >= 2) return `${parts[0]}:${parts[1]}`;
-    return raw;
-  };
-
-  const getHourNumber = (timeStr) => {
-    const raw = getTimeValueStr(timeStr);
-    const [h] = (raw || '').split(':');
-    const hour = Number.parseInt(h, 10);
-    return Number.isNaN(hour) ? null : hour;
-  };
-
-  const getMeridiem = (timeStr) => {
-    const hour = getHourNumber(timeStr);
-    if (hour === null) return '';
-    return hour < 12 ? 'AM' : 'PM';
-  };
-
-  const getPeriod = (timeStr) => {
-    const hour = getHourNumber(timeStr);
-    if (hour === null) return '';
-    return hour < 12 ? 'mañana' : 'tarde';
-  };
+  const shouldRender = tipoHora !== 'sin_hora';
 
   const normalizedSchedules = useMemo(() => {
+    if (!shouldRender) return [];
     return (schedules || []).map((s) => {
       const valueStr = getTimeValueStr(s);
       const labelStr = s?.label || valueStr;
       const period = s?.period || getPeriod(valueStr);
       return { ...s, value: s?.value || valueStr, label: labelStr, period };
     });
-  }, [schedules]);
+  }, [schedules, shouldRender]);
 
   const morningSchedules = normalizedSchedules.filter(s => s.period === 'mañana');
   const afternoonSchedules = normalizedSchedules.filter(s => s.period === 'tarde');
@@ -57,17 +57,20 @@ const TimeSelectionSection = ({ onSelect, selectedTime, schedules = [], loading 
   const fixedValueStr = fixedSchedule ? getTimeValueStr(fixedSchedule) : '';
 
   useEffect(() => {
+    if (!shouldRender) return;
     if (tipoHora !== 'hora_fija') return;
     if (loading) return;
     if (!fixedSchedule) return;
     if (selectedValueStr && selectedValueStr === fixedValueStr) return;
     onSelect(fixedSchedule);
-  }, [fixedSchedule, fixedValueStr, loading, onSelect, selectedValueStr, tipoHora]);
+  }, [fixedSchedule, fixedValueStr, loading, onSelect, selectedValueStr, shouldRender, tipoHora]);
 
   const handleTimeSelect = (time) => {
     if (tipoHora === 'hora_fija') return; // No permitir cambios si es hora fija
     onSelect(time);
   };
+
+  if (!shouldRender) return null;
 
   return (
     <div 
@@ -85,7 +88,7 @@ const TimeSelectionSection = ({ onSelect, selectedTime, schedules = [], loading 
             </div>
           ) : tipoHora === 'hora_fija' ? (
             fixedSchedule ? (
-              <div className="max-w-sm mx-auto w-full">
+              <div className="w-full">
                 <div className="bg-brand-light/30 dark:bg-dark-bg-main/40 border border-brand-primary/20 rounded-[2rem] p-6 shadow-sm space-y-3">
                   <p className="text-[10px] uppercase tracking-widest font-black text-brand-primary">
                     {t('sections.fixed_time_label')}
@@ -115,7 +118,7 @@ const TimeSelectionSection = ({ onSelect, selectedTime, schedules = [], loading 
                     <span className="text-[10px] font-black uppercase tracking-widest text-brand-text-secondary/60 dark:text-dark-text-secondary/60 whitespace-nowrap">{t('sections.morning')}</span>
                     <div className="h-[1px] flex-1 bg-brand-border/60 dark:bg-dark-border/60"></div>
                   </div>
-                  <div className="grid grid-cols-2 gap-3 max-w-sm mx-auto w-full">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 w-full">
                     {morningSchedules.map((time) => (
                       <button
                         key={time.id || time.value || time.hora || time.label}
@@ -144,7 +147,7 @@ const TimeSelectionSection = ({ onSelect, selectedTime, schedules = [], loading 
                     <span className="text-[10px] font-black uppercase tracking-widest text-brand-text-secondary/60 dark:text-dark-text-secondary/60 whitespace-nowrap">{t('sections.afternoon')}</span>
                     <div className="h-[1px] flex-1 bg-brand-border/60 dark:bg-dark-border/60"></div>
                   </div>
-                  <div className="grid grid-cols-2 gap-3 max-w-sm mx-auto w-full">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 w-full">
                     {afternoonSchedules.map((time) => (
                       <button
                         key={time.id || time.value || time.hora || time.label}
@@ -175,7 +178,7 @@ const TimeSelectionSection = ({ onSelect, selectedTime, schedules = [], loading 
           {/* Selection Summary Card */}
           <div className="space-y-4">
             {tipoHora !== 'hora_fija' && selectedValueStr ? (
-              <div className="animate-in fade-in slide-in-from-top-2 duration-300 max-w-sm mx-auto w-full">
+              <div className="animate-in fade-in slide-in-from-top-2 duration-300 w-full">
                 <div className="bg-brand-light/30 dark:bg-dark-bg-main/40 border border-brand-primary/20 rounded-[2rem] p-6 flex items-center justify-between shadow-sm">
                   <div className="flex items-center gap-4">
                     <div className="w-12 h-12 bg-white dark:bg-dark-bg-card rounded-2xl border border-brand-primary/10 shadow-sm flex items-center justify-center text-brand-primary">
@@ -197,7 +200,7 @@ const TimeSelectionSection = ({ onSelect, selectedTime, schedules = [], loading 
               </div>
             ) : (
               tipoHora !== 'hora_fija' ? (
-                <div className="bg-brand-light/10 dark:bg-dark-bg-main/30 border-2 border-dashed border-brand-border dark:border-dark-border rounded-[2.5rem] p-8 text-center max-w-sm mx-auto w-full">
+                <div className="bg-brand-light/10 dark:bg-dark-bg-main/30 border-2 border-dashed border-brand-border dark:border-dark-border rounded-[2.5rem] p-8 text-center w-full">
                   <p className="text-sm text-brand-text-secondary/60 dark:text-dark-text-secondary/60 font-medium italic">
                     {t('sections.time_not_selected')}
                   </p>

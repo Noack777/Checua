@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import PhoneInputPkg from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
@@ -12,7 +12,6 @@ const WelcomeModal = ({ isOpen, onComplete, onClose, tours = [], loading = false
   const [phone, setPhone] = useState(initialPhone);
   const [selectedTourId, setSelectedTourId] = useState(initialTourId);
   const [acceptedTerms, setAcceptedTerms] = useState(false);
-  const [isValid, setIsValid] = useState(false);
   const [isTourDropdownOpen, setIsTourDropdownOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const dropdownRef = useRef(null);
@@ -20,12 +19,19 @@ const WelcomeModal = ({ isOpen, onComplete, onClose, tours = [], loading = false
   const phoneContainerRef = useRef(null);
   const [phoneDropdownPosition, setPhoneDropdownPosition] = useState('down');
 
-  // Asegurar que si initialTourId cambia (ej: por precarga de cliente), se actualice el estado local
-  useEffect(() => {
-    if (initialTourId) {
-      setSelectedTourId(initialTourId);
+  const phoneWithPlus = useMemo(() => {
+    if (!phone) return '';
+    return phone.startsWith('+') ? phone : `+${phone}`;
+  }, [phone]);
+
+  const isValid = useMemo(() => {
+    if (!phoneWithPlus) return false;
+    try {
+      return isValidPhoneNumber(phoneWithPlus);
+    } catch {
+      return false;
     }
-  }, [initialTourId]);
+  }, [phoneWithPlus]);
 
   // Detectar espacio para el dropdown de teléfono
   const handlePhoneDropdownClick = () => {
@@ -44,7 +50,7 @@ const WelcomeModal = ({ isOpen, onComplete, onClose, tours = [], loading = false
   };
 
   // Filtrado de tours optimizado
-  const filteredTours = React.useMemo(() => {
+  const filteredTours = useMemo(() => {
     if (!searchTerm.trim()) return tours;
     
     const term = searchTerm.toLowerCase().trim();
@@ -66,23 +72,10 @@ const WelcomeModal = ({ isOpen, onComplete, onClose, tours = [], loading = false
   }, [isTourDropdownOpen]);
 
   // Estados para la verificación del cliente
-  const [clientStatus, setClientStatus] = useState('idle'); // idle, checking, found, created, error
+  const [clientStatus, setClientStatus] = useState(initialPhone ? 'found' : 'idle'); // idle, checking, found, created, error
   const [clientData, setClientData] = useState(null);
-  const [clientError, setClientError] = useState(null);
   const debounceTimer = useRef(null);
-
-  // Sincronizar estados locales con props cuando el modal se abre
-  useEffect(() => {
-    if (isOpen) {
-      if (initialPhone) {
-        setPhone(initialPhone);
-        const phoneWithPlus = initialPhone.startsWith('+') ? initialPhone : `+${initialPhone}`;
-        setIsValid(isValidPhoneNumber(phoneWithPlus));
-        setClientStatus('found'); // Asumimos found porque ya pasó por aquí
-      }
-      if (initialTourId) setSelectedTourId(initialTourId);
-    }
-  }, [isOpen, initialPhone, initialTourId]);
+  const latestLookupRef = useRef('');
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -94,38 +87,49 @@ const WelcomeModal = ({ isOpen, onComplete, onClose, tours = [], loading = false
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  useEffect(() => {
-    // libphonenumber-js needs the + prefix for validation
-    const phoneWithPlus = phone.startsWith('+') ? phone : `+${phone}`;
-    const valid = phone ? isValidPhoneNumber(phoneWithPlus) : false;
-    setIsValid(valid);
+  const handlePhoneChange = (nextPhone) => {
+    setPhone(nextPhone);
 
-    // Lógica de Debounce para búsqueda en Supabase
     if (debounceTimer.current) clearTimeout(debounceTimer.current);
 
-    if (valid) {
-      setClientStatus('checking');
-      debounceTimer.current = setTimeout(async () => {
-        const { data, status, error } = await findOrCreateClient(phoneWithPlus);
-        if (status === 'error') {
-          setClientStatus('error');
-          setClientError(error.message);
-        } else {
-          setClientStatus(status);
-          setClientData(data);
-          setClientError(null);
+    const nextPhoneWithPlus = nextPhone ? (String(nextPhone).startsWith('+') ? String(nextPhone) : `+${nextPhone}`) : '';
+    let nextIsValid = false;
+    if (nextPhoneWithPlus) {
+      try {
+        nextIsValid = isValidPhoneNumber(nextPhoneWithPlus);
+      } catch {
+        nextIsValid = false;
+      }
+    }
 
-          // Si el cliente ya tiene un plan asignado, lo precargamos
-          if (data && data.id_plan) {
-            setSelectedTourId(data.id_plan.toString());
-          }
-        }
-      }, 800);
-    } else {
+    if (!nextIsValid) {
       setClientStatus('idle');
       setClientData(null);
+      latestLookupRef.current = '';
+      return;
     }
-  }, [phone]);
+
+    setClientStatus('checking');
+    latestLookupRef.current = nextPhoneWithPlus;
+    debounceTimer.current = setTimeout(async () => {
+      const lookupPhone = latestLookupRef.current;
+      if (!lookupPhone) return;
+      const { data, status } = await findOrCreateClient(lookupPhone);
+      if (latestLookupRef.current !== lookupPhone) return;
+
+      if (status === 'error') {
+        setClientStatus('error');
+        return;
+      }
+
+      setClientStatus(status);
+      setClientData(data);
+
+      if (data && data.id_plan) {
+        setSelectedTourId(data.id_plan.toString());
+      }
+    }, 800);
+  };
 
   // El botón se activa solo si hay teléfono válido, plan seleccionado y términos aceptados
   const canContinue = acceptedTerms && isValid && selectedTourId;
@@ -133,7 +137,6 @@ const WelcomeModal = ({ isOpen, onComplete, onClose, tours = [], loading = false
   const handleContinue = async () => {
     if (canContinue) {
       const tour = tours.find(t => t.id.toString() === selectedTourId);
-      const phoneWithPlus = phone.startsWith('+') ? phone : `+${phone}`;
 
       // Actualizar el plan del cliente en la base de datos si es necesario
       try {
@@ -253,7 +256,7 @@ const WelcomeModal = ({ isOpen, onComplete, onClose, tours = [], loading = false
                 <PhoneInput
                   country={'co'}
                   value={phone}
-                  onChange={setPhone}
+                  onChange={handlePhoneChange}
                   enableSearch={true}
                   searchPlaceholder={t('welcome.search_placeholder')}
                   searchNotFound={t('welcome.search_not_found') || "..."}
