@@ -75,6 +75,9 @@
     "verified": "Verified",
     "verified_hint": "This number was verified at the beginning.",
     "email": "Email",
+    "birth_date": "Date of birth",
+    "age": "Age",
+    "age_suffix": "yrs",
     "rh": "RH",
     "weight": "Weight (kg)",
     "height": "Height (m)"
@@ -152,6 +155,9 @@
     "required_weight": "Weight is required",
     "invalid_weight": "Invalid weight",
     "required_height": "Height is required",
-    "invalid_height": "Invalid height"
+    "invalid_height": "Invalid height",
+    "required_birth_date": "Date of birth is required",
+    "invalid_birth_date": "Invalid date of birth",
+    "invalid_age": "Age must be between 1 and 120 years"
   }
 }

@@ -207,3 +207,205 @@ body {
   49% { transform: scale(1.3); }
   83% { transform: scale(1.3); }
 }
+
+/* ============================
+   Estilos Premium para Date Input
+   ============================ */
+.input-premium[type="date"] {
+  position: relative;
+  color-scheme: light dark;
+  min-height: 58px;
+}
+
+.input-premium[type="date"]::-webkit-datetime-edit {
+  padding: 0;
+}
+
+.input-premium[type="date"]::-webkit-datetime-edit-fields-wrapper {
+  padding: 0;
+}
+
+.input-premium[type="date"]::-webkit-datetime-edit-text {
+  padding: 0 2px;
+  color: inherit;
+  font-weight: 700;
+}
+
+.input-premium[type="date"]::-webkit-datetime-edit-month-field,
+.input-premium[type="date"]::-webkit-datetime-edit-day-field,
+.input-premium[type="date"]::-webkit-datetime-edit-year-field {
+  padding: 2px 4px;
+  border-radius: 8px;
+  color: inherit;
+  font-weight: 700;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.input-premium[type="date"]::-webkit-datetime-edit-month-field:focus,
+.input-premium[type="date"]::-webkit-datetime-edit-day-field:focus,
+.input-premium[type="date"]::-webkit-datetime-edit-year-field:focus {
+  background-color: rgba(140, 201, 21, 0.12);
+  color: var(--color-brand-dark, #355E1B);
+  outline: none;
+}
+
+.input-premium[type="date"]::-webkit-inner-spin-button {
+  display: none;
+}
+
+.input-premium[type="date"]::-webkit-calendar-picker-indicator {
+  position: absolute;
+  left: 18px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  padding: 6px;
+  margin: 0;
+  opacity: 0.55;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%238CC915' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='4' width='18' height='18' rx='2' ry='2'%3E%3C/rect%3E%3Cline x1='16' y1='2' x2='16' y2='6'%3E%3C/line%3E%3Cline x1='8' y1='2' x2='8' y2='6'%3E%3C/line%3E%3Cline x1='3' y1='10' x2='21' y2='10'%3E%3C/line%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  color: transparent;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+  filter: drop-shadow(0 1px 0 rgba(255,255,255,0.4));
+}
+
+.input-premium[type="date"]::-webkit-calendar-picker-indicator:hover {
+  opacity: 1;
+  transform: translateY(-50%) scale(1.1);
+}
+
+/* Ajuste para el padding izquierdo para acomodar el icono */
+.input-premium[type="date"] {
+  padding-left: 48px !important;
+}
+
+/* Placeholder para fecha (cuando está vacío) */
+.input-premium[type="date"]:invalid::-webkit-datetime-edit,
+.input-premium[type="date"].placeholder-shown::-webkit-datetime-edit {
+  color: rgba(115, 123, 146, 0.4);
+}
+
+/* En modo oscuro */
+.dark .input-premium[type="date"]::-webkit-calendar-picker-indicator {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%238CC915' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='4' width='18' height='18' rx='2' ry='2'%3E%3C/rect%3E%3Cline x1='16' y1='2' x2='16' y2='6'%3E%3C/line%3E%3Cline x1='8' y1='2' x2='8' y2='6'%3E%3C/line%3E%3Cline x1='3' y1='10' x2='21' y2='10'%3E%3C/line%3E%3C/svg%3E");
+}
+
+.dark .input-premium[type="date"]::-webkit-datetime-edit-month-field:focus,
+.dark .input-premium[type="date"]::-webkit-datetime-edit-day-field:focus,
+.dark .input-premium[type="date"]::-webkit-datetime-edit-year-field:focus {
+  background-color: rgba(140, 201, 21, 0.18);
+  color: #8CC915;
+}
+
+/* Firefox */
+.input-premium[type="date"]::-moz-calendar-picker-indicator {
+  cursor: pointer;
+  opacity: 0.6;
+  padding: 4px;
+  margin-left: 8px;
+}
+
+.input-premium[type="date"]::-moz-calendar-picker-indicator:hover {
+  opacity: 1;
+}
+
+/* ============================
+   Responsive: Date input badges
+   ============================ */
+@media (max-width: 480px) {
+  .input-premium[type="date"] {
+    font-size: 14px !important;
+    padding-left: 42px !important;
+  }
+
+  .input-premium[type="date"]::-webkit-calendar-picker-indicator {
+    left: 14px;
+    background-size: 18px 18px;
+  }
+}
+
+/* ============================
+   Custom Scrollbar
+   ============================ */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(140, 201, 21, 0.25);
+  border-radius: 999px;
+  transition: background 0.2s ease;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(140, 201, 21, 0.5);
+}
+
+/* ============================
+   Animaciones
+   ============================ */
+.animate-in {
+  animation-duration: 0.3s;
+  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  animation-fill-mode: both;
+}
+
+.fade-in {
+  animation-name: fadeIn;
+}
+
+.slide-in-from-top-2 {
+  animation-name: slideInFromTop2;
+}
+
+.slide-in-from-bottom-2 {
+  animation-name: slideInFromBottom2;
+}
+
+.slide-in-from-bottom-4 {
+  animation-name: slideInFromBottom4;
+}
+
+.zoom-in-95 {
+  animation-name: zoomIn95;
+}
+
+.zoom-in {
+  animation-name: zoomIn;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideInFromTop2 {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideInFromBottom2 {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideInFromBottom4 {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes zoomIn95 {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes zoomIn {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
+}

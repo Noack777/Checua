@@ -52,6 +52,7 @@ function App() {
       correo_contacto: '',
       tipo_documento: '',
       numero_documento: '',
+      fecha_nacimiento: '',
       rh: '',
       peso_kg: '',
       estatura_m: ''
@@ -111,7 +112,7 @@ function App() {
       setErrors(prev => {
         const newErrors = { ...prev };
         delete newErrors[field];
-        const contactFields = ['nombre_jefe_reserva', 'telefono_cliente', 'correo_contacto', 'tipo_documento', 'numero_documento', 'rh', 'peso_kg', 'estatura_m'];
+        const contactFields = ['nombre_jefe_reserva', 'telefono_cliente', 'correo_contacto', 'tipo_documento', 'numero_documento', 'fecha_nacimiento', 'rh', 'peso_kg', 'estatura_m'];
         const hasMoreContactErrors = contactFields.some(f => f !== field && newErrors[f]);
         if (!hasMoreContactErrors) delete newErrors.contact;
         return newErrors;
@@ -234,6 +235,7 @@ function App() {
           nombre: '',
           tipo_documento: '',
           numero_documento: '',
+          fecha_nacimiento: '',
           telefono: '',
           correo: '',
           rh: '',
@@ -260,6 +262,19 @@ function App() {
       });
       return newErrors;
     });
+  };
+
+  const calculateAge = (birthDateStr) => {
+    if (!birthDateStr) return null;
+    const birthDate = new Date(birthDateStr);
+    if (isNaN(birthDate.getTime())) return null;
+    const today = new Date();
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const monthDiff = today.getMonth() - birthDate.getMonth();
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+      age--;
+    }
+    return age >= 0 ? age : null;
   };
 
   // --- VALIDACIÓN Y ENVÍO ---
@@ -335,6 +350,23 @@ function App() {
       newErrors.contact = true;
     }
 
+    if (!contact.fecha_nacimiento) {
+      newErrors.fecha_nacimiento = t('errors.required_birth_date');
+      newErrors.fecha_nacimiento_key = 'required_birth_date';
+      newErrors.contact = true;
+    } else {
+      const age = calculateAge(contact.fecha_nacimiento);
+      if (age === null) {
+        newErrors.fecha_nacimiento = t('errors.invalid_birth_date');
+        newErrors.fecha_nacimiento_key = 'invalid_birth_date';
+        newErrors.contact = true;
+      } else if (age < 1 || age > 120) {
+        newErrors.fecha_nacimiento = t('errors.invalid_age');
+        newErrors.fecha_nacimiento_key = 'invalid_age';
+        newErrors.contact = true;
+      }
+    }
+
     if (!tour.tour_reserva) {
       newErrors.tour = t('errors.required_tour');
       newErrors.tour_key = 'required_tour';
@@ -383,6 +415,16 @@ function App() {
         newErrors[`companion_${index}_estatura_m`] = t('errors.required_height');
       } else if (isNaN(companion.estatura_m) || parseFloat(companion.estatura_m) <= 0) {
         newErrors[`companion_${index}_estatura_m`] = t('errors.invalid_height');
+      }
+      if (!companion.fecha_nacimiento) {
+        newErrors[`companion_${index}_fecha_nacimiento`] = t('errors.required_birth_date');
+      } else {
+        const age = calculateAge(companion.fecha_nacimiento);
+        if (age === null) {
+          newErrors[`companion_${index}_fecha_nacimiento`] = t('errors.invalid_birth_date');
+        } else if (age < 1 || age > 120) {
+          newErrors[`companion_${index}_fecha_nacimiento`] = t('errors.invalid_age');
+        }
       }
     });
 

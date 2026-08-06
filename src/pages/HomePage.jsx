@@ -42,6 +42,19 @@ const HomePage = ({
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
+  const calculateAge = (birthDateStr) => {
+    if (!birthDateStr) return null;
+    const birthDate = new Date(birthDateStr);
+    if (isNaN(birthDate.getTime())) return null;
+    const today = new Date();
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const monthDiff = today.getMonth() - birthDate.getMonth();
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+      age--;
+    }
+    return age >= 0 ? age : null;
+  };
+
   const handleProceedToPayment = async () => {
     setIsSaving(true);
     try {
@@ -84,6 +97,7 @@ const HomePage = ({
         numero_documento: reservationData.contact.numero_documento,
         telefono_participante: normalizePhoneForParticipant(reservationData.contact.telefono_cliente),
         correo: reservationData.contact.correo_contacto,
+        edad: calculateAge(reservationData.contact.fecha_nacimiento),
         rh: reservationData.contact.rh,
         peso: reservationData.contact.peso_kg ? parseFloat(reservationData.contact.peso_kg) : null,
         estatura: reservationData.contact.estatura_m ? parseFloat(reservationData.contact.estatura_m) : null
@@ -96,6 +110,7 @@ const HomePage = ({
         numero_documento: companion.numero_documento,
         telefono_participante: companion.telefono,
         correo: companion.correo,
+        edad: calculateAge(companion.fecha_nacimiento),
         rh: companion.rh,
         peso: companion.peso_kg ? parseFloat(companion.peso_kg) : null,
         estatura: companion.estatura_m ? parseFloat(companion.estatura_m) : null
@@ -420,15 +435,27 @@ const HomePage = ({
                           <span className="font-bold shrink-0">{t('sections.email')}:</span>
                           <span className="min-w-0 break-all">{reservationData.contact.correo_contacto}</span>
                         </p>
-                        <div className="flex gap-4 pt-1">
-                          <p className="text-brand-text-secondary dark:text-dark-text-secondary text-xs">
-                            <span className="font-black text-brand-primary/60 mr-1">RH:</span> {reservationData.contact.rh}
+                        <div className="flex gap-3 sm:gap-4 pt-1 flex-wrap">
+                          {calculateAge(reservationData.contact.fecha_nacimiento) !== null && (
+                            <p className="text-brand-text-secondary dark:text-dark-text-secondary text-xs flex items-center gap-1">
+                              <span className="w-1.5 h-1.5 rounded-full bg-brand-primary/50 shrink-0"></span>
+                              <span className="font-black text-brand-primary/70 mr-1">{t('sections.age').toUpperCase()}:</span>
+                              <span className="font-black text-brand-dark dark:text-brand-primary">
+                                {calculateAge(reservationData.contact.fecha_nacimiento)} {t('sections.age_suffix')}
+                              </span>
+                            </p>
+                          )}
+                          <p className="text-brand-text-secondary dark:text-dark-text-secondary text-xs flex items-center gap-1">
+                            <span className="w-1.5 h-1.5 rounded-full bg-brand-primary/50 shrink-0"></span>
+                            <span className="font-black text-brand-primary/70 mr-1">RH:</span> {reservationData.contact.rh}
                           </p>
-                          <p className="text-brand-text-secondary dark:text-dark-text-secondary text-xs">
-                            <span className="font-black text-brand-primary/60 mr-1">PESO:</span> {reservationData.contact.peso_kg}kg
+                          <p className="text-brand-text-secondary dark:text-dark-text-secondary text-xs flex items-center gap-1">
+                            <span className="w-1.5 h-1.5 rounded-full bg-brand-primary/50 shrink-0"></span>
+                            <span className="font-black text-brand-primary/70 mr-1">PESO:</span> {reservationData.contact.peso_kg}kg
                           </p>
-                          <p className="text-brand-text-secondary dark:text-dark-text-secondary text-xs">
-                            <span className="font-black text-brand-primary/60 mr-1">ALTURA:</span> {reservationData.contact.estatura_m}m
+                          <p className="text-brand-text-secondary dark:text-dark-text-secondary text-xs flex items-center gap-1">
+                            <span className="w-1.5 h-1.5 rounded-full bg-brand-primary/50 shrink-0"></span>
+                            <span className="font-black text-brand-primary/70 mr-1">ALTURA:</span> {reservationData.contact.estatura_m}m
                           </p>
                         </div>
                       </div>
@@ -617,14 +644,26 @@ const HomePage = ({
                               </p>
                             </div>
 
-                            <div className="flex gap-4 pt-3 mt-3 border-t border-brand-primary/5">
-                              <p className="text-brand-text-secondary dark:text-dark-text-secondary text-[10px]">
+                            <div className="flex gap-3 sm:gap-4 pt-3 mt-3 border-t border-brand-primary/5 flex-wrap">
+                              {calculateAge(comp.fecha_nacimiento) !== null && (
+                                <p className="text-brand-text-secondary dark:text-dark-text-secondary text-[10px] flex items-center gap-1">
+                                  <span className="w-1 h-1 rounded-full bg-brand-primary/30 shrink-0"></span>
+                                  <span className="font-black text-brand-primary/50 mr-1 uppercase">{t('sections.age')}:</span>
+                                  <span className="font-black text-brand-dark/80 dark:text-brand-primary/90">
+                                    {calculateAge(comp.fecha_nacimiento)} {t('sections.age_suffix')}
+                                  </span>
+                                </p>
+                              )}
+                              <p className="text-brand-text-secondary dark:text-dark-text-secondary text-[10px] flex items-center gap-1">
+                                <span className="w-1 h-1 rounded-full bg-brand-primary/30 shrink-0"></span>
                                 <span className="font-black text-brand-primary/40 mr-1 uppercase">RH:</span> {comp.rh}
                               </p>
-                              <p className="text-brand-text-secondary dark:text-dark-text-secondary text-[10px]">
+                              <p className="text-brand-text-secondary dark:text-dark-text-secondary text-[10px] flex items-center gap-1">
+                                <span className="w-1 h-1 rounded-full bg-brand-primary/30 shrink-0"></span>
                                 <span className="font-black text-brand-primary/40 mr-1 uppercase">PESO:</span> {comp.peso_kg}kg
                               </p>
-                              <p className="text-brand-text-secondary dark:text-dark-text-secondary text-[10px]">
+                              <p className="text-brand-text-secondary dark:text-dark-text-secondary text-[10px] flex items-center gap-1">
+                                <span className="w-1 h-1 rounded-full bg-brand-primary/30 shrink-0"></span>
                                 <span className="font-black text-brand-primary/40 mr-1 uppercase">ALTURA:</span> {comp.estatura_m}m
                               </p>
                             </div>
