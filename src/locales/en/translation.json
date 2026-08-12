@@ -78,6 +78,9 @@
     "birth_date": "Date of birth",
     "age": "Age",
     "age_suffix": "yrs",
+    "nationality": "Nationality",
+    "nationality_placeholder": "Select your nationality",
+    "no_countries_found": "No countries found",
     "rh": "RH",
     "weight": "Weight (kg)",
     "height": "Height (m)"
@@ -156,6 +159,7 @@
     "invalid_weight": "Invalid weight",
     "required_height": "Height is required",
     "invalid_height": "Invalid height",
+    "required_nationality": "Nationality is required",
     "required_birth_date": "Date of birth is required",
     "invalid_birth_date": "Invalid date of birth",
     "invalid_age": "Age must be between 1 and 120 years"

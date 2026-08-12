@@ -53,9 +53,7 @@ function App() {
       tipo_documento: '',
       numero_documento: '',
       fecha_nacimiento: '',
-      rh: '',
-      peso_kg: '',
-      estatura_m: ''
+      nacionalidad: ''
     },
     tour: {
       tour_reserva: '',
@@ -94,25 +92,16 @@ function App() {
 
   // --- MANEJADORES DE CAMBIOS ---
   const handleContactChange = (field, value) => {
-    let finalValue = value;
-    
-    // Normalización de Peso y Estatura: convertir coma a punto
-    if (field === 'peso_kg' || field === 'estatura_m') {
-      if (typeof value === 'string') {
-        finalValue = value.replace(',', '.');
-      }
-    }
-
     setReservationData(prev => ({
       ...prev,
-      contact: { ...prev.contact, [field]: finalValue }
+      contact: { ...prev.contact, [field]: value }
     }));
     
     if (errors[field] || errors.contact) {
       setErrors(prev => {
         const newErrors = { ...prev };
         delete newErrors[field];
-        const contactFields = ['nombre_jefe_reserva', 'telefono_cliente', 'correo_contacto', 'tipo_documento', 'numero_documento', 'fecha_nacimiento', 'rh', 'peso_kg', 'estatura_m'];
+        const contactFields = ['nombre_jefe_reserva', 'telefono_cliente', 'correo_contacto', 'tipo_documento', 'numero_documento', 'fecha_nacimiento', 'nacionalidad'];
         const hasMoreContactErrors = contactFields.some(f => f !== field && newErrors[f]);
         if (!hasMoreContactErrors) delete newErrors.contact;
         return newErrors;
@@ -238,9 +227,7 @@ function App() {
           fecha_nacimiento: '',
           telefono: '',
           correo: '',
-          rh: '',
-          peso_kg: '',
-          estatura_m: ''
+          nacionalidad: ''
         }
       ]
     }));
@@ -324,29 +311,9 @@ function App() {
       newErrors.contact = true;
     }
 
-    if (!contact.rh) {
-      newErrors.rh = t('errors.required_rh');
-      newErrors.rh_key = 'required_rh';
-      newErrors.contact = true;
-    }
-
-    if (!contact.peso_kg) {
-      newErrors.peso_kg = t('errors.required_weight');
-      newErrors.peso_kg_key = 'required_weight';
-      newErrors.contact = true;
-    } else if (isNaN(contact.peso_kg) || parseFloat(contact.peso_kg) <= 0) {
-      newErrors.peso_kg = t('errors.invalid_weight');
-      newErrors.peso_kg_key = 'invalid_weight';
-      newErrors.contact = true;
-    }
-
-    if (!contact.estatura_m) {
-      newErrors.estatura_m = t('errors.required_height');
-      newErrors.estatura_m_key = 'required_height';
-      newErrors.contact = true;
-    } else if (isNaN(contact.estatura_m) || parseFloat(contact.estatura_m) <= 0) {
-      newErrors.estatura_m = t('errors.invalid_height');
-      newErrors.estatura_m_key = 'invalid_height';
+    if (!contact.nacionalidad) {
+      newErrors.nacionalidad = t('errors.required_nationality');
+      newErrors.nacionalidad_key = 'required_nationality';
       newErrors.contact = true;
     }
 
@@ -403,18 +370,8 @@ function App() {
       if (companion.correo.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(companion.correo)) {
         newErrors[`companion_${index}_correo`] = t('errors.invalid_email');
       }
-      if (!companion.rh) {
-        newErrors[`companion_${index}_rh`] = t('errors.required_rh');
-      }
-      if (!companion.peso_kg) {
-        newErrors[`companion_${index}_peso_kg`] = t('errors.required_weight');
-      } else if (isNaN(companion.peso_kg) || parseFloat(companion.peso_kg) <= 0) {
-        newErrors[`companion_${index}_peso_kg`] = t('errors.invalid_weight');
-      }
-      if (!companion.estatura_m) {
-        newErrors[`companion_${index}_estatura_m`] = t('errors.required_height');
-      } else if (isNaN(companion.estatura_m) || parseFloat(companion.estatura_m) <= 0) {
-        newErrors[`companion_${index}_estatura_m`] = t('errors.invalid_height');
+      if (!companion.nacionalidad) {
+        newErrors[`companion_${index}_nacionalidad`] = t('errors.required_nationality');
       }
       if (!companion.fecha_nacimiento) {
         newErrors[`companion_${index}_fecha_nacimiento`] = t('errors.required_birth_date');

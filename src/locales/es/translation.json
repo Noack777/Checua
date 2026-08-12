@@ -78,6 +78,9 @@
     "birth_date": "Fecha de nacimiento",
     "age": "Edad",
     "age_suffix": "años",
+    "nationality": "Nacionalidad",
+    "nationality_placeholder": "Selecciona tu nacionalidad",
+    "no_countries_found": "No se encontraron países",
     "rh": "RH",
     "weight": "Peso (kg)",
     "height": "Estatura (m)"
@@ -156,6 +159,7 @@
     "invalid_weight": "Peso inválido",
     "required_height": "La estatura es obligatoria",
     "invalid_height": "Estatura inválida",
+    "required_nationality": "La nacionalidad es obligatoria",
     "required_birth_date": "La fecha de nacimiento es obligatoria",
     "invalid_birth_date": "Fecha de nacimiento inválida",
     "invalid_age": "La edad debe estar entre 1 y 120 años"

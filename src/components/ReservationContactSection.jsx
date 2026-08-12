@@ -5,26 +5,94 @@ import 'react-phone-input-2/lib/style.css';
 
 const PhoneInput = PhoneInputPkg.default || PhoneInputPkg;
 
+const COUNTRIES = [
+  { code: 'CO', name: 'Colombia', flag: '🇨🇴' },
+  { code: 'AR', name: 'Argentina', flag: '🇦🇷' },
+  { code: 'BR', name: 'Brasil', flag: '🇧🇷' },
+  { code: 'MX', name: 'México', flag: '🇲🇽' },
+  { code: 'ES', name: 'España', flag: '🇪🇸' },
+  { code: 'US', name: 'Estados Unidos', flag: '🇺🇸' },
+  { code: 'VE', name: 'Venezuela', flag: '🇻🇪' },
+  { code: 'PE', name: 'Perú', flag: '🇵🇪' },
+  { code: 'CL', name: 'Chile', flag: '🇨🇱' },
+  { code: 'EC', name: 'Ecuador', flag: '🇪🇨' },
+  { code: 'PA', name: 'Panamá', flag: '🇵🇦' },
+  { code: 'CR', name: 'Costa Rica', flag: '🇨🇷' },
+  { code: 'UY', name: 'Uruguay', flag: '🇺🇾' },
+  { code: 'PY', name: 'Paraguay', flag: '🇵🇾' },
+  { code: 'BO', name: 'Bolivia', flag: '🇧🇴' },
+  { code: 'GT', name: 'Guatemala', flag: '🇬🇹' },
+  { code: 'HN', name: 'Honduras', flag: '🇭🇳' },
+  { code: 'SV', name: 'El Salvador', flag: '🇸🇻' },
+  { code: 'NI', name: 'Nicaragua', flag: '🇳🇮' },
+  { code: 'DO', name: 'República Dominicana', flag: '🇩🇴' },
+  { code: 'PR', name: 'Puerto Rico', flag: '🇵🇷' },
+  { code: 'CU', name: 'Cuba', flag: '🇨🇺' },
+  { code: 'FR', name: 'Francia', flag: '🇫🇷' },
+  { code: 'DE', name: 'Alemania', flag: '🇩🇪' },
+  { code: 'IT', name: 'Italia', flag: '🇮🇹' },
+  { code: 'PT', name: 'Portugal', flag: '🇵🇹' },
+  { code: 'GB', name: 'Reino Unido', flag: '🇬🇧' },
+  { code: 'CA', name: 'Canadá', flag: '🇨🇦' },
+  { code: 'AU', name: 'Australia', flag: '🇦🇺' },
+  { code: 'JP', name: 'Japón', flag: '🇯🇵' },
+  { code: 'CN', name: 'China', flag: '🇨🇳' },
+  { code: 'KR', name: 'Corea del Sur', flag: '🇰🇷' },
+  { code: 'IN', name: 'India', flag: '🇮🇳' },
+  { code: 'RU', name: 'Rusia', flag: '🇷🇺' },
+  { code: 'ZA', name: 'Sudáfrica', flag: '🇿🇦' },
+  { code: 'AE', name: 'Emiratos Árabes Unidos', flag: '🇦🇪' },
+  { code: 'SA', name: 'Arabia Saudita', flag: '🇸🇦' },
+  { code: 'EG', name: 'Egipto', flag: '🇪🇬' },
+  { code: 'IL', name: 'Israel', flag: '🇮🇱' },
+  { code: 'TR', name: 'Turquía', flag: '🇹🇷' },
+  { code: 'GR', name: 'Grecia', flag: '🇬🇷' },
+  { code: 'NL', name: 'Países Bajos', flag: '🇳🇱' },
+  { code: 'BE', name: 'Bélgica', flag: '🇧🇪' },
+  { code: 'CH', name: 'Suiza', flag: '🇨🇭' },
+  { code: 'SE', name: 'Suecia', flag: '🇸🇪' },
+  { code: 'NO', name: 'Noruega', flag: '🇳🇴' },
+  { code: 'DK', name: 'Dinamarca', flag: '🇩🇰' },
+  { code: 'FI', name: 'Finlandia', flag: '🇫🇮' },
+  { code: 'PL', name: 'Polonia', flag: '🇵🇱' },
+  { code: 'AT', name: 'Austria', flag: '🇦🇹' },
+  { code: 'NZ', name: 'Nueva Zelanda', flag: '🇳🇿' },
+  { code: 'IE', name: 'Irlanda', flag: '🇮🇪' },
+  { code: 'SG', name: 'Singapur', flag: '🇸🇬' },
+  { code: 'MY', name: 'Malasia', flag: '🇲🇾' },
+  { code: 'TH', name: 'Tailandia', flag: '🇹🇭' },
+  { code: 'VN', name: 'Vietnam', flag: '🇻🇳' },
+  { code: 'ID', name: 'Indonesia', flag: '🇮🇩' },
+  { code: 'PH', name: 'Filipinas', flag: '🇵🇭' },
+  { code: 'PK', name: 'Pakistán', flag: '🇵🇰' },
+  { code: 'BD', name: 'Bangladés', flag: '🇧🇩' },
+  { code: 'NG', name: 'Nigeria', flag: '🇳🇬' },
+  { code: 'KE', name: 'Kenia', flag: '🇰🇪' },
+  { code: 'MA', name: 'Marruecos', flag: '🇲🇦' },
+  { code: 'other', name: 'Otro', flag: '🌍' }
+];
+
 const ReservationContactSection = ({ data, onChange, errors, sectionRef }) => {
   const { t } = useTranslation();
   const [isDocTypeOpen, setIsDocTypeOpen] = useState(false);
-  const [isRHOpen, setIsRHOpen] = useState(false);
-  const [rhDropdownPosition, setRhDropdownPosition] = useState('down');
+  const [isNationalityOpen, setIsNationalityOpen] = useState(false);
+  const [nationalitySearch, setNationalitySearch] = useState('');
+  const [nationalityDropdownPosition, setNationalityDropdownPosition] = useState('down');
   const [docDropdownPosition, setDocDropdownPosition] = useState('down');
   const dropdownRef = useRef(null);
-  const rhDropdownRef = useRef(null);
+  const nationalityDropdownRef = useRef(null);
 
   useEffect(() => {
-    if (isRHOpen && rhDropdownRef.current) {
-      const rect = rhDropdownRef.current.getBoundingClientRect();
+    if (isNationalityOpen && nationalityDropdownRef.current) {
+      const rect = nationalityDropdownRef.current.getBoundingClientRect();
       const spaceBelow = window.innerHeight - rect.bottom;
-      if (spaceBelow < 250) {
-        setRhDropdownPosition('up');
+      if (spaceBelow < 300) {
+        setNationalityDropdownPosition('up');
       } else {
-        setRhDropdownPosition('down');
+        setNationalityDropdownPosition('down');
       }
     }
-  }, [isRHOpen]);
+  }, [isNationalityOpen]);
 
   useEffect(() => {
     if (isDocTypeOpen && dropdownRef.current) {
@@ -48,15 +116,20 @@ const ReservationContactSection = ({ data, onChange, errors, sectionRef }) => {
     t('doc_types.other')
   ];
 
-  const RH_TYPES = ['O+', 'O-', 'A+', 'A-', 'B+', 'B-', 'AB+', 'AB-'];
+  const filteredCountries = COUNTRIES.filter(c =>
+    c.name.toLowerCase().includes(nationalitySearch.toLowerCase())
+  );
+
+  const selectedCountry = COUNTRIES.find(c => c.name === data.nacionalidad);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setIsDocTypeOpen(false);
       }
-      if (rhDropdownRef.current && !rhDropdownRef.current.contains(event.target)) {
-        setIsRHOpen(false);
+      if (nationalityDropdownRef.current && !nationalityDropdownRef.current.contains(event.target)) {
+        setIsNationalityOpen(false);
+        setNationalitySearch('');
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
@@ -73,22 +146,6 @@ const ReservationContactSection = ({ data, onChange, errors, sectionRef }) => {
 
     if (name === 'numero_documento') {
       cleanValue = value.replace(/\D/g, '');
-    }
-
-    if (name === 'peso_kg') {
-      // Solo números y máximo 3 caracteres
-      cleanValue = value.replace(/\D/g, '').slice(0, 3);
-    }
-
-    if (name === 'estatura_m') {
-      // Solo números y máximo 3 caracteres
-      let digits = value.replace(/\D/g, '').slice(0, 3);
-      // El punto aparece únicamente con el tercer carácter, después del primero
-      if (digits.length === 3) {
-        cleanValue = `${digits[0]}.${digits.slice(1)}`;
-      } else {
-        cleanValue = digits;
-      }
     }
 
     onChange(name, cleanValue);
@@ -119,16 +176,17 @@ const ReservationContactSection = ({ data, onChange, errors, sectionRef }) => {
     setIsDocTypeOpen(false);
   };
 
-  const handleRHSelect = (type) => {
-    onChange('rh', type);
-    setIsRHOpen(false);
+  const handleNationalitySelect = (country) => {
+    onChange('nacionalidad', country.name);
+    setIsNationalityOpen(false);
+    setNationalitySearch('');
   };
 
   return (
     <div 
       ref={sectionRef}
       className={`card-premium ${errors.contact ? 'border-red-400 ring-2 ring-red-50' : ''}`}
-      style={{ zIndex: isDocTypeOpen || isRHOpen ? 50 : 1 }}
+      style={{ zIndex: isDocTypeOpen || isNationalityOpen ? 50 : 1 }}
     >
       <div className={`card-accent-line ${errors.contact ? 'bg-red-400' : ''}`}></div>
       
@@ -243,6 +301,87 @@ const ReservationContactSection = ({ data, onChange, errors, sectionRef }) => {
               {errors.fecha_nacimiento && <p className="text-[10px] text-red-500 mt-1.5 ml-6 font-bold uppercase tracking-wider">{errors.fecha_nacimiento}</p>}
             </div>
 
+            {/* Nacionalidad con selector de banderas */}
+            <div className="relative group" ref={nationalityDropdownRef}>
+              <label className="text-[8px] sm:text-[9px] font-black text-brand-primary uppercase tracking-widest mb-1.5 block opacity-70 ml-6">
+                {t('sections.nationality')}
+              </label>
+              <button
+                type="button"
+                onClick={() => setIsNationalityOpen(!isNationalityOpen)}
+                className={`input-premium !py-3.5 sm:!py-4 text-left flex items-center justify-between group ${
+                  isNationalityOpen ? 'border-brand-primary ring-4 ring-brand-primary/5' : errors.nacionalidad ? 'border-red-200' : ''
+                }`}
+              >
+                <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+                  {selectedCountry ? (
+                    <>
+                      <span className="text-xl sm:text-2xl shrink-0">{selectedCountry.flag}</span>
+                      <span className="truncate text-sm sm:text-base font-bold text-brand-text-main dark:text-dark-text-main">
+                        {selectedCountry.name}
+                      </span>
+                    </>
+                  ) : (
+                    <span className="text-brand-text-secondary/40 text-sm sm:text-base">
+                      {t('sections.nationality_placeholder')}
+                    </span>
+                  )}
+                </div>
+                <svg 
+                  className={`w-5 h-5 text-brand-primary transition-transform duration-300 shrink-0 ml-2 ${isNationalityOpen ? 'rotate-180' : ''}`} 
+                  fill="none" 
+                  viewBox="0 0 24 24" 
+                  stroke="currentColor" 
+                  strokeWidth="3"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+
+              {isNationalityOpen && (
+                <div className={`absolute left-0 right-0 ${nationalityDropdownPosition === 'up' ? 'bottom-full mb-3 animate-in fade-in slide-in-from-bottom-2' : 'top-full mt-3 animate-in fade-in slide-in-from-top-2'} bg-white dark:bg-dark-bg-card border-2 border-brand-border dark:border-dark-border rounded-[1.5rem] shadow-2xl z-[50] overflow-hidden duration-200`}>
+                  <div className="p-3 border-b border-brand-light dark:border-dark-border">
+                    <div className="relative">
+                      <svg className="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-brand-text-secondary/40" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                      </svg>
+                      <input
+                        type="text"
+                        autoFocus
+                        placeholder={t('welcome.search_placeholder')}
+                        value={nationalitySearch}
+                        onChange={(e) => setNationalitySearch(e.target.value)}
+                        className="w-full pl-11 pr-4 py-3 text-sm font-bold rounded-full bg-brand-light/40 dark:bg-dark-bg-main/40 border-2 border-transparent focus:border-brand-primary/30 text-brand-text-main dark:text-dark-text-main placeholder:text-brand-text-secondary/40 outline-none transition-colors"
+                        onClick={(e) => e.stopPropagation()}
+                      />
+                    </div>
+                  </div>
+                  <div className="max-h-[280px] overflow-y-auto custom-scrollbar">
+                    {filteredCountries.length === 0 ? (
+                      <div className="px-6 py-6 text-center text-sm text-brand-text-secondary/50 font-medium italic">
+                        {t('sections.no_countries_found')}
+                      </div>
+                    ) : (
+                      filteredCountries.map((country) => (
+                        <button
+                          key={country.code}
+                          type="button"
+                          onClick={() => handleNationalitySelect(country)}
+                          className={`w-full px-5 sm:px-6 py-3.5 sm:py-4 text-left flex items-center gap-3 sm:gap-4 transition-colors hover:bg-brand-light/50 dark:hover:bg-dark-bg-main/50 border-b border-brand-light dark:border-dark-border last:border-0 ${
+                            data.nacionalidad === country.name ? 'text-brand-primary bg-brand-primary/5' : 'text-brand-text-main dark:text-dark-text-main'
+                          }`}
+                        >
+                          <span className="text-xl sm:text-2xl shrink-0">{country.flag}</span>
+                          <span className="text-sm sm:text-base font-bold truncate">{country.name}</span>
+                        </button>
+                      ))
+                    )}
+                  </div>
+                </div>
+              )}
+              {errors.nacionalidad && <p className="text-[10px] text-red-500 mt-1.5 ml-6 font-bold uppercase tracking-wider">{errors.nacionalidad}</p>}
+            </div>
+
             <div className="relative group verified-phone-display">
               <div className="relative">
                 <PhoneInput
@@ -273,106 +412,6 @@ const ReservationContactSection = ({ data, onChange, errors, sectionRef }) => {
                 className={`input-premium ${errors.correo_contacto ? 'border-red-200 focus:border-red-400 focus:ring-red-400/5' : ''}`}
               />
               {errors.correo_contacto && <p className="text-[10px] text-red-500 mt-1.5 ml-6 font-bold uppercase tracking-wider">{errors.correo_contacto}</p>}
-            </div>
-
-            {/* Fila de Salud: RH, Peso, Estatura */}
-            <div className="grid grid-cols-12 gap-2 sm:gap-3 items-start">
-              {/* RH */}
-              <div className="col-span-3 relative" ref={rhDropdownRef}>
-                <label className="text-[8px] sm:text-[9px] font-black text-brand-primary uppercase tracking-widest mb-1.5 block opacity-70 whitespace-nowrap text-center w-full">
-                  {t('sections.rh')}
-                </label>
-                <button
-                  type="button"
-                  onClick={() => setIsRHOpen(!isRHOpen)}
-                  className={`input-premium !px-2 sm:!px-4 text-left flex items-center justify-between group h-[52px] sm:h-[58px] ${
-                    isRHOpen ? 'border-brand-primary ring-4 ring-brand-primary/5' : errors.rh ? 'border-red-200' : ''
-                  }`}
-                >
-                  <span className={`truncate text-xs sm:text-base ${data.rh ? '' : 'text-brand-text-secondary/40'}`}>
-                    {data.rh || 'RH'}
-                  </span>
-                  <svg 
-                    className={`w-3 h-3 sm:w-4 sm:h-4 text-brand-primary transition-transform duration-300 ${isRHOpen ? 'rotate-180' : ''}`} 
-                    fill="none" 
-                    viewBox="0 0 24 24" 
-                    stroke="currentColor" 
-                    strokeWidth="3"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-                  </svg>
-                </button>
-
-                {isRHOpen && (
-                  <div className={`absolute left-0 right-0 min-w-[70px] sm:min-w-[80px] ${rhDropdownPosition === 'up' ? 'bottom-full mb-3 animate-in fade-in slide-in-from-bottom-2' : 'top-full mt-3 animate-in fade-in slide-in-from-top-2'} bg-white dark:bg-dark-bg-card border-2 border-brand-border dark:border-dark-border rounded-[1.5rem] shadow-2xl z-[50] overflow-hidden duration-200`}>
-                    <div className="max-h-[200px] overflow-y-auto custom-scrollbar">
-                      {RH_TYPES.map((type) => (
-                        <button
-                          key={type}
-                          type="button"
-                          onClick={() => handleRHSelect(type)}
-                          className={`w-full px-2 py-3 sm:py-4 text-center text-xs sm:text-base font-bold transition-colors hover:bg-brand-light/50 dark:hover:bg-dark-bg-main/50 border-b border-brand-light dark:border-dark-border last:border-0 ${
-                            data.rh === type ? 'text-brand-primary bg-brand-primary/5' : 'text-brand-text-main dark:text-dark-text-main'
-                          }`}
-                        >
-                          {type}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                )}
-                {errors.rh && <p className="text-[8px] text-red-500 mt-1 ml-1 font-bold uppercase tracking-tight leading-tight">{errors.rh}</p>}
-              </div>
-
-              {/* Peso */}
-              <div className="col-span-4 relative group">
-                <label className="text-[8px] sm:text-[9px] font-black text-brand-primary uppercase tracking-widest mb-1.5 block opacity-70 whitespace-nowrap text-center w-full">
-                  {t('sections.weight')}
-                </label>
-                <div className="relative">
-                  <input
-                    type="text"
-                    inputMode="numeric"
-                    name="peso_kg"
-                    placeholder="70"
-                    maxLength={3}
-                    value={data.peso_kg}
-                    onChange={handleChange}
-                    className={`input-premium !px-2 sm:!px-4 text-center h-[52px] sm:h-[58px] text-xs sm:text-base !pr-8 sm:!pr-12 ${
-                      errors.peso_kg ? 'border-red-200 focus:border-red-400 focus:ring-red-400/5' : ''
-                    }`}
-                  />
-                  <div className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 pointer-events-none">
-                    <span className="text-[8px] sm:text-[10px] font-black text-brand-primary/40 uppercase tracking-widest">kg</span>
-                  </div>
-                </div>
-                {errors.peso_kg && <p className="text-[8px] text-red-500 mt-1 ml-1 font-bold uppercase tracking-tight leading-tight">{errors.peso_kg}</p>}
-              </div>
-
-              {/* Estatura */}
-              <div className="col-span-5 relative group">
-                <label className="text-[8px] sm:text-[9px] font-black text-brand-primary uppercase tracking-widest mb-1.5 block opacity-70 whitespace-nowrap text-center w-full">
-                  {t('sections.height')}
-                </label>
-                <div className="relative">
-                  <input
-                    type="text"
-                    inputMode="numeric"
-                    name="estatura_m"
-                    placeholder="1.75"
-                    maxLength={4}
-                    value={data.estatura_m}
-                    onChange={handleChange}
-                    className={`input-premium !px-2 sm:!px-4 text-center h-[52px] sm:h-[58px] text-xs sm:text-base !pr-6 sm:!pr-10 ${
-                      errors.estatura_m ? 'border-red-200 focus:border-red-400 focus:ring-red-400/5' : ''
-                    }`}
-                  />
-                  <div className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 pointer-events-none">
-                    <span className="text-[8px] sm:text-[10px] font-black text-brand-primary/40 uppercase tracking-widest">m</span>
-                  </div>
-                </div>
-                {errors.estatura_m && <p className="text-[8px] text-red-500 mt-1 ml-1 font-bold uppercase tracking-tight leading-tight">{errors.estatura_m}</p>}
-              </div>
             </div>
           </div>
       </div>

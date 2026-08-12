@@ -10,6 +10,73 @@ import WelcomeModal from '../components/WelcomeModal';
 import { saveParticipantsForReservation } from '../services/participantService';
 import { createReservation } from '../services/reservationService';
 
+const COUNTRIES_MAP = {
+  'Colombia': '🇨🇴',
+  'Argentina': '🇦🇷',
+  'Brasil': '🇧🇷',
+  'México': '🇲🇽',
+  'España': '🇪🇸',
+  'Estados Unidos': '🇺🇸',
+  'Venezuela': '🇻🇪',
+  'Perú': '🇵🇪',
+  'Chile': '🇨🇱',
+  'Ecuador': '🇪🇨',
+  'Panamá': '🇵🇦',
+  'Costa Rica': '🇨🇷',
+  'Uruguay': '🇺🇾',
+  'Paraguay': '🇵🇾',
+  'Bolivia': '🇧🇴',
+  'Guatemala': '🇬🇹',
+  'Honduras': '🇭🇳',
+  'El Salvador': '🇸🇻',
+  'Nicaragua': '🇳🇮',
+  'República Dominicana': '🇩🇴',
+  'Puerto Rico': '🇵🇷',
+  'Cuba': '🇨🇺',
+  'Francia': '🇫🇷',
+  'Alemania': '🇩🇪',
+  'Italia': '🇮🇹',
+  'Portugal': '🇵🇹',
+  'Reino Unido': '🇬🇧',
+  'Canadá': '🇨🇦',
+  'Australia': '🇦🇺',
+  'Japón': '🇯🇵',
+  'China': '🇨🇳',
+  'Corea del Sur': '🇰🇷',
+  'India': '🇮🇳',
+  'Rusia': '🇷🇺',
+  'Sudáfrica': '🇿🇦',
+  'Emiratos Árabes Unidos': '🇦🇪',
+  'Arabia Saudita': '🇸🇦',
+  'Egipto': '🇪🇬',
+  'Israel': '🇮🇱',
+  'Turquía': '🇹🇷',
+  'Grecia': '🇬🇷',
+  'Países Bajos': '🇳🇱',
+  'Bélgica': '🇧🇪',
+  'Suiza': '🇨🇭',
+  'Suecia': '🇸🇪',
+  'Noruega': '🇳🇴',
+  'Dinamarca': '🇩🇰',
+  'Finlandia': '🇫🇮',
+  'Polonia': '🇵🇱',
+  'Austria': '🇦🇹',
+  'Nueva Zelanda': '🇳🇿',
+  'Irlanda': '🇮🇪',
+  'Singapur': '🇸🇬',
+  'Malasia': '🇲🇾',
+  'Tailandia': '🇹🇭',
+  'Vietnam': '🇻🇳',
+  'Indonesia': '🇮🇩',
+  'Filipinas': '🇵🇭',
+  'Pakistán': '🇵🇰',
+  'Bangladés': '🇧🇩',
+  'Nigeria': '🇳🇬',
+  'Kenia': '🇰🇪',
+  'Marruecos': '🇲🇦',
+  'Otro': '🌍'
+};
+
 const HomePage = ({
   isModalOpen,
   onModalComplete,
@@ -97,10 +164,8 @@ const HomePage = ({
         numero_documento: reservationData.contact.numero_documento,
         telefono_participante: normalizePhoneForParticipant(reservationData.contact.telefono_cliente),
         correo: reservationData.contact.correo_contacto,
-        edad: calculateAge(reservationData.contact.fecha_nacimiento),
-        rh: reservationData.contact.rh,
-        peso: reservationData.contact.peso_kg ? parseFloat(reservationData.contact.peso_kg) : null,
-        estatura: reservationData.contact.estatura_m ? parseFloat(reservationData.contact.estatura_m) : null
+        nacionalidad: reservationData.contact.nacionalidad,
+        edad: calculateAge(reservationData.contact.fecha_nacimiento)
       };
 
       const companionsParticipants = (reservationData.companions || []).map(companion => ({
@@ -110,10 +175,8 @@ const HomePage = ({
         numero_documento: companion.numero_documento,
         telefono_participante: companion.telefono,
         correo: companion.correo,
-        edad: calculateAge(companion.fecha_nacimiento),
-        rh: companion.rh,
-        peso: companion.peso_kg ? parseFloat(companion.peso_kg) : null,
-        estatura: companion.estatura_m ? parseFloat(companion.estatura_m) : null
+        nacionalidad: companion.nacionalidad,
+        edad: calculateAge(companion.fecha_nacimiento)
       }));
 
       const participantsToSave = [headParticipant, ...companionsParticipants];
@@ -445,18 +508,16 @@ const HomePage = ({
                               </span>
                             </p>
                           )}
-                          <p className="text-brand-text-secondary dark:text-dark-text-secondary text-xs flex items-center gap-1">
-                            <span className="w-1.5 h-1.5 rounded-full bg-brand-primary/50 shrink-0"></span>
-                            <span className="font-black text-brand-primary/70 mr-1">RH:</span> {reservationData.contact.rh}
-                          </p>
-                          <p className="text-brand-text-secondary dark:text-dark-text-secondary text-xs flex items-center gap-1">
-                            <span className="w-1.5 h-1.5 rounded-full bg-brand-primary/50 shrink-0"></span>
-                            <span className="font-black text-brand-primary/70 mr-1">PESO:</span> {reservationData.contact.peso_kg}kg
-                          </p>
-                          <p className="text-brand-text-secondary dark:text-dark-text-secondary text-xs flex items-center gap-1">
-                            <span className="w-1.5 h-1.5 rounded-full bg-brand-primary/50 shrink-0"></span>
-                            <span className="font-black text-brand-primary/70 mr-1">ALTURA:</span> {reservationData.contact.estatura_m}m
-                          </p>
+                          {reservationData.contact.nacionalidad && (
+                            <p className="text-brand-text-secondary dark:text-dark-text-secondary text-xs flex items-center gap-1">
+                              <span className="w-1.5 h-1.5 rounded-full bg-brand-primary/50 shrink-0"></span>
+                              <span className="font-black text-brand-primary/70 mr-1">{t('sections.nationality').toUpperCase()}:</span>
+                              <span className="text-sm mr-1">{COUNTRIES_MAP[reservationData.contact.nacionalidad] || '🌍'}</span>
+                              <span className="font-black text-brand-dark dark:text-brand-primary">
+                                {reservationData.contact.nacionalidad}
+                              </span>
+                            </p>
+                          )}
                         </div>
                       </div>
                     </div>
@@ -654,18 +715,16 @@ const HomePage = ({
                                   </span>
                                 </p>
                               )}
-                              <p className="text-brand-text-secondary dark:text-dark-text-secondary text-[10px] flex items-center gap-1">
-                                <span className="w-1 h-1 rounded-full bg-brand-primary/30 shrink-0"></span>
-                                <span className="font-black text-brand-primary/40 mr-1 uppercase">RH:</span> {comp.rh}
-                              </p>
-                              <p className="text-brand-text-secondary dark:text-dark-text-secondary text-[10px] flex items-center gap-1">
-                                <span className="w-1 h-1 rounded-full bg-brand-primary/30 shrink-0"></span>
-                                <span className="font-black text-brand-primary/40 mr-1 uppercase">PESO:</span> {comp.peso_kg}kg
-                              </p>
-                              <p className="text-brand-text-secondary dark:text-dark-text-secondary text-[10px] flex items-center gap-1">
-                                <span className="w-1 h-1 rounded-full bg-brand-primary/30 shrink-0"></span>
-                                <span className="font-black text-brand-primary/40 mr-1 uppercase">ALTURA:</span> {comp.estatura_m}m
-                              </p>
+                              {comp.nacionalidad && (
+                                <p className="text-brand-text-secondary dark:text-dark-text-secondary text-[10px] flex items-center gap-1">
+                                  <span className="w-1 h-1 rounded-full bg-brand-primary/30 shrink-0"></span>
+                                  <span className="font-black text-brand-primary/50 mr-1 uppercase">{t('sections.nationality')}:</span>
+                                  <span className="text-sm mr-1">{COUNTRIES_MAP[comp.nacionalidad] || '🌍'}</span>
+                                  <span className="font-black text-brand-dark/80 dark:text-brand-primary/90">
+                                    {comp.nacionalidad}
+                                  </span>
+                                </p>
+                              )}
                             </div>
                           </div>
                         </div>

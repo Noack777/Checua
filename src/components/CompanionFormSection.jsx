@@ -1,6 +1,73 @@
 import { useState, useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 
+const COUNTRIES = [
+  { code: 'CO', name: 'Colombia', flag: '🇨🇴' },
+  { code: 'AR', name: 'Argentina', flag: '🇦🇷' },
+  { code: 'BR', name: 'Brasil', flag: '🇧🇷' },
+  { code: 'MX', name: 'México', flag: '🇲🇽' },
+  { code: 'ES', name: 'España', flag: '🇪🇸' },
+  { code: 'US', name: 'Estados Unidos', flag: '🇺🇸' },
+  { code: 'VE', name: 'Venezuela', flag: '🇻🇪' },
+  { code: 'PE', name: 'Perú', flag: '🇵🇪' },
+  { code: 'CL', name: 'Chile', flag: '🇨🇱' },
+  { code: 'EC', name: 'Ecuador', flag: '🇪🇨' },
+  { code: 'PA', name: 'Panamá', flag: '🇵🇦' },
+  { code: 'CR', name: 'Costa Rica', flag: '🇨🇷' },
+  { code: 'UY', name: 'Uruguay', flag: '🇺🇾' },
+  { code: 'PY', name: 'Paraguay', flag: '🇵🇾' },
+  { code: 'BO', name: 'Bolivia', flag: '🇧🇴' },
+  { code: 'GT', name: 'Guatemala', flag: '🇬🇹' },
+  { code: 'HN', name: 'Honduras', flag: '🇭🇳' },
+  { code: 'SV', name: 'El Salvador', flag: '🇸🇻' },
+  { code: 'NI', name: 'Nicaragua', flag: '🇳🇮' },
+  { code: 'DO', name: 'República Dominicana', flag: '🇩🇴' },
+  { code: 'PR', name: 'Puerto Rico', flag: '🇵🇷' },
+  { code: 'CU', name: 'Cuba', flag: '🇨🇺' },
+  { code: 'FR', name: 'Francia', flag: '🇫🇷' },
+  { code: 'DE', name: 'Alemania', flag: '🇩🇪' },
+  { code: 'IT', name: 'Italia', flag: '🇮🇹' },
+  { code: 'PT', name: 'Portugal', flag: '🇵🇹' },
+  { code: 'GB', name: 'Reino Unido', flag: '🇬🇧' },
+  { code: 'CA', name: 'Canadá', flag: '🇨🇦' },
+  { code: 'AU', name: 'Australia', flag: '🇦🇺' },
+  { code: 'JP', name: 'Japón', flag: '🇯🇵' },
+  { code: 'CN', name: 'China', flag: '🇨🇳' },
+  { code: 'KR', name: 'Corea del Sur', flag: '🇰🇷' },
+  { code: 'IN', name: 'India', flag: '🇮🇳' },
+  { code: 'RU', name: 'Rusia', flag: '🇷🇺' },
+  { code: 'ZA', name: 'Sudáfrica', flag: '🇿🇦' },
+  { code: 'AE', name: 'Emiratos Árabes Unidos', flag: '🇦🇪' },
+  { code: 'SA', name: 'Arabia Saudita', flag: '🇸🇦' },
+  { code: 'EG', name: 'Egipto', flag: '🇪🇬' },
+  { code: 'IL', name: 'Israel', flag: '🇮🇱' },
+  { code: 'TR', name: 'Turquía', flag: '🇹🇷' },
+  { code: 'GR', name: 'Grecia', flag: '🇬🇷' },
+  { code: 'NL', name: 'Países Bajos', flag: '🇳🇱' },
+  { code: 'BE', name: 'Bélgica', flag: '🇧🇪' },
+  { code: 'CH', name: 'Suiza', flag: '🇨🇭' },
+  { code: 'SE', name: 'Suecia', flag: '🇸🇪' },
+  { code: 'NO', name: 'Noruega', flag: '🇳🇴' },
+  { code: 'DK', name: 'Dinamarca', flag: '🇩🇰' },
+  { code: 'FI', name: 'Finlandia', flag: '🇫🇮' },
+  { code: 'PL', name: 'Polonia', flag: '🇵🇱' },
+  { code: 'AT', name: 'Austria', flag: '🇦🇹' },
+  { code: 'NZ', name: 'Nueva Zelanda', flag: '🇳🇿' },
+  { code: 'IE', name: 'Irlanda', flag: '🇮🇪' },
+  { code: 'SG', name: 'Singapur', flag: '🇸🇬' },
+  { code: 'MY', name: 'Malasia', flag: '🇲🇾' },
+  { code: 'TH', name: 'Tailandia', flag: '🇹🇭' },
+  { code: 'VN', name: 'Vietnam', flag: '🇻🇳' },
+  { code: 'ID', name: 'Indonesia', flag: '🇮🇩' },
+  { code: 'PH', name: 'Filipinas', flag: '🇵🇭' },
+  { code: 'PK', name: 'Pakistán', flag: '🇵🇰' },
+  { code: 'BD', name: 'Bangladés', flag: '🇧🇩' },
+  { code: 'NG', name: 'Nigeria', flag: '🇳🇬' },
+  { code: 'KE', name: 'Kenia', flag: '🇰🇪' },
+  { code: 'MA', name: 'Marruecos', flag: '🇲🇦' },
+  { code: 'other', name: 'Otro', flag: '🌍' }
+];
+
 const CompanionFormSection = ({ 
   companions, 
   onCompanionChange, 
@@ -9,7 +76,8 @@ const CompanionFormSection = ({
   errors 
 }) => {
   const { t } = useTranslation();
-  const [activeDropdown, setActiveDropdown] = useState(null); // { index: number, type: 'doc' | 'rh' }
+  const [activeDropdown, setActiveDropdown] = useState(null); // { index: number, type: 'doc' | 'nationality' }
+  const [nationalitySearches, setNationalitySearches] = useState({}); // { [index]: 'search' }
   const [dropdownPosition, setDropdownPosition] = useState('down');
   const dropdownRef = useRef(null);
 
@@ -23,10 +91,15 @@ const CompanionFormSection = ({
     t('doc_types.other')
   ];
 
-  const RH_TYPES = ['O+', 'O-', 'A+', 'A-', 'B+', 'B-', 'AB+', 'AB-'];
-
   const handleClickOutside = (event) => {
     if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+      if (activeDropdown?.type === 'nationality') {
+        setNationalitySearches(prev => {
+          const newState = { ...prev };
+          delete newState[activeDropdown.index];
+          return newState;
+        });
+      }
       setActiveDropdown(null);
     }
   };
@@ -34,15 +107,22 @@ const CompanionFormSection = ({
   useEffect(() => {
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
+  }, [activeDropdown]);
 
   const handleDropdownToggle = (index, type, event) => {
     if (activeDropdown?.index === index && activeDropdown?.type === type) {
+      if (type === 'nationality') {
+        setNationalitySearches(prev => {
+          const newState = { ...prev };
+          delete newState[index];
+          return newState;
+        });
+      }
       setActiveDropdown(null);
     } else {
       const rect = event.currentTarget.getBoundingClientRect();
       const spaceBelow = window.innerHeight - rect.bottom;
-      setDropdownPosition(spaceBelow < 250 ? 'up' : 'down');
+      setDropdownPosition(spaceBelow < 300 ? 'up' : 'down');
       setActiveDropdown({ index, type });
     }
   };
@@ -76,232 +156,205 @@ const CompanionFormSection = ({
       cleanValue = value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s]/g, '');
     }
     
-    if (field === 'peso_kg') {
-      // Solo números y máximo 3 caracteres
-      cleanValue = value.replace(/\D/g, '').slice(0, 3);
-    }
-
-    if (field === 'estatura_m') {
-      // Solo números y máximo 3 caracteres
-      let digits = value.replace(/\D/g, '').slice(0, 3);
-      // El punto aparece únicamente con el tercer carácter, después del primero
-      if (digits.length === 3) {
-        cleanValue = `${digits[0]}.${digits.slice(1)}`;
-      } else {
-        cleanValue = digits;
-      }
-    }
-    
     onCompanionChange(index, field, cleanValue);
+  };
+
+  const handleNationalitySearchChange = (index, value) => {
+    setNationalitySearches(prev => ({
+      ...prev,
+      [index]: value
+    }));
   };
 
   return (
     <div id="companions-section" className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-      {companions.map((companion, index) => (
-        <div key={index} className="card-premium relative overflow-visible">
-          <div className="card-accent-line bg-brand-primary/40"></div>
-          
-          {/* Header del Acompañante */}
-          <div className="px-6 pt-6 md:px-10 flex justify-between items-center">
-            <h3 className="text-xs font-black text-brand-primary uppercase tracking-[0.2em] flex items-center gap-2">
-              <span className="w-6 h-6 rounded-full bg-brand-primary text-white flex items-center justify-center text-[10px] shadow-sm">
-                {index + 1}
-              </span>
-              Acompañante {index + 1}
-            </h3>
-            <button
-              onClick={() => onRemoveCompanion(index)}
-              className="p-2 text-brand-text-secondary/40 hover:text-red-500 transition-colors duration-300 rounded-full hover:bg-red-50"
-              title="Eliminar acompañante"
-            >
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-              </svg>
-            </button>
-          </div>
+      {companions.map((companion, index) => {
+        const selectedCountry = COUNTRIES.find(c => c.name === companion.nacionalidad);
+        const nationalitySearch = nationalitySearches[index] || '';
+        const filteredCountries = COUNTRIES.filter(c =>
+          c.name.toLowerCase().includes(nationalitySearch.toLowerCase())
+        );
+        const isNatActive = activeDropdown?.index === index && activeDropdown?.type === 'nationality';
+        const isDocActive = activeDropdown?.index === index && activeDropdown?.type === 'doc';
 
-          <div className="px-6 py-8 md:px-10 md:pb-10 space-y-4">
-            {/* Nombre Completo */}
-            <div className="relative group">
-              <input
-                type="text"
-                placeholder={t('sections.full_name')}
-                value={companion.nombre}
-                onChange={(e) => handleInputChange(index, 'nombre', e.target.value)}
-                className={`input-premium !py-3.5 sm:!py-4 text-sm sm:text-base ${errors[`companion_${index}_nombre`] ? 'border-red-200 focus:border-red-400' : ''}`}
-              />
-              {errors[`companion_${index}_nombre`] && (
-                <p className="text-[10px] text-red-500 mt-1.5 ml-6 font-bold uppercase tracking-wider">
-                  {errors[`companion_${index}_nombre`]}
-                </p>
-              )}
+        return (
+          <div key={index} className="card-premium relative overflow-visible">
+            <div className="card-accent-line bg-brand-primary/40"></div>
+            
+            {/* Header del Acompañante */}
+            <div className="px-6 pt-6 md:px-10 flex justify-between items-center">
+              <h3 className="text-xs font-black text-brand-primary uppercase tracking-[0.2em] flex items-center gap-2">
+                <span className="w-6 h-6 rounded-full bg-brand-primary text-white flex items-center justify-center text-[10px] shadow-sm">
+                  {index + 1}
+                </span>
+                Acompañante {index + 1}
+              </h3>
+              <button
+                onClick={() => onRemoveCompanion(index)}
+                className="p-2 text-brand-text-secondary/40 hover:text-red-500 transition-colors duration-300 rounded-full hover:bg-red-50"
+                title="Eliminar acompañante"
+              >
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+              </button>
             </div>
 
-            {/* Fila: Tipo y Número de Documento */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {/* Tipo de Documento */}
-              <div className="relative" ref={activeDropdown?.index === index && activeDropdown?.type === 'doc' ? dropdownRef : null}>
-                <button
-                  type="button"
-                  onClick={(e) => handleDropdownToggle(index, 'doc', e)}
-                  className={`input-premium !py-3.5 sm:!py-4 text-sm sm:text-base text-left flex items-center justify-between group ${
-                    activeDropdown?.index === index && activeDropdown?.type === 'doc' ? 'border-brand-primary ring-4 ring-brand-primary/5' : errors[`companion_${index}_tipo_documento`] ? 'border-red-200' : ''
-                  }`}
-                >
-                  <span className={`truncate ${companion.tipo_documento ? '' : 'text-brand-text-secondary/40'}`}>
-                    {companion.tipo_documento || t('sections.doc_type')}
-                  </span>
-                  <svg 
-                    className={`w-5 h-5 text-brand-primary transition-transform duration-300 ${activeDropdown?.index === index && activeDropdown?.type === 'doc' ? 'rotate-180' : ''}`} 
-                    fill="none" 
-                    viewBox="0 0 24 24" 
-                    stroke="currentColor" 
-                    strokeWidth="3"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-                  </svg>
-                </button>
-
-                {activeDropdown?.index === index && activeDropdown?.type === 'doc' && (
-                  <div className={`absolute left-0 right-0 ${dropdownPosition === 'up' ? 'bottom-full mb-3 animate-in fade-in slide-in-from-bottom-2' : 'top-full mt-3 animate-in fade-in slide-in-from-top-2'} bg-white dark:bg-dark-bg-card border-2 border-brand-border dark:border-dark-border rounded-[1.5rem] shadow-2xl z-[50] overflow-hidden duration-200`}>
-                    <div className="max-h-[200px] overflow-y-auto custom-scrollbar">
-                      {DOCUMENT_TYPES.map((type) => (
-                        <button
-                          key={type}
-                          type="button"
-                          onClick={() => {
-                            onCompanionChange(index, 'tipo_documento', type);
-                            setActiveDropdown(null);
-                          }}
-                          className={`w-full px-6 py-4 text-left text-sm font-bold transition-colors hover:bg-brand-light/50 dark:hover:bg-dark-bg-main/50 border-b border-brand-light dark:border-dark-border last:border-0 ${
-                            companion.tipo_documento === type ? 'text-brand-primary bg-brand-primary/5' : 'text-brand-text-main dark:text-dark-text-main'
-                          }`}
-                        >
-                          {type}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                )}
-                {errors[`companion_${index}_tipo_documento`] && (
-                  <p className="text-[10px] text-red-500 mt-1.5 ml-6 font-bold uppercase tracking-wider">
-                    {errors[`companion_${index}_tipo_documento`]}
-                  </p>
-                )}
-              </div>
-
-              {/* Número de Documento */}
+            <div className="px-6 py-8 md:px-10 md:pb-10 space-y-4">
+              {/* Nombre Completo */}
               <div className="relative group">
                 <input
                   type="text"
-                  inputMode="numeric"
-                  placeholder={t('sections.doc_number')}
-                  value={formatNumber(companion.numero_documento)}
-                  onChange={(e) => handleInputChange(index, 'numero_documento', e.target.value)}
-                  className={`input-premium !py-3.5 sm:!py-4 text-sm sm:text-base ${errors[`companion_${index}_numero_documento`] ? 'border-red-200 focus:border-red-400' : ''}`}
+                  placeholder={t('sections.full_name')}
+                  value={companion.nombre}
+                  onChange={(e) => handleInputChange(index, 'nombre', e.target.value)}
+                  className={`input-premium !py-3.5 sm:!py-4 text-sm sm:text-base ${errors[`companion_${index}_nombre`] ? 'border-red-200 focus:border-red-400' : ''}`}
                 />
-                {errors[`companion_${index}_numero_documento`] && (
+                {errors[`companion_${index}_nombre`] && (
                   <p className="text-[10px] text-red-500 mt-1.5 ml-6 font-bold uppercase tracking-wider">
-                    {errors[`companion_${index}_numero_documento`]}
+                    {errors[`companion_${index}_nombre`]}
                   </p>
                 )}
               </div>
-            </div>
 
-            {/* Fecha de Nacimiento + Edad calculada */}
-            <div className="relative group">
-              <label className="text-[8px] sm:text-[9px] font-black text-brand-primary uppercase tracking-widest mb-1.5 block opacity-70 ml-6">
-                {t('sections.birth_date')}
-              </label>
-              <div className="relative">
-                <input
-                  type="date"
-                  value={companion.fecha_nacimiento}
-                  onChange={(e) => handleInputChange(index, 'fecha_nacimiento', e.target.value)}
-                  max={new Date().toISOString().split('T')[0]}
-                  className={`input-premium !py-3.5 sm:!py-4 text-sm sm:text-base pr-28 sm:pr-36 ${errors[`companion_${index}_fecha_nacimiento`] ? 'border-red-200 focus:border-red-400 focus:ring-red-400/5' : ''}`}
-                />
-                <div className="absolute right-3 sm:right-4 top-1/2 -translate-y-1/2 pointer-events-none">
-                  {calculateAge(companion.fecha_nacimiento) !== null ? (
-                    <div className="flex items-center gap-1.5 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-gradient-to-r from-brand-primary/10 to-brand-primary/20 border border-brand-primary/30 animate-in fade-in zoom-in duration-300">
-                      <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-brand-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                      </svg>
-                      <span className="text-[10px] sm:text-xs font-black text-brand-primary uppercase tracking-wider">
-                        {calculateAge(companion.fecha_nacimiento)} {t('sections.age_suffix')}
-                      </span>
+              {/* Fila: Tipo y Número de Documento */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* Tipo de Documento */}
+                <div className="relative" ref={isDocActive ? dropdownRef : null}>
+                  <button
+                    type="button"
+                    onClick={(e) => handleDropdownToggle(index, 'doc', e)}
+                    className={`input-premium !py-3.5 sm:!py-4 text-sm sm:text-base text-left flex items-center justify-between group ${
+                      isDocActive ? 'border-brand-primary ring-4 ring-brand-primary/5' : errors[`companion_${index}_tipo_documento`] ? 'border-red-200' : ''
+                    }`}
+                  >
+                    <span className={`truncate ${companion.tipo_documento ? '' : 'text-brand-text-secondary/40'}`}>
+                      {companion.tipo_documento || t('sections.doc_type')}
+                    </span>
+                    <svg 
+                      className={`w-5 h-5 text-brand-primary transition-transform duration-300 ${isDocActive ? 'rotate-180' : ''}`} 
+                      fill="none" 
+                      viewBox="0 0 24 24" 
+                      stroke="currentColor" 
+                      strokeWidth="3"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </button>
+
+                  {isDocActive && (
+                    <div className={`absolute left-0 right-0 ${dropdownPosition === 'up' ? 'bottom-full mb-3 animate-in fade-in slide-in-from-bottom-2' : 'top-full mt-3 animate-in fade-in slide-in-from-top-2'} bg-white dark:bg-dark-bg-card border-2 border-brand-border dark:border-dark-border rounded-[1.5rem] shadow-2xl z-[50] overflow-hidden duration-200`}>
+                      <div className="max-h-[200px] overflow-y-auto custom-scrollbar">
+                        {DOCUMENT_TYPES.map((type) => (
+                          <button
+                            key={type}
+                            type="button"
+                            onClick={() => {
+                              onCompanionChange(index, 'tipo_documento', type);
+                              setActiveDropdown(null);
+                            }}
+                            className={`w-full px-6 py-4 text-left text-sm font-bold transition-colors hover:bg-brand-light/50 dark:hover:bg-dark-bg-main/50 border-b border-brand-light dark:border-dark-border last:border-0 ${
+                              companion.tipo_documento === type ? 'text-brand-primary bg-brand-primary/5' : 'text-brand-text-main dark:text-dark-text-main'
+                            }`}
+                          >
+                            {type}
+                          </button>
+                        ))}
+                      </div>
                     </div>
-                  ) : (
-                    <div className="px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-brand-light/40 dark:bg-dark-bg-main/40 border border-brand-border/50 dark:border-dark-border/50">
-                      <span className="text-[10px] sm:text-xs font-bold text-brand-text-secondary/40 dark:text-dark-text-secondary/40 uppercase tracking-wider">
-                        -- {t('sections.age_suffix')}
-                      </span>
-                    </div>
+                  )}
+                  {errors[`companion_${index}_tipo_documento`] && (
+                    <p className="text-[10px] text-red-500 mt-1.5 ml-6 font-bold uppercase tracking-wider">
+                      {errors[`companion_${index}_tipo_documento`]}
+                    </p>
+                  )}
+                </div>
+
+                {/* Número de Documento */}
+                <div className="relative group">
+                  <input
+                    type="text"
+                    inputMode="numeric"
+                    placeholder={t('sections.doc_number')}
+                    value={formatNumber(companion.numero_documento)}
+                    onChange={(e) => handleInputChange(index, 'numero_documento', e.target.value)}
+                    className={`input-premium !py-3.5 sm:!py-4 text-sm sm:text-base ${errors[`companion_${index}_numero_documento`] ? 'border-red-200 focus:border-red-400' : ''}`}
+                  />
+                  {errors[`companion_${index}_numero_documento`] && (
+                    <p className="text-[10px] text-red-500 mt-1.5 ml-6 font-bold uppercase tracking-wider">
+                      {errors[`companion_${index}_numero_documento`]}
+                    </p>
                   )}
                 </div>
               </div>
-              {errors[`companion_${index}_fecha_nacimiento`] && (
-                <p className="text-[10px] text-red-500 mt-1.5 ml-6 font-bold uppercase tracking-wider">
-                  {errors[`companion_${index}_fecha_nacimiento`]}
-                </p>
-              )}
-            </div>
 
-            {/* Fila: Teléfono y Correo */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {/* Teléfono */}
+              {/* Fecha de Nacimiento + Edad calculada */}
               <div className="relative group">
-                <input
-                  type="text"
-                  inputMode="tel"
-                  placeholder="Teléfono"
-                  value={companion.telefono}
-                  onChange={(e) => handleInputChange(index, 'telefono', e.target.value)}
-                  className={`input-premium !py-3.5 sm:!py-4 text-sm sm:text-base ${errors[`companion_${index}_telefono`] ? 'border-red-200 focus:border-red-400' : ''}`}
-                />
-                {errors[`companion_${index}_telefono`] && (
+                <label className="text-[8px] sm:text-[9px] font-black text-brand-primary uppercase tracking-widest mb-1.5 block opacity-70 ml-6">
+                  {t('sections.birth_date')}
+                </label>
+                <div className="relative">
+                  <input
+                    type="date"
+                    value={companion.fecha_nacimiento}
+                    onChange={(e) => handleInputChange(index, 'fecha_nacimiento', e.target.value)}
+                    max={new Date().toISOString().split('T')[0]}
+                    className={`input-premium !py-3.5 sm:!py-4 text-sm sm:text-base pr-28 sm:pr-36 ${errors[`companion_${index}_fecha_nacimiento`] ? 'border-red-200 focus:border-red-400 focus:ring-red-400/5' : ''}`}
+                  />
+                  <div className="absolute right-3 sm:right-4 top-1/2 -translate-y-1/2 pointer-events-none">
+                    {calculateAge(companion.fecha_nacimiento) !== null ? (
+                      <div className="flex items-center gap-1.5 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-gradient-to-r from-brand-primary/10 to-brand-primary/20 border border-brand-primary/30 animate-in fade-in zoom-in duration-300">
+                        <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-brand-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                        <span className="text-[10px] sm:text-xs font-black text-brand-primary uppercase tracking-wider">
+                          {calculateAge(companion.fecha_nacimiento)} {t('sections.age_suffix')}
+                        </span>
+                      </div>
+                    ) : (
+                      <div className="px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-brand-light/40 dark:bg-dark-bg-main/40 border border-brand-border/50 dark:border-dark-border/50">
+                        <span className="text-[10px] sm:text-xs font-bold text-brand-text-secondary/40 dark:text-dark-text-secondary/40 uppercase tracking-wider">
+                          -- {t('sections.age_suffix')}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+                {errors[`companion_${index}_fecha_nacimiento`] && (
                   <p className="text-[10px] text-red-500 mt-1.5 ml-6 font-bold uppercase tracking-wider">
-                    {errors[`companion_${index}_telefono`]}
+                    {errors[`companion_${index}_fecha_nacimiento`]}
                   </p>
                 )}
               </div>
 
-              {/* Correo Electrónico */}
-              <div className="relative group">
-                <input
-                  type="email"
-                  placeholder={t('sections.email')}
-                  value={companion.correo}
-                  onChange={(e) => handleInputChange(index, 'correo', e.target.value)}
-                  className={`input-premium !py-3.5 sm:!py-4 text-sm sm:text-base ${errors[`companion_${index}_correo`] ? 'border-red-200 focus:border-red-400' : ''}`}
-                />
-                {errors[`companion_${index}_correo`] && (
-                  <p className="text-[10px] text-red-500 mt-1.5 ml-6 font-bold uppercase tracking-wider">
-                    {errors[`companion_${index}_correo`]}
-                  </p>
-                )}
-              </div>
-            </div>
-
-            {/* Fila: RH, Peso y Estatura (Unificada con Responsable) */}
-            <div className="grid grid-cols-12 gap-2 sm:gap-3 items-start">
-              {/* RH */}
-              <div className="col-span-3 relative" ref={activeDropdown?.index === index && activeDropdown?.type === 'rh' ? dropdownRef : null}>
-                <label className="text-[8px] sm:text-[9px] font-black text-brand-primary uppercase tracking-widest mb-1.5 block opacity-70 whitespace-nowrap text-center w-full">
-                  {t('sections.rh')}
+              {/* Nacionalidad con selector de banderas */}
+              <div className="relative group" ref={isNatActive ? dropdownRef : null}>
+                <label className="text-[8px] sm:text-[9px] font-black text-brand-primary uppercase tracking-widest mb-1.5 block opacity-70 ml-6">
+                  {t('sections.nationality')}
                 </label>
                 <button
                   type="button"
-                  onClick={(e) => handleDropdownToggle(index, 'rh', e)}
-                  className={`input-premium !px-2 sm:!px-4 text-left flex items-center justify-between group h-[52px] sm:h-[58px] ${
-                    activeDropdown?.index === index && activeDropdown?.type === 'rh' ? 'border-brand-primary ring-4 ring-brand-primary/5' : errors[`companion_${index}_rh`] ? 'border-red-200' : ''
+                  onClick={(e) => handleDropdownToggle(index, 'nationality', e)}
+                  className={`input-premium !py-3.5 sm:!py-4 text-sm sm:text-base text-left flex items-center justify-between group ${
+                    isNatActive ? 'border-brand-primary ring-4 ring-brand-primary/5' : errors[`companion_${index}_nacionalidad`] ? 'border-red-200' : ''
                   }`}
                 >
-                  <span className={`truncate text-xs sm:text-base ${companion.rh ? '' : 'text-brand-text-secondary/40'}`}>
-                    {companion.rh || 'RH'}
-                  </span>
+                  <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+                    {selectedCountry ? (
+                      <>
+                        <span className="text-xl sm:text-2xl shrink-0">{selectedCountry.flag}</span>
+                        <span className="truncate text-sm sm:text-base font-bold text-brand-text-main dark:text-dark-text-main">
+                          {selectedCountry.name}
+                        </span>
+                      </>
+                    ) : (
+                      <span className="text-brand-text-secondary/40 text-sm sm:text-base">
+                        {t('sections.nationality_placeholder')}
+                      </span>
+                    )}
+                  </div>
                   <svg 
-                    className={`w-3 h-3 sm:w-4 sm:h-4 text-brand-primary transition-transform duration-300 ${activeDropdown?.index === index && activeDropdown?.type === 'rh' ? 'rotate-180' : ''}`} 
+                    className={`w-5 h-5 text-brand-primary transition-transform duration-300 shrink-0 ml-2 ${isNatActive ? 'rotate-180' : ''}`} 
                     fill="none" 
                     viewBox="0 0 24 24" 
                     stroke="currentColor" 
@@ -311,93 +364,101 @@ const CompanionFormSection = ({
                   </svg>
                 </button>
 
-                {activeDropdown?.index === index && activeDropdown?.type === 'rh' && (
-                  <div className={`absolute left-0 right-0 min-w-[70px] sm:min-w-[80px] ${dropdownPosition === 'up' ? 'bottom-full mb-3 animate-in fade-in slide-in-from-bottom-2' : 'top-full mt-3 animate-in fade-in slide-in-from-top-2'} bg-white dark:bg-dark-bg-card border-2 border-brand-border dark:border-dark-border rounded-[1.5rem] shadow-2xl z-[50] overflow-hidden duration-200`}>
-                    <div className="max-h-[200px] overflow-y-auto custom-scrollbar">
-                      {RH_TYPES.map((type) => (
-                        <button
-                          key={type}
-                          type="button"
-                          onClick={() => {
-                            onCompanionChange(index, 'rh', type);
-                            setActiveDropdown(null);
-                          }}
-                          className={`w-full px-2 py-3 sm:py-4 text-center text-xs sm:text-base font-bold transition-colors hover:bg-brand-light/50 dark:hover:bg-dark-bg-main/50 border-b border-brand-light dark:border-dark-border last:border-0 ${
-                            companion.rh === type ? 'text-brand-primary bg-brand-primary/5' : 'text-brand-text-main dark:text-dark-text-main'
-                          }`}
-                        >
-                          {type}
-                        </button>
-                      ))}
+                {isNatActive && (
+                  <div className={`absolute left-0 right-0 ${dropdownPosition === 'up' ? 'bottom-full mb-3 animate-in fade-in slide-in-from-bottom-2' : 'top-full mt-3 animate-in fade-in slide-in-from-top-2'} bg-white dark:bg-dark-bg-card border-2 border-brand-border dark:border-dark-border rounded-[1.5rem] shadow-2xl z-[50] overflow-hidden duration-200`}>
+                    <div className="p-3 border-b border-brand-light dark:border-dark-border">
+                      <div className="relative">
+                        <svg className="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-brand-text-secondary/40" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                        <input
+                          type="text"
+                          autoFocus
+                          placeholder={t('welcome.search_placeholder')}
+                          value={nationalitySearch}
+                          onChange={(e) => handleNationalitySearchChange(index, e.target.value)}
+                          className="w-full pl-11 pr-4 py-3 text-sm font-bold rounded-full bg-brand-light/40 dark:bg-dark-bg-main/40 border-2 border-transparent focus:border-brand-primary/30 text-brand-text-main dark:text-dark-text-main placeholder:text-brand-text-secondary/40 outline-none transition-colors"
+                          onClick={(e) => e.stopPropagation()}
+                        />
+                      </div>
+                    </div>
+                    <div className="max-h-[280px] overflow-y-auto custom-scrollbar">
+                      {filteredCountries.length === 0 ? (
+                        <div className="px-6 py-6 text-center text-sm text-brand-text-secondary/50 font-medium italic">
+                          {t('sections.no_countries_found')}
+                        </div>
+                      ) : (
+                        filteredCountries.map((country) => (
+                          <button
+                            key={country.code}
+                            type="button"
+                            onClick={() => {
+                              onCompanionChange(index, 'nacionalidad', country.name);
+                              setNationalitySearches(prev => {
+                                const newState = { ...prev };
+                                delete newState[index];
+                                return newState;
+                              });
+                              setActiveDropdown(null);
+                            }}
+                            className={`w-full px-5 sm:px-6 py-3.5 sm:py-4 text-left flex items-center gap-3 sm:gap-4 transition-colors hover:bg-brand-light/50 dark:hover:bg-dark-bg-main/50 border-b border-brand-light dark:border-dark-border last:border-0 ${
+                              companion.nacionalidad === country.name ? 'text-brand-primary bg-brand-primary/5' : 'text-brand-text-main dark:text-dark-text-main'
+                            }`}
+                          >
+                            <span className="text-xl sm:text-2xl shrink-0">{country.flag}</span>
+                            <span className="text-sm sm:text-base font-bold truncate">{country.name}</span>
+                          </button>
+                        ))
+                      )}
                     </div>
                   </div>
                 )}
-                {errors[`companion_${index}_rh`] && (
-                  <p className="text-[8px] text-red-500 mt-1 ml-1 font-bold uppercase tracking-tight leading-tight">
-                    {errors[`companion_${index}_rh`]}
+                {errors[`companion_${index}_nacionalidad`] && (
+                  <p className="text-[10px] text-red-500 mt-1.5 ml-6 font-bold uppercase tracking-wider">
+                    {errors[`companion_${index}_nacionalidad`]}
                   </p>
                 )}
               </div>
 
-              {/* Peso */}
-              <div className="col-span-4 relative group">
-                <label className="text-[8px] sm:text-[9px] font-black text-brand-primary uppercase tracking-widest mb-1.5 block opacity-70 whitespace-nowrap text-center w-full">
-                  {t('sections.weight')}
-                </label>
-                <div className="relative">
+              {/* Fila: Teléfono y Correo */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* Teléfono */}
+                <div className="relative group">
                   <input
                     type="text"
-                    inputMode="numeric"
-                    placeholder="70"
-                    maxLength={3}
-                    value={companion.peso_kg}
-                    onChange={(e) => handleInputChange(index, 'peso_kg', e.target.value)}
-                    className={`input-premium !px-2 sm:!px-4 text-center h-[52px] sm:h-[58px] text-xs sm:text-base !pr-8 sm:!pr-12 ${
-                      errors[`companion_${index}_peso_kg`] ? 'border-red-200 focus:border-red-400' : ''
-                    }`}
+                    inputMode="tel"
+                    placeholder="Teléfono"
+                    value={companion.telefono}
+                    onChange={(e) => handleInputChange(index, 'telefono', e.target.value)}
+                    className={`input-premium !py-3.5 sm:!py-4 text-sm sm:text-base ${errors[`companion_${index}_telefono`] ? 'border-red-200 focus:border-red-400' : ''}`}
                   />
-                  <div className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 pointer-events-none">
-                    <span className="text-[8px] sm:text-[10px] font-black text-brand-primary/40 uppercase tracking-widest">kg</span>
-                  </div>
+                  {errors[`companion_${index}_telefono`] && (
+                    <p className="text-[10px] text-red-500 mt-1.5 ml-6 font-bold uppercase tracking-wider">
+                      {errors[`companion_${index}_telefono`]}
+                    </p>
+                  )}
                 </div>
-                {errors[`companion_${index}_peso_kg`] && (
-                  <p className="text-[8px] text-red-500 mt-1 ml-1 font-bold uppercase tracking-tight leading-tight">
-                    {errors[`companion_${index}_peso_kg`]}
-                  </p>
-                )}
-              </div>
 
-              {/* Estatura */}
-              <div className="col-span-5 relative group">
-                <label className="text-[8px] sm:text-[9px] font-black text-brand-primary uppercase tracking-widest mb-1.5 block opacity-70 whitespace-nowrap text-center w-full">
-                  {t('sections.height')}
-                </label>
-                <div className="relative">
+                {/* Correo Electrónico */}
+                <div className="relative group">
                   <input
-                    type="text"
-                    inputMode="numeric"
-                    placeholder="1.75"
-                    maxLength={4}
-                    value={companion.estatura_m}
-                    onChange={(e) => handleInputChange(index, 'estatura_m', e.target.value)}
-                    className={`input-premium !px-2 sm:!px-4 text-center h-[52px] sm:h-[58px] text-xs sm:text-base !pr-6 sm:!pr-10 ${
-                      errors[`companion_${index}_estatura_m`] ? 'border-red-200 focus:border-red-400' : ''
-                    }`}
+                    type="email"
+                    placeholder={t('sections.email')}
+                    value={companion.correo}
+                    onChange={(e) => handleInputChange(index, 'correo', e.target.value)}
+                    className={`input-premium !py-3.5 sm:!py-4 text-sm sm:text-base ${errors[`companion_${index}_correo`] ? 'border-red-200 focus:border-red-400' : ''}`}
                   />
-                  <div className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 pointer-events-none">
-                    <span className="text-[8px] sm:text-[10px] font-black text-brand-primary/40 uppercase tracking-widest">m</span>
-                  </div>
+                  {errors[`companion_${index}_correo`] && (
+                    <p className="text-[10px] text-red-500 mt-1.5 ml-6 font-bold uppercase tracking-wider">
+                      {errors[`companion_${index}_correo`]}
+                    </p>
+                  )}
                 </div>
-                {errors[`companion_${index}_estatura_m`] && (
-                  <p className="text-[8px] text-red-500 mt-1 ml-1 font-bold uppercase tracking-tight leading-tight">
-                    {errors[`companion_${index}_estatura_m`]}
-                  </p>
-                )}
               </div>
             </div>
           </div>
-        </div>
-      ))}
+        );
+      })}
 
       {/* Botón para añadir otro acompañante más */}
       <button
