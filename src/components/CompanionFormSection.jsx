@@ -91,20 +91,19 @@ const CompanionFormSection = ({
     t('doc_types.other')
   ];
 
-  const handleClickOutside = (event) => {
-    if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-      if (activeDropdown?.type === 'nationality') {
-        setNationalitySearches(prev => {
-          const newState = { ...prev };
-          delete newState[activeDropdown.index];
-          return newState;
-        });
-      }
-      setActiveDropdown(null);
-    }
-  };
-
   useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        if (activeDropdown?.type === 'nationality') {
+          setNationalitySearches(prev => {
+            const newState = { ...prev };
+            delete newState[activeDropdown.index];
+            return newState;
+          });
+        }
+        setActiveDropdown(null);
+      }
+    };
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [activeDropdown]);
