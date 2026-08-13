@@ -10,6 +10,7 @@ const PhoneInput = PhoneInputPkg.default || PhoneInputPkg;
 const WelcomeModal = ({ isOpen, onComplete, onClose, tours = [], loading = false, initialPhone = '', initialTourId = '', theme, toggleTheme }) => {
   const { t, i18n } = useTranslation();
   const [phone, setPhone] = useState(initialPhone);
+  const [selectedCountry, setSelectedCountry] = useState(initialPhone ? undefined : 'co');
   const [selectedTourId, setSelectedTourId] = useState(initialTourId);
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [isTourDropdownOpen, setIsTourDropdownOpen] = useState(false);
@@ -87,12 +88,21 @@ const WelcomeModal = ({ isOpen, onComplete, onClose, tours = [], loading = false
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const handlePhoneChange = (nextPhone) => {
-    setPhone(nextPhone);
+  const handlePhoneChange = (nextPhone, countryData = {}) => {
+    const normalizedPhone = String(nextPhone || '').replace(/\D/g, '');
+    const dialCode = String(countryData?.dialCode || '');
+    const hasSelectedPrefix = Boolean(dialCode) && normalizedPhone.startsWith(dialCode);
+
+    setPhone(normalizedPhone);
+    setSelectedCountry(
+      normalizedPhone && hasSelectedPrefix && countryData?.countryCode
+        ? countryData.countryCode
+        : null
+    );
 
     if (debounceTimer.current) clearTimeout(debounceTimer.current);
 
-    const nextPhoneWithPlus = nextPhone ? (String(nextPhone).startsWith('+') ? String(nextPhone) : `+${nextPhone}`) : '';
+    const nextPhoneWithPlus = normalizedPhone && hasSelectedPrefix ? `+${normalizedPhone}` : '';
     let nextIsValid = false;
     if (nextPhoneWithPlus) {
       try {
@@ -254,15 +264,16 @@ const WelcomeModal = ({ isOpen, onComplete, onClose, tours = [], loading = false
                 className={`relative welcome-phone-input-v2 ${phoneDropdownPosition === 'up' ? 'drop-up' : ''}`}
               >
                 <PhoneInput
-                  country={'co'}
+                  country={selectedCountry}
                   value={phone}
                   onChange={handlePhoneChange}
+                  disableCountryGuess={true}
                   enableSearch={true}
                   searchPlaceholder={t('welcome.search_placeholder')}
                   searchNotFound={t('welcome.search_not_found') || "..."}
                   placeholder={t('welcome.phone_placeholder')}
                   containerClass="!w-full !font-sans"
-                  inputClass="!w-full !h-auto !py-4 !pl-[70px] !pr-5 !bg-brand-light/30 dark:!bg-dark-bg-main/50 !border-2 !border-brand-border dark:!border-dark-border !rounded-full !text-brand-text-main dark:!text-dark-text-main !font-bold !text-base focus:!border-brand-primary focus:!ring-4 focus:!ring-brand-primary/5 !transition-all !duration-300"
+                  inputClass="!w-full !h-auto !py-4 !pl-[88px] !pr-5 !bg-brand-light/30 dark:!bg-dark-bg-main/50 !border-2 !border-brand-border dark:!border-dark-border !rounded-full !text-brand-text-main dark:!text-dark-text-main !font-bold !text-base focus:!border-brand-primary focus:!ring-4 focus:!ring-brand-primary/5 !transition-all !duration-300"
                   buttonClass="!bg-transparent !border-none !rounded-l-full !pl-4 hover:!bg-brand-primary/5 !transition-colors"
                   dropdownClass={`welcome-phone-dropdown ${phoneDropdownPosition === 'up' ? 'open-up' : ''}`}
                   searchClass="welcome-phone-search"
@@ -538,8 +549,8 @@ const WelcomeModal = ({ isOpen, onComplete, onClose, tours = [], loading = false
           box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
           border: 2px solid #E5E7EB !important;
           margin-top: 10px !important;
-          width: 100% !important; /* Ajustado al modal */
-          max-width: 320px !important;
+          width: min(430px, calc(100vw - 3rem)) !important;
+          max-width: calc(100vw - 3rem) !important;
           max-height: 280px !important; /* Altura máxima requerida */
           z-index: 1000 !important;
           scrollbar-width: thin;
@@ -571,8 +582,8 @@ const WelcomeModal = ({ isOpen, onComplete, onClose, tours = [], loading = false
         @media (max-width: 480px) {
           .react-tel-input .country-list {
             width: calc(100vw - 3rem) !important;
-            max-width: none !important;
-            left: -15px !important; /* Centrado relativo al input */
+            max-width: calc(100vw - 3rem) !important;
+            left: 0 !important;
             max-height: 250px !important;
           }
         }
@@ -605,7 +616,11 @@ const WelcomeModal = ({ isOpen, onComplete, onClose, tours = [], loading = false
           color: #172033 !important;
         }
 
-        /* Icono de búsqueda simulado */
+        /* La librería ya dibuja la lupa; ocultamos su emoji y conservamos un solo icono visual. */
+        .react-tel-input .search-emoji {
+          display: none !important;
+        }
+
         .react-tel-input .search::before {
           content: "🔍";
           position: absolute;
@@ -615,6 +630,7 @@ const WelcomeModal = ({ isOpen, onComplete, onClose, tours = [], loading = false
           font-size: 14px;
           z-index: 11;
           opacity: 0.6;
+          pointer-events: none;
         }
 
         .dark .react-tel-input .search-box {
@@ -631,6 +647,7 @@ const WelcomeModal = ({ isOpen, onComplete, onClose, tours = [], loading = false
           gap: 12px !important;
           transition: background-color 0.2s !important;
           overflow: hidden !important;
+          min-height: 44px !important;
         }
 
         .react-tel-input .country:hover {
@@ -655,7 +672,9 @@ const WelcomeModal = ({ isOpen, onComplete, onClose, tours = [], loading = false
           margin: 0 !important;
           position: static !important;
           flex-shrink: 0 !important;
-          transform: scale(1.1);
+          transform: none !important;
+          width: 16px !important;
+          min-width: 16px !important;
         }
 
         /* Nombre del país */
@@ -696,13 +715,13 @@ const WelcomeModal = ({ isOpen, onComplete, onClose, tours = [], loading = false
 
         /* Ajuste de la bandera seleccionada */
         .react-tel-input .selected-flag {
-          width: 55px !important;
+          width: 72px !important;
           padding-left: 15px !important;
           background: transparent !important;
         }
         
         .react-tel-input .selected-flag .arrow {
-          left: 35px !important;
+          left: 47px !important;
           border-top-color: #8CC915 !important;
         }
         

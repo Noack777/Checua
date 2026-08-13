@@ -8,6 +8,8 @@ const PaymentModal = ({ isOpen, onClose, experience, participants, totalAmount, 
 
   if (!isOpen) return null;
 
+  const depositAmount = Math.round(totalAmount * 0.3);
+
   const handleCopy = (text, field) => {
     navigator.clipboard.writeText(text);
     setCopiedField(field);
@@ -50,18 +52,34 @@ const PaymentModal = ({ isOpen, onClose, experience, participants, totalAmount, 
             <p className="text-brand-text-main dark:text-dark-text-main font-black text-base md:text-lg leading-tight break-words whitespace-normal">
               {experience}
             </p>
-            <div className="flex justify-between items-end pt-2 border-t border-brand-primary/10">
-              <div>
-                <p className="text-[10px] font-bold text-brand-text-secondary dark:text-dark-text-secondary uppercase tracking-widest">
-                  {t('summary.payment.participants')}: <span className="text-brand-text-main dark:text-dark-text-main">{participants}</span>
-                </p>
+            <div className="pt-3 border-t border-brand-primary/10 space-y-3">
+              <p className="text-[10px] font-bold text-brand-text-secondary dark:text-dark-text-secondary uppercase tracking-widest">
+                {t('summary.payment.participants')}: <span className="text-brand-text-main dark:text-dark-text-main">{participants}</span>
+              </p>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="rounded-2xl border border-brand-primary/15 bg-white/50 dark:bg-dark-bg-card/40 p-4">
+                  <p className="text-[9px] font-black text-brand-text-secondary dark:text-dark-text-secondary uppercase tracking-wider">
+                    Valor total de la reserva
+                  </p>
+                  <p className="mt-1 text-lg md:text-xl font-black text-brand-text-main dark:text-dark-text-main whitespace-nowrap">
+                    {formatCurrency(totalAmount)} COP
+                  </p>
+                </div>
+
+                <div className="rounded-2xl border-2 border-brand-primary/40 bg-brand-primary/10 p-4 shadow-[0_10px_25px_-18px_rgba(140,201,21,0.9)]">
+                  <p className="text-[9px] font-black text-brand-primary uppercase tracking-wider">
+                    Abono para confirmar (30 %)
+                  </p>
+                  <p className="mt-1 text-xl md:text-2xl font-black text-brand-primary whitespace-nowrap">
+                    {formatCurrency(depositAmount)} COP
+                  </p>
+                </div>
               </div>
-              <div className="text-right">
-                <p className="text-xl md:text-2xl font-black text-brand-primary leading-none">
-                  ${formatCurrency(totalAmount)}
-                </p>
-                <span className="text-[9px] font-black text-brand-primary/40 uppercase tracking-widest">COP</span>
-              </div>
+
+              <p className="text-[10px] font-bold text-brand-text-secondary dark:text-dark-text-secondary text-center">
+                Paga el abono mínimo para confirmar tu cupo.
+              </p>
             </div>
           </div>
 
@@ -169,15 +187,14 @@ const PaymentModal = ({ isOpen, onClose, experience, participants, totalAmount, 
             </p>
             <button
               onClick={handleWhatsApp}
-              className="w-full py-4 bg-[#25D366] text-white font-black text-xs uppercase tracking-widest rounded-full shadow-lg hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-3"
+              className="w-full px-5 py-4 bg-[#25D366] text-white font-black text-xs uppercase tracking-widest rounded-full shadow-lg hover:scale-[1.02] active:scale-95 transition-all"
             >
-              <img 
-                src={PAYMENT_CONFIG.whatsapp.logo} 
-                alt="WhatsApp" 
-                className="w-6 h-6 object-contain"
-                loading="lazy"
-              />
-              {t('summary.payment.send_whatsapp')}
+              <span className="mx-auto inline-flex max-w-full items-center justify-center gap-2.5">
+                <svg className="h-5 w-5 shrink-0" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <path d="M12.04 2a9.84 9.84 0 00-8.43 14.92L2 22l5.22-1.54A9.98 9.98 0 1012.04 2zm0 17.99a8.1 8.1 0 01-4.13-1.13l-.3-.18-3.1.91.93-3.02-.2-.31a8.02 8.02 0 116.8 3.73zm4.45-6.03c-.24-.12-1.44-.71-1.66-.79-.22-.08-.38-.12-.54.12-.16.24-.63.79-.77.95-.14.16-.28.18-.52.06-.24-.12-1.03-.38-1.96-1.21a7.3 7.3 0 01-1.36-1.69c-.14-.24-.02-.37.1-.49.11-.11.24-.28.36-.42.12-.14.16-.24.24-.4.08-.16.04-.3-.02-.42-.06-.12-.54-1.3-.74-1.78-.2-.47-.4-.4-.54-.41h-.46c-.16 0-.42.06-.64.3-.22.24-.84.82-.84 2s.86 2.32.98 2.48c.12.16 1.69 2.58 4.1 3.62.57.25 1.02.4 1.37.51.58.18 1.1.16 1.51.1.46-.07 1.44-.59 1.64-1.16.2-.57.2-1.06.14-1.16-.06-.1-.22-.16-.46-.28z" />
+                </svg>
+                <span className="min-w-0 text-center leading-tight">{t('summary.payment.send_whatsapp')}</span>
+              </span>
             </button>
           </div>
         </div>

@@ -200,7 +200,7 @@ const HomePage = ({
   };
 
   return (
-    <div className={`min-h-screen bg-gradient-to-b from-white to-brand-light/40 dark:from-dark-bg-main dark:to-dark-bg-main py-8 px-4 sm:px-6 lg:px-8 flex flex-col items-center transition-colors duration-300 ${isModalOpen ? 'overflow-hidden h-screen' : ''}`}>
+    <div className={`min-h-screen bg-gradient-to-b from-white to-brand-light/40 dark:from-dark-bg-main dark:to-dark-bg-main py-3 sm:py-8 px-4 sm:px-6 lg:px-8 flex flex-col items-center transition-colors duration-300 ${isModalOpen ? 'overflow-hidden h-screen' : ''}`}>
       {isModalOpen ? (
         <WelcomeModal 
           isOpen={isModalOpen} 
@@ -219,9 +219,9 @@ const HomePage = ({
       {!isModalOpen && (
         <>
           {/* Header Titles */}
-          <div className="w-full max-w-xl text-center mb-10 pt-16 md:pt-20 relative">
+          <div className="w-full max-w-xl text-center mb-6 sm:mb-10 pt-2 sm:pt-16 md:pt-20 relative">
         {/* Theme & Language Selectors */}
-        <div className="flex items-center justify-center gap-3 flex-wrap sm:absolute sm:top-0 sm:right-0">
+        <div className="flex items-center justify-center gap-3 flex-wrap mb-4 sm:mb-0 sm:absolute sm:top-0 sm:right-0">
           {/* Theme Toggle */}
           <button
             onClick={toggleTheme}
@@ -302,7 +302,7 @@ const HomePage = ({
         )}
 
         {/* INDICADOR DE PASOS */}
-        <div className="mb-8 md:mb-12 px-2">
+        <div className="mb-5 sm:mb-8 md:mb-12 px-2">
           <div className="max-w-3xl mx-auto relative">
             <div className="flex items-center justify-between z-10 relative">
               {[
@@ -579,62 +579,125 @@ const HomePage = ({
                     <p className="text-brand-text-main dark:text-dark-text-main font-black text-lg md:text-xl mb-3 break-words whitespace-normal">
                       {reservationData.contact.nombre_jefe_reserva}
                     </p>
-                    <div className="grid sm:grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <p className="text-brand-text-secondary dark:text-dark-text-secondary text-sm flex items-start gap-2 min-w-0">
-                          <span className="w-1.5 h-1.5 bg-brand-primary rounded-full mt-2 shrink-0"></span>
-                          <span className="font-bold shrink-0">{reservationData.contact.tipo_documento}:</span>
-                          <span className="min-w-0 break-all">{reservationData.contact.numero_documento}</span>
+                    <div className="grid sm:grid-cols-2 gap-y-2 gap-x-4">
+                      <p className="text-brand-text-secondary dark:text-dark-text-secondary text-xs flex items-start gap-2 min-w-0">
+                        <span className="w-1 h-1 bg-brand-primary/40 rounded-full mt-1.5 shrink-0"></span>
+                        <span className="font-bold shrink-0">{reservationData.contact.tipo_documento}:</span>
+                        <span className="min-w-0 whitespace-nowrap">{reservationData.contact.numero_documento}</span>
+                      </p>
+                      <p className="text-brand-text-secondary dark:text-dark-text-secondary text-xs flex items-start gap-2 min-w-0">
+                        <span className="w-1 h-1 bg-brand-primary/40 rounded-full mt-1.5 shrink-0"></span>
+                        <span className="font-bold shrink-0">Tel:</span>
+                        <span className="min-w-0 whitespace-nowrap">{reservationData.contact.telefono_cliente}</span>
+                      </p>
+                      <p className="text-brand-text-secondary dark:text-dark-text-secondary text-xs flex items-start gap-2 sm:col-span-2 min-w-0">
+                        <span className="w-1 h-1 bg-brand-primary/40 rounded-full mt-1.5 shrink-0"></span>
+                        <span className="font-bold shrink-0">Email:</span>
+                        <span className="min-w-0 break-all">{reservationData.contact.correo_contacto}</span>
+                      </p>
+                    </div>
+
+                    <div className="flex gap-3 sm:gap-4 pt-3 mt-3 border-t border-brand-primary/5 flex-wrap">
+                      {calculateAge(reservationData.contact.fecha_nacimiento) !== null && (
+                        <p className="text-brand-text-secondary dark:text-dark-text-secondary text-[10px] flex items-center gap-1">
+                          <span className="w-1 h-1 rounded-full bg-brand-primary/30 shrink-0"></span>
+                          <span className="font-black text-brand-primary/50 mr-1 uppercase">{t('sections.age')}:</span>
+                          <span className="font-black text-brand-dark/80 dark:text-brand-primary/90">
+                            {calculateAge(reservationData.contact.fecha_nacimiento)} {t('sections.age_suffix')}
+                          </span>
                         </p>
-                        <p className="text-brand-text-secondary dark:text-dark-text-secondary text-sm flex items-start gap-2 min-w-0">
-                          <span className="w-1.5 h-1.5 bg-brand-primary rounded-full mt-2 shrink-0"></span>
-                          <span className="font-bold shrink-0">{t('welcome.phone_label').replace('*', '')}:</span>
-                          <span className="min-w-0 break-all">{reservationData.contact.telefono_cliente}</span>
+                      )}
+                      {reservationData.contact.nacionalidad && (
+                        <p className="text-brand-text-secondary dark:text-dark-text-secondary text-[10px] flex items-center gap-1">
+                          <span className="w-1 h-1 rounded-full bg-brand-primary/30 shrink-0"></span>
+                          <span className="font-black text-brand-primary/50 mr-1 uppercase">{t('sections.nationality')}:</span>
+                          <CountryFlagImg value={reservationData.contact.nacionalidad} size="w40" alt="" className="!w-4 !h-4 rounded-full" />
+                          <span className="font-black text-brand-dark/80 dark:text-brand-primary/90 ml-1">
+                            {getCountryName(reservationData.contact.nacionalidad)}
+                          </span>
                         </p>
-                      </div>
-                      <div className="space-y-2">
-                        <p className="text-brand-text-secondary dark:text-dark-text-secondary text-sm flex items-start gap-2 min-w-0">
-                          <span className="w-1.5 h-1.5 bg-brand-primary rounded-full mt-2 shrink-0"></span>
-                          <span className="font-bold shrink-0">{t('sections.email')}:</span>
-                          <span className="min-w-0 break-all">{reservationData.contact.correo_contacto}</span>
-                        </p>
-                        <div className="flex gap-3 sm:gap-4 pt-1 flex-wrap">
-                          {calculateAge(reservationData.contact.fecha_nacimiento) !== null && (
-                            <p className="text-brand-text-secondary dark:text-dark-text-secondary text-xs flex items-center gap-1">
-                              <span className="w-1.5 h-1.5 rounded-full bg-brand-primary/50 shrink-0"></span>
-                              <span className="font-black text-brand-primary/70 mr-1">{t('sections.age').toUpperCase()}:</span>
-                              <span className="font-black text-brand-dark dark:text-brand-primary">
-                                {calculateAge(reservationData.contact.fecha_nacimiento)} {t('sections.age_suffix')}
-                              </span>
-                            </p>
-                          )}
-                          {reservationData.contact.nacionalidad && (
-                            <p className="text-brand-text-secondary dark:text-dark-text-secondary text-xs flex items-center gap-1">
-                              <span className="w-1.5 h-1.5 rounded-full bg-brand-primary/50 shrink-0"></span>
-                              <span className="font-black text-brand-primary/70 mr-1">{t('sections.nationality').toUpperCase()}:</span>
-                              <CountryFlagImg value={reservationData.contact.nacionalidad} size="w40" alt="" className="!w-5 !h-5 rounded-full" />
-                              <span className="font-black text-brand-dark dark:text-brand-primary ml-1">
-                                {getCountryName(reservationData.contact.nacionalidad)}
-                              </span>
-                            </p>
-                          )}
-                        </div>
-                      </div>
+                      )}
                     </div>
                   </div>
                 </div>
 
-                {/* Detalles de la Experiencia y Fecha */}
-                <div className="grid lg:grid-cols-2 gap-8 lg:gap-10 items-start">
+              {/* Lista de Acompañantes en el Resumen */}
+              {reservationData.companions.length > 0 && (
+                <div className="space-y-4 pt-4 border-t border-brand-light dark:border-dark-border">
+                  <p className="section-title-premium !ml-0">
+                    {t('summary.registered_companions')} ({reservationData.companions.length})
+                  </p>
+                  <div className="grid gap-4">
+                    {reservationData.companions.map((comp, idx) => (
+                      <div key={idx} className="bg-brand-light/30 dark:bg-dark-bg-main/30 rounded-[1.5rem] p-6 border border-brand-primary/10 group hover:border-brand-primary/30 transition-all">
+                        <div className="flex items-start gap-4">
+                          <div className="w-10 h-10 rounded-full bg-brand-primary/10 text-brand-primary flex items-center justify-center font-black text-sm shrink-0">
+                            {idx + 1}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex justify-between items-start mb-2">
+                              <p className="text-brand-text-main dark:text-dark-text-main font-black text-base uppercase truncate pr-2">{comp.nombre}</p>
+                            </div>
+                            
+                            <div className="grid sm:grid-cols-2 gap-y-2 gap-x-4">
+                              <p className="text-brand-text-secondary dark:text-dark-text-secondary text-xs flex items-start gap-2 min-w-0">
+                                <span className="w-1 h-1 bg-brand-primary/40 rounded-full mt-1.5 shrink-0"></span>
+                                <span className="font-bold shrink-0">{comp.tipo_documento}:</span>
+                                <span className="min-w-0 sm:whitespace-nowrap">{comp.numero_documento}</span>
+                              </p>
+                              <p className="text-brand-text-secondary dark:text-dark-text-secondary text-xs flex items-start gap-2 min-w-0">
+                                <span className="w-1 h-1 bg-brand-primary/40 rounded-full mt-1.5 shrink-0"></span>
+                                <span className="font-bold shrink-0">Tel:</span>
+                                <span className="min-w-0 break-all">{comp.telefono}</span>
+                              </p>
+                              <p className="text-brand-text-secondary dark:text-dark-text-secondary text-xs flex items-start gap-2 sm:col-span-2 min-w-0">
+                                <span className="w-1 h-1 bg-brand-primary/40 rounded-full mt-1.5 shrink-0"></span>
+                                <span className="font-bold shrink-0">Email:</span>
+                                <span className="min-w-0 break-all">{comp.correo || '---'}</span>
+                              </p>
+                            </div>
+
+                            <div className="flex gap-3 sm:gap-4 pt-3 mt-3 border-t border-brand-primary/5 flex-wrap">
+                              {calculateAge(comp.fecha_nacimiento) !== null && (
+                                <p className="text-brand-text-secondary dark:text-dark-text-secondary text-[10px] flex items-center gap-1">
+                                  <span className="w-1 h-1 rounded-full bg-brand-primary/30 shrink-0"></span>
+                                  <span className="font-black text-brand-primary/50 mr-1 uppercase">{t('sections.age')}:</span>
+                                  <span className="font-black text-brand-dark/80 dark:text-brand-primary/90">
+                                    {calculateAge(comp.fecha_nacimiento)} {t('sections.age_suffix')}
+                                  </span>
+                                </p>
+                              )}
+                              {comp.nacionalidad && (
+                                <p className="text-brand-text-secondary dark:text-dark-text-secondary text-[10px] flex items-center gap-1">
+                                  <span className="w-1 h-1 rounded-full bg-brand-primary/30 shrink-0"></span>
+                                  <span className="font-black text-brand-primary/50 mr-1 uppercase">{t('sections.nationality')}:</span>
+                                  <CountryFlagImg value={comp.nacionalidad} size="w40" alt="" className="!w-4 !h-4 rounded-full" />
+                                  <span className="font-black text-brand-dark/80 dark:text-brand-primary/90 ml-1">
+                                    {getCountryName(comp.nacionalidad)}
+                                  </span>
+                                </p>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+
+                {/* Experiencia, programación y pago */}
+                <div className="space-y-8">
                   <div className="space-y-4">
                     <p className="section-title-premium !ml-0">{t('summary.experience')}</p>
-                    <div className="bg-brand-light/30 dark:bg-dark-bg-main/30 rounded-[2rem] p-6 border border-brand-primary/10 h-full space-y-4">
+                    <div className="bg-brand-light/30 dark:bg-dark-bg-main/30 rounded-[2rem] p-6 border border-brand-primary/10 space-y-5">
                       <div className="space-y-1">
                         <p className="text-brand-text-main dark:text-dark-text-main font-black text-base sm:text-lg md:text-xl leading-snug break-words whitespace-normal">
                           <span className="mr-2">{getPlanEmoji(reservationData.tour.tour_reserva)}</span>
                           <span className="uppercase">{reservationData.tour.tour_reserva}</span>
                         </p>
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2 flex-wrap">
                           <span className="text-brand-primary font-black text-lg">
                             {formatCurrency(reservationData.tour.precio_por_persona)}
                           </span>
@@ -644,88 +707,61 @@ const HomePage = ({
                         </div>
                       </div>
 
-                      <div className="pt-3 border-t border-brand-primary/10 space-y-3">
-                        <div className="flex justify-between items-center">
-                          <span className="text-xs font-bold text-brand-text-secondary dark:text-dark-text-secondary uppercase tracking-widest">
-                            PARTICIPANTES
+                      <div className="pt-4 border-t border-brand-primary/10 flex items-center justify-between gap-4">
+                        <span className="text-xs font-bold text-brand-text-secondary dark:text-dark-text-secondary uppercase tracking-widest">
+                          PARTICIPANTES
+                        </span>
+                        <span className="text-sm font-black text-brand-text-main dark:text-dark-text-main whitespace-nowrap">
+                          {totalParticipants} Persona(s)
+                        </span>
+                      </div>
+
+                      <div className="rounded-[1.5rem] border-2 border-brand-primary/30 bg-brand-primary/10 p-5 text-center shadow-[0_10px_30px_-18px_rgba(140,201,21,0.8)]">
+                        <p className="text-[10px] sm:text-xs font-black text-brand-primary uppercase tracking-[0.18em]">
+                          ABONO MÍNIMO PARA CONFIRMAR
+                        </p>
+                        <p className="mt-2 text-2xl sm:text-3xl font-black text-brand-primary leading-none">
+                          {formatCOP(depositAmount)}
+                        </p>
+                        <p className="mt-2 text-[10px] font-bold text-brand-text-secondary dark:text-dark-text-secondary">
+                          Corresponde al 30 % del valor total y garantiza tu cupo.
+                        </p>
+                      </div>
+
+                      <div className="space-y-3 rounded-[1.5rem] bg-white/50 dark:bg-dark-bg-card/40 border border-brand-primary/10 p-5">
+                        <p className="text-[10px] font-black text-brand-text-secondary dark:text-dark-text-secondary uppercase tracking-widest">
+                          RESUMEN DEL PAGO
+                        </p>
+                        <div className="rounded-[1.25rem] border-2 border-brand-primary/25 bg-brand-primary/5 px-4 py-4 text-center">
+                          <p className="text-[10px] sm:text-xs font-black text-brand-text-secondary dark:text-dark-text-secondary uppercase tracking-[0.14em]">
+                            Valor total del plan
+                          </p>
+                          <p className="mt-1 text-2xl sm:text-3xl font-black text-brand-text-main dark:text-dark-text-main leading-none">
+                            {formatCOP(totalPrice)}
+                          </p>
+                          <p className="mt-2 text-[9px] sm:text-[10px] font-bold text-brand-primary uppercase tracking-wider">
+                            Para {totalParticipants} persona(s): responsable y acompañantes
+                          </p>
+                        </div>
+                        <div className="h-px bg-brand-primary/10"></div>
+                        <div className="flex items-center justify-between gap-4">
+                          <span className="text-[10px] sm:text-xs font-bold text-brand-text-secondary dark:text-dark-text-secondary uppercase">
+                            Saldo para el día del evento
                           </span>
-                          <div className="text-right">
-                            <p className="text-sm font-black text-brand-text-main dark:text-dark-text-main">
-                              {totalParticipants} Persona(s)
-                            </p>
-                            <p className="text-[9px] font-bold text-brand-text-secondary/50 dark:text-dark-text-secondary/50 italic">
-                              ({totalParticipants} responsable(s))
-                            </p>
-                          </div>
+                          <span className="text-sm font-black text-brand-text-main dark:text-dark-text-main whitespace-nowrap">
+                            {formatCOP(remainingAmount)}
+                          </span>
                         </div>
-
-                        <div className="pt-3 border-t-2 border-dashed border-brand-primary/20">
-                          <div className="text-center text-brand-primary/60 font-black tracking-[0.2em] text-[10px] select-none whitespace-nowrap overflow-hidden">
-                            ──────────────────────────
-                          </div>
-                          <div className="flex justify-between items-center pt-2">
-                            <span className="text-xs font-black text-brand-primary uppercase tracking-[0.2em]">
-                              TOTAL ESTIMADO
-                            </span>
-                            <div className="text-right">
-                              <p className="text-xl md:text-2xl font-black text-brand-primary leading-none">
-                                {formatCOP(totalPrice)}
-                              </p>
-                            </div>
-                          </div>
-                          <div className="text-center text-brand-primary/60 font-black tracking-[0.2em] text-[10px] select-none pt-2 whitespace-nowrap overflow-hidden">
-                            ──────────────────────────
-                          </div>
-
-                          <div className="pt-5 space-y-4">
-                            <p className="text-xs font-black text-brand-text-secondary dark:text-dark-text-secondary uppercase tracking-widest">
-                              INFORMACION DE PAGO
-                            </p>
-
-                            <p className="text-sm text-brand-text-secondary dark:text-dark-text-secondary font-medium leading-relaxed">
-                              Tu reserva se puede confirmar pagando desde el 30% del valor total.
-                            </p>
-
-                            <div className="space-y-2">
-                              <div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-3">
-                                <span className="text-[10px] sm:text-[11px] font-black text-brand-text-secondary dark:text-dark-text-secondary uppercase tracking-wider break-words leading-snug">
-                                  VALOR TOTAL DE LA RESERVA:
-                                </span>
-                                <span className="text-[11px] font-black text-brand-text-main dark:text-dark-text-main whitespace-nowrap">
-                                  {formatCOP(totalPrice)}
-                                </span>
-                              </div>
-                              <div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-3">
-                                <span className="text-[10px] sm:text-[11px] font-black text-brand-text-secondary dark:text-dark-text-secondary uppercase tracking-wider break-words leading-snug">
-                                  ABONO MINIMO PARA CONFIRMAR:
-                                </span>
-                                <span className="text-[11px] font-black text-brand-primary whitespace-nowrap">
-                                  {formatCOP(depositAmount)}
-                                </span>
-                              </div>
-                              <div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-3">
-                                <span className="text-[10px] sm:text-[11px] font-black text-brand-text-secondary dark:text-dark-text-secondary uppercase tracking-wider break-words leading-snug">
-                                  SALDO RESTANTE EL DIA DEL EVENTO:
-                                </span>
-                                <span className="text-[11px] font-black text-brand-text-main dark:text-dark-text-main whitespace-nowrap">
-                                  {formatCOP(remainingAmount)}
-                                </span>
-                              </div>
-                            </div>
-
-                            <div className="text-[11px] text-brand-text-secondary dark:text-dark-text-secondary font-medium leading-relaxed">
-                              <p>El abono del 30% garantiza tu cupo.</p>
-                              <p>El saldo restante se cancela el dia de la actividad.</p>
-                            </div>
-                          </div>
-                        </div>
+                        <p className="pt-1 text-[10px] text-brand-text-secondary/70 dark:text-dark-text-secondary/70 font-medium">
+                          El saldo restante se paga el día de la actividad.
+                        </p>
                       </div>
                     </div>
                   </div>
-                  
+
                   <div className="space-y-4">
                     <p className="section-title-premium !ml-0">{t('summary.date_time')}</p>
-                    <div className="bg-brand-light/30 dark:bg-dark-bg-main/30 rounded-[2rem] p-6 border border-brand-primary/10 space-y-3 self-start">
+                    <div className="bg-brand-light/30 dark:bg-dark-bg-main/30 rounded-[2rem] p-6 border border-brand-primary/10 space-y-3">
                       <p className="text-brand-text-main dark:text-dark-text-main font-black text-sm sm:text-base md:text-lg capitalize leading-snug break-words whitespace-normal">
                         {reservationData.date.rawDate?.toLocaleDateString(i18n.language === 'en' ? 'en-US' : 'es-ES', { weekday: 'long', day: 'numeric', month: 'long' })}
                       </p>
@@ -776,80 +812,9 @@ const HomePage = ({
                 </button>
               </div>
 
-              {/* Lista de Acompañantes en el Resumen */}
-              {reservationData.companions.length > 0 && (
-                <div className="space-y-4 pt-4 border-t border-brand-light dark:border-dark-border">
-                  <p className="section-title-premium !ml-0">
-                    {t('summary.registered_companions')} ({reservationData.companions.length})
-                  </p>
-                  <div className="grid gap-4">
-                    {reservationData.companions.map((comp, idx) => (
-                      <div key={idx} className="bg-brand-light/30 dark:bg-dark-bg-main/30 rounded-[1.5rem] p-6 border border-brand-primary/10 group hover:border-brand-primary/30 transition-all">
-                        <div className="flex items-start gap-4">
-                          <div className="w-10 h-10 rounded-full bg-brand-primary/10 text-brand-primary flex items-center justify-center font-black text-sm shrink-0">
-                            {idx + 1}
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <div className="flex justify-between items-start mb-2">
-                              <p className="text-brand-text-main dark:text-dark-text-main font-black text-base uppercase truncate pr-2">{comp.nombre}</p>
-                            </div>
-                            
-                            <div className="grid sm:grid-cols-2 gap-y-2 gap-x-4">
-                              <p className="text-brand-text-secondary dark:text-dark-text-secondary text-xs flex items-start gap-2 min-w-0">
-                                <span className="w-1 h-1 bg-brand-primary/40 rounded-full mt-1.5 shrink-0"></span>
-                                <span className="font-bold shrink-0">{comp.tipo_documento}:</span>
-                                <span className="min-w-0 break-all">{comp.numero_documento}</span>
-                              </p>
-                              <p className="text-brand-text-secondary dark:text-dark-text-secondary text-xs flex items-start gap-2 min-w-0">
-                                <span className="w-1 h-1 bg-brand-primary/40 rounded-full mt-1.5 shrink-0"></span>
-                                <span className="font-bold shrink-0">Tel:</span>
-                                <span className="min-w-0 break-all">{comp.telefono}</span>
-                              </p>
-                              <p className="text-brand-text-secondary dark:text-dark-text-secondary text-xs flex items-start gap-2 sm:col-span-2 min-w-0">
-                                <span className="w-1 h-1 bg-brand-primary/40 rounded-full mt-1.5 shrink-0"></span>
-                                <span className="font-bold shrink-0">Email:</span>
-                                <span className="min-w-0 break-all">{comp.correo || '---'}</span>
-                              </p>
-                            </div>
-
-                            <div className="flex gap-3 sm:gap-4 pt-3 mt-3 border-t border-brand-primary/5 flex-wrap">
-                              {calculateAge(comp.fecha_nacimiento) !== null && (
-                                <p className="text-brand-text-secondary dark:text-dark-text-secondary text-[10px] flex items-center gap-1">
-                                  <span className="w-1 h-1 rounded-full bg-brand-primary/30 shrink-0"></span>
-                                  <span className="font-black text-brand-primary/50 mr-1 uppercase">{t('sections.age')}:</span>
-                                  <span className="font-black text-brand-dark/80 dark:text-brand-primary/90">
-                                    {calculateAge(comp.fecha_nacimiento)} {t('sections.age_suffix')}
-                                  </span>
-                                </p>
-                              )}
-                              {comp.nacionalidad && (
-                                <p className="text-brand-text-secondary dark:text-dark-text-secondary text-[10px] flex items-center gap-1">
-                                  <span className="w-1 h-1 rounded-full bg-brand-primary/30 shrink-0"></span>
-                                  <span className="font-black text-brand-primary/50 mr-1 uppercase">{t('sections.nationality')}:</span>
-                                  <CountryFlagImg value={comp.nacionalidad} size="w40" alt="" className="!w-4 !h-4 rounded-full" />
-                                  <span className="font-black text-brand-dark/80 dark:text-brand-primary/90 ml-1">
-                                    {getCountryName(comp.nacionalidad)}
-                                  </span>
-                                </p>
-                              )}
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
               <div className="pt-4 text-center">
                 <p className="text-[11px] text-brand-text-secondary/40 dark:text-dark-text-secondary/40 font-bold uppercase tracking-[0.2em] italic">
                   {t('summary.verify_data_hint')}
-                </p>
-              </div>
-
-              <div className="pt-6 text-center">
-                <p className="text-sm text-brand-text-main dark:text-dark-text-main font-black">
-                  Deseas proceder con la reserva o tienes alguna duda?
                 </p>
               </div>
 
