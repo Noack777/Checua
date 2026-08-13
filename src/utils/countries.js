@@ -1,69 +1,78 @@
 export const COUNTRIES = [
-  { code: 'CO', name: 'Colombia', flag: '🇨🇴' },
-  { code: 'AR', name: 'Argentina', flag: '🇦🇷' },
-  { code: 'BR', name: 'Brasil', flag: '🇧🇷' },
-  { code: 'MX', name: 'México', flag: '🇲🇽' },
-  { code: 'ES', name: 'España', flag: '🇪🇸' },
-  { code: 'US', name: 'Estados Unidos', flag: '🇺🇸' },
-  { code: 'VE', name: 'Venezuela', flag: '🇻🇪' },
-  { code: 'PE', name: 'Perú', flag: '🇵🇪' },
-  { code: 'CL', name: 'Chile', flag: '🇨🇱' },
-  { code: 'EC', name: 'Ecuador', flag: '🇪🇨' },
-  { code: 'PA', name: 'Panamá', flag: '🇵🇦' },
-  { code: 'CR', name: 'Costa Rica', flag: '🇨🇷' },
-  { code: 'UY', name: 'Uruguay', flag: '🇺🇾' },
-  { code: 'PY', name: 'Paraguay', flag: '🇵🇾' },
-  { code: 'BO', name: 'Bolivia', flag: '🇧🇴' },
-  { code: 'GT', name: 'Guatemala', flag: '🇬🇹' },
-  { code: 'HN', name: 'Honduras', flag: '🇭🇳' },
-  { code: 'SV', name: 'El Salvador', flag: '🇸🇻' },
-  { code: 'NI', name: 'Nicaragua', flag: '🇳🇮' },
-  { code: 'DO', name: 'República Dominicana', flag: '🇩🇴' },
-  { code: 'PR', name: 'Puerto Rico', flag: '🇵🇷' },
-  { code: 'CU', name: 'Cuba', flag: '🇨🇺' },
-  { code: 'FR', name: 'Francia', flag: '🇫🇷' },
-  { code: 'DE', name: 'Alemania', flag: '🇩🇪' },
-  { code: 'IT', name: 'Italia', flag: '🇮🇹' },
-  { code: 'PT', name: 'Portugal', flag: '🇵🇹' },
-  { code: 'GB', name: 'Reino Unido', flag: '🇬🇧' },
-  { code: 'CA', name: 'Canadá', flag: '🇨🇦' },
-  { code: 'AU', name: 'Australia', flag: '🇦🇺' },
-  { code: 'JP', name: 'Japón', flag: '🇯🇵' },
-  { code: 'CN', name: 'China', flag: '🇨🇳' },
-  { code: 'KR', name: 'Corea del Sur', flag: '🇰🇷' },
-  { code: 'IN', name: 'India', flag: '🇮🇳' },
-  { code: 'RU', name: 'Rusia', flag: '🇷🇺' },
-  { code: 'ZA', name: 'Sudáfrica', flag: '🇿🇦' },
-  { code: 'AE', name: 'Emiratos Árabes Unidos', flag: '🇦🇪' },
-  { code: 'SA', name: 'Arabia Saudita', flag: '🇸🇦' },
-  { code: 'EG', name: 'Egipto', flag: '🇪🇬' },
-  { code: 'IL', name: 'Israel', flag: '🇮🇱' },
-  { code: 'TR', name: 'Turquía', flag: '🇹🇷' },
-  { code: 'GR', name: 'Grecia', flag: '🇬🇷' },
-  { code: 'NL', name: 'Países Bajos', flag: '🇳🇱' },
-  { code: 'BE', name: 'Bélgica', flag: '🇧🇪' },
-  { code: 'CH', name: 'Suiza', flag: '🇨🇭' },
-  { code: 'SE', name: 'Suecia', flag: '🇸🇪' },
-  { code: 'NO', name: 'Noruega', flag: '🇳🇴' },
-  { code: 'DK', name: 'Dinamarca', flag: '🇩🇰' },
-  { code: 'FI', name: 'Finlandia', flag: '🇫🇮' },
-  { code: 'PL', name: 'Polonia', flag: '🇵🇱' },
-  { code: 'AT', name: 'Austria', flag: '🇦🇹' },
-  { code: 'NZ', name: 'Nueva Zelanda', flag: '🇳🇿' },
-  { code: 'IE', name: 'Irlanda', flag: '🇮🇪' },
-  { code: 'SG', name: 'Singapur', flag: '🇸🇬' },
-  { code: 'MY', name: 'Malasia', flag: '🇲🇾' },
-  { code: 'TH', name: 'Tailandia', flag: '🇹🇭' },
-  { code: 'VN', name: 'Vietnam', flag: '🇻🇳' },
-  { code: 'ID', name: 'Indonesia', flag: '🇮🇩' },
-  { code: 'PH', name: 'Filipinas', flag: '🇵🇭' },
-  { code: 'PK', name: 'Pakistán', flag: '🇵🇰' },
-  { code: 'BD', name: 'Bangladés', flag: '🇧🇩' },
-  { code: 'NG', name: 'Nigeria', flag: '🇳🇬' },
-  { code: 'KE', name: 'Kenia', flag: '🇰🇪' },
-  { code: 'MA', name: 'Marruecos', flag: '🇲🇦' },
-  { code: 'other', name: 'Otro', flag: '🌍' }
+  { code: 'CO', name: 'Colombia' },
+  { code: 'AR', name: 'Argentina' },
+  { code: 'BR', name: 'Brasil' },
+  { code: 'MX', name: 'México' },
+  { code: 'ES', name: 'España' },
+  { code: 'US', name: 'Estados Unidos' },
+  { code: 'VE', name: 'Venezuela' },
+  { code: 'PE', name: 'Perú' },
+  { code: 'CL', name: 'Chile' },
+  { code: 'EC', name: 'Ecuador' },
+  { code: 'PA', name: 'Panamá' },
+  { code: 'CR', name: 'Costa Rica' },
+  { code: 'UY', name: 'Uruguay' },
+  { code: 'PY', name: 'Paraguay' },
+  { code: 'BO', name: 'Bolivia' },
+  { code: 'GT', name: 'Guatemala' },
+  { code: 'HN', name: 'Honduras' },
+  { code: 'SV', name: 'El Salvador' },
+  { code: 'NI', name: 'Nicaragua' },
+  { code: 'DO', name: 'República Dominicana' },
+  { code: 'PR', name: 'Puerto Rico' },
+  { code: 'CU', name: 'Cuba' },
+  { code: 'FR', name: 'Francia' },
+  { code: 'DE', name: 'Alemania' },
+  { code: 'IT', name: 'Italia' },
+  { code: 'PT', name: 'Portugal' },
+  { code: 'GB', name: 'Reino Unido' },
+  { code: 'CA', name: 'Canadá' },
+  { code: 'AU', name: 'Australia' },
+  { code: 'JP', name: 'Japón' },
+  { code: 'CN', name: 'China' },
+  { code: 'KR', name: 'Corea del Sur' },
+  { code: 'IN', name: 'India' },
+  { code: 'RU', name: 'Rusia' },
+  { code: 'ZA', name: 'Sudáfrica' },
+  { code: 'AE', name: 'Emiratos Árabes Unidos' },
+  { code: 'SA', name: 'Arabia Saudita' },
+  { code: 'EG', name: 'Egipto' },
+  { code: 'IL', name: 'Israel' },
+  { code: 'TR', name: 'Turquía' },
+  { code: 'GR', name: 'Grecia' },
+  { code: 'NL', name: 'Países Bajos' },
+  { code: 'BE', name: 'Bélgica' },
+  { code: 'CH', name: 'Suiza' },
+  { code: 'SE', name: 'Suecia' },
+  { code: 'NO', name: 'Noruega' },
+  { code: 'DK', name: 'Dinamarca' },
+  { code: 'FI', name: 'Finlandia' },
+  { code: 'PL', name: 'Polonia' },
+  { code: 'AT', name: 'Austria' },
+  { code: 'NZ', name: 'Nueva Zelanda' },
+  { code: 'IE', name: 'Irlanda' },
+  { code: 'SG', name: 'Singapur' },
+  { code: 'MY', name: 'Malasia' },
+  { code: 'TH', name: 'Tailandia' },
+  { code: 'VN', name: 'Vietnam' },
+  { code: 'ID', name: 'Indonesia' },
+  { code: 'PH', name: 'Filipinas' },
+  { code: 'PK', name: 'Pakistán' },
+  { code: 'BD', name: 'Bangladés' },
+  { code: 'NG', name: 'Nigeria' },
+  { code: 'KE', name: 'Kenia' },
+  { code: 'MA', name: 'Marruecos' },
+  { code: 'other', name: 'Otro' }
 ];
+
+const FLAG_CDN_BASE = 'https://flagcdn.com';
+
+export const getFlagUrl = (code, size = 'w40') => {
+  if (!code) return null;
+  const clean = String(code).trim().toLowerCase();
+  if (!clean || clean === 'other') return null;
+  return `${FLAG_CDN_BASE}/${size}/${clean}.png`;
+};
 
 export const findCountry = (value) => {
   if (!value) return null;
@@ -89,22 +98,13 @@ export const findCountry = (value) => {
   return null;
 };
 
-export const getCountryFlag = (value) => {
+export const getCountryFlag = (value, size = 'w40') => {
   const country = findCountry(value);
-  return country ? country.flag : '🌍';
+  if (!country) return null;
+  return getFlagUrl(country.code, size);
 };
 
 export const getCountryName = (value) => {
   const country = findCountry(value);
   return country ? country.name : value || '';
 };
-
-export const COUNTRIES_BY_NAME = COUNTRIES.reduce((acc, c) => {
-  acc[c.name] = c.flag;
-  return acc;
-}, {});
-
-export const COUNTRIES_BY_CODE = COUNTRIES.reduce((acc, c) => {
-  acc[c.code] = c.flag;
-  return acc;
-}, {});

@@ -9,7 +9,8 @@ import PaymentModal from '../components/PaymentModal';
 import WelcomeModal from '../components/WelcomeModal';
 import { saveParticipantsForReservation } from '../services/participantService';
 import { createReservation } from '../services/reservationService';
-import { getCountryFlag, getCountryName } from '../utils/countries';
+import { getCountryName } from '../utils/countries';
+import { CountryFlagImg } from '../utils/CountryFlagImg.jsx';
 
 const HomePage = ({
   isModalOpen,
@@ -446,8 +447,8 @@ const HomePage = ({
                             <p className="text-brand-text-secondary dark:text-dark-text-secondary text-xs flex items-center gap-1">
                               <span className="w-1.5 h-1.5 rounded-full bg-brand-primary/50 shrink-0"></span>
                               <span className="font-black text-brand-primary/70 mr-1">{t('sections.nationality').toUpperCase()}:</span>
-                              <span className="text-sm mr-1">{getCountryFlag(reservationData.contact.nacionalidad)}</span>
-                              <span className="font-black text-brand-dark dark:text-brand-primary">
+                              <CountryFlagImg value={reservationData.contact.nacionalidad} size="w40" alt="" className="!w-5 !h-5 rounded-full" />
+                              <span className="font-black text-brand-dark dark:text-brand-primary ml-1">
                                 {getCountryName(reservationData.contact.nacionalidad)}
                               </span>
                             </p>
@@ -653,8 +654,8 @@ const HomePage = ({
                                 <p className="text-brand-text-secondary dark:text-dark-text-secondary text-[10px] flex items-center gap-1">
                                   <span className="w-1 h-1 rounded-full bg-brand-primary/30 shrink-0"></span>
                                   <span className="font-black text-brand-primary/50 mr-1 uppercase">{t('sections.nationality')}:</span>
-                                  <span className="text-sm mr-1">{getCountryFlag(comp.nacionalidad)}</span>
-                                  <span className="font-black text-brand-dark/80 dark:text-brand-primary/90">
+                                  <CountryFlagImg value={comp.nacionalidad} size="w40" alt="" className="!w-4 !h-4 rounded-full" />
+                                  <span className="font-black text-brand-dark/80 dark:text-brand-primary/90 ml-1">
                                     {getCountryName(comp.nacionalidad)}
                                   </span>
                                 </p>

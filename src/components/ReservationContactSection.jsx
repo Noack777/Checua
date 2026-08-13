@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import PhoneInputPkg from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
 import { COUNTRIES, findCountry, getCountryName } from '../utils/countries';
+import { CountryFlagImg } from '../utils/CountryFlagImg.jsx';
 
 const PhoneInput = PhoneInputPkg.default || PhoneInputPkg;
 
@@ -253,14 +254,14 @@ const ReservationContactSection = ({ data, onChange, errors, sectionRef }) => {
                 <div className="flex items-center gap-2 sm:gap-3 min-w-0">
                   {selectedCountry ? (
                     <>
-                      <span className="text-xl sm:text-2xl shrink-0">{selectedCountry.flag}</span>
+                      <CountryFlagImg value={selectedCountry.code} size="w40" alt="" className="!w-6 !h-6 sm:!w-7 sm:!h-7 rounded-full" />
                       <span className="truncate text-sm sm:text-base font-bold text-brand-text-main dark:text-dark-text-main">
                         {displayedNationalityName}
                       </span>
                     </>
                   ) : data.nacionalidad ? (
                     <>
-                      <span className="text-xl sm:text-2xl shrink-0">🌍</span>
+                      <CountryFlagImg value={data.nacionalidad} size="w40" alt="" className="!w-6 !h-6 sm:!w-7 sm:!h-7 rounded-full" />
                       <span className="truncate text-sm sm:text-base font-bold text-brand-text-main dark:text-dark-text-main">
                         {displayedNationalityName}
                       </span>
@@ -317,7 +318,7 @@ const ReservationContactSection = ({ data, onChange, errors, sectionRef }) => {
                               : 'text-brand-text-main dark:text-dark-text-main'
                           }`}
                         >
-                          <span className="text-xl sm:text-2xl shrink-0">{country.flag}</span>
+                          <CountryFlagImg value={country.code} size="w40" alt="" className="!w-7 !h-7 sm:!w-8 sm:!h-8 rounded-full" fallbackEmoji={country.code === 'other' ? '🌍' : '🏳️'} />
                           <span className="text-sm sm:text-base font-bold truncate">{country.name}</span>
                         </button>
                       ))
