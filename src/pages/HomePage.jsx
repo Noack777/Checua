@@ -26,7 +26,8 @@ const HomePage = ({
   handleTourSelect,
   handleDateSelect,
   handleTimeSelect,
-  handleStep1Continue,
+  handleStep1AddCompanions,
+  handleStep1ReserveAlone,
   handleStep2Continue,
   showSummary,
   setShowSummary,
@@ -422,22 +423,36 @@ const HomePage = ({
               />
             </div>
 
-            {/* Botón continuar PASO 1 */}
-            <div className="pt-4">
+            {/* Botones finales PASO 1 */}
+            <div className="pt-4 grid gap-3 md:grid-cols-2">
               <button
-                onClick={handleStep1Continue}
+                onClick={handleStep1AddCompanions}
+                className="rounded-[1.25rem] px-6 py-4 md:py-5 font-black text-sm md:text-base uppercase tracking-wider border-2 border-brand-primary/40 text-brand-primary bg-brand-primary/5 dark:bg-brand-primary/10 hover:bg-brand-primary/15 hover:shadow-lg transition-all duration-300 flex items-center justify-center gap-2"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="3">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+                </svg>
+                {t('steps.step1_add_companion') || 'Añadir acompañante'}
+              </button>
+
+              <button
+                onClick={handleStep1ReserveAlone}
                 className="btn-animate-continue w-full"
               >
                 <div className="dots_border"></div>
                 <svg className="sparkle" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path className="path" d="M12 2L14.5 9L22 11.5L14.5 14L12 21L9.5 14L2 11.5L9.5 9L12 2Z" />
                 </svg>
-                <span className="text_button">{t('steps.step1_continue') || 'Continuar a participantes'}</span>
+                <span className="text_button">{t('steps.step1_reserve_alone') || 'Reservar'}</span>
                 <svg className="sparkle" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path className="path" d="M12 2L14.5 9L22 11.5L14.5 14L12 21L9.5 14L2 11.5L9.5 9L12 2Z" />
                 </svg>
               </button>
             </div>
+
+            <p className="text-[10px] md:text-xs text-brand-text-secondary/60 dark:text-dark-text-secondary/60 text-center mt-3 italic">
+              {t('steps.step1_hint') || 'Elige "Reservar" si vas solo, o "Añadir acompañante" si te acompañan más personas.'}
+            </p>
           </div>
         )}
 

@@ -82,7 +82,7 @@ function App() {
   // --- ESTADO DE VALIDACIÓN ---
   const [errors, setErrors] = useState({});
   const [showSummary, setShowSummary] = useState(false);
-  const [showCompanionsSection, setShowCompanionsSection] = useState(false);
+  const [, setShowCompanionsSection] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
 
   // --- REFS PARA SCROLL ---
@@ -415,7 +415,19 @@ function App() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const handleStep1Continue = () => {
+  const handleStep1ReserveAlone = () => {
+    if (validateStep1()) {
+      setReservationData(prev => ({ ...prev, companions: [] }));
+      setShowCompanionsSection(false);
+      setCurrentStep(3);
+      setShowSummary(true);
+      setTimeout(() => {
+        document.getElementById('reservation-summary')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 100);
+    }
+  };
+
+  const handleStep1AddCompanions = () => {
     if (validateStep1()) {
       setCurrentStep(2);
       setShowCompanionsSection(true);
@@ -436,7 +448,7 @@ function App() {
   };
 
   const handleStep2Continue = () => {
-    if (validateStep2()) {
+    if (reservationData.companions.length === 0 || validateStep2()) {
       setShowSummary(true);
       setCurrentStep(3);
       setTimeout(() => {
@@ -495,13 +507,13 @@ function App() {
               handleTourSelect={handleTourSelect}
               handleDateSelect={handleDateSelect}
               handleTimeSelect={handleTimeSelect}
-              handleStep1Continue={handleStep1Continue}
+              handleStep1AddCompanions={handleStep1AddCompanions}
+              handleStep1ReserveAlone={handleStep1ReserveAlone}
               handleStep2Continue={handleStep2Continue}
               showSummary={showSummary}
               setShowSummary={setShowSummary}
               handleEditInformation={handleEditInformation}
               handleAddCompanions={handleAddCompanions}
-              showCompanionsSection={showCompanionsSection}
               setShowCompanionsSection={setShowCompanionsSection}
               addCompanion={addCompanion}
               removeCompanion={removeCompanion}
