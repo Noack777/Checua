@@ -1,72 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-
-const COUNTRIES = [
-  { code: 'CO', name: 'Colombia', flag: '🇨🇴' },
-  { code: 'AR', name: 'Argentina', flag: '🇦🇷' },
-  { code: 'BR', name: 'Brasil', flag: '🇧🇷' },
-  { code: 'MX', name: 'México', flag: '🇲🇽' },
-  { code: 'ES', name: 'España', flag: '🇪🇸' },
-  { code: 'US', name: 'Estados Unidos', flag: '🇺🇸' },
-  { code: 'VE', name: 'Venezuela', flag: '🇻🇪' },
-  { code: 'PE', name: 'Perú', flag: '🇵🇪' },
-  { code: 'CL', name: 'Chile', flag: '🇨🇱' },
-  { code: 'EC', name: 'Ecuador', flag: '🇪🇨' },
-  { code: 'PA', name: 'Panamá', flag: '🇵🇦' },
-  { code: 'CR', name: 'Costa Rica', flag: '🇨🇷' },
-  { code: 'UY', name: 'Uruguay', flag: '🇺🇾' },
-  { code: 'PY', name: 'Paraguay', flag: '🇵🇾' },
-  { code: 'BO', name: 'Bolivia', flag: '🇧🇴' },
-  { code: 'GT', name: 'Guatemala', flag: '🇬🇹' },
-  { code: 'HN', name: 'Honduras', flag: '🇭🇳' },
-  { code: 'SV', name: 'El Salvador', flag: '🇸🇻' },
-  { code: 'NI', name: 'Nicaragua', flag: '🇳🇮' },
-  { code: 'DO', name: 'República Dominicana', flag: '🇩🇴' },
-  { code: 'PR', name: 'Puerto Rico', flag: '🇵🇷' },
-  { code: 'CU', name: 'Cuba', flag: '🇨🇺' },
-  { code: 'FR', name: 'Francia', flag: '🇫🇷' },
-  { code: 'DE', name: 'Alemania', flag: '🇩🇪' },
-  { code: 'IT', name: 'Italia', flag: '🇮🇹' },
-  { code: 'PT', name: 'Portugal', flag: '🇵🇹' },
-  { code: 'GB', name: 'Reino Unido', flag: '🇬🇧' },
-  { code: 'CA', name: 'Canadá', flag: '🇨🇦' },
-  { code: 'AU', name: 'Australia', flag: '🇦🇺' },
-  { code: 'JP', name: 'Japón', flag: '🇯🇵' },
-  { code: 'CN', name: 'China', flag: '🇨🇳' },
-  { code: 'KR', name: 'Corea del Sur', flag: '🇰🇷' },
-  { code: 'IN', name: 'India', flag: '🇮🇳' },
-  { code: 'RU', name: 'Rusia', flag: '🇷🇺' },
-  { code: 'ZA', name: 'Sudáfrica', flag: '🇿🇦' },
-  { code: 'AE', name: 'Emiratos Árabes Unidos', flag: '🇦🇪' },
-  { code: 'SA', name: 'Arabia Saudita', flag: '🇸🇦' },
-  { code: 'EG', name: 'Egipto', flag: '🇪🇬' },
-  { code: 'IL', name: 'Israel', flag: '🇮🇱' },
-  { code: 'TR', name: 'Turquía', flag: '🇹🇷' },
-  { code: 'GR', name: 'Grecia', flag: '🇬🇷' },
-  { code: 'NL', name: 'Países Bajos', flag: '🇳🇱' },
-  { code: 'BE', name: 'Bélgica', flag: '🇧🇪' },
-  { code: 'CH', name: 'Suiza', flag: '🇨🇭' },
-  { code: 'SE', name: 'Suecia', flag: '🇸🇪' },
-  { code: 'NO', name: 'Noruega', flag: '🇳🇴' },
-  { code: 'DK', name: 'Dinamarca', flag: '🇩🇰' },
-  { code: 'FI', name: 'Finlandia', flag: '🇫🇮' },
-  { code: 'PL', name: 'Polonia', flag: '🇵🇱' },
-  { code: 'AT', name: 'Austria', flag: '🇦🇹' },
-  { code: 'NZ', name: 'Nueva Zelanda', flag: '🇳🇿' },
-  { code: 'IE', name: 'Irlanda', flag: '🇮🇪' },
-  { code: 'SG', name: 'Singapur', flag: '🇸🇬' },
-  { code: 'MY', name: 'Malasia', flag: '🇲🇾' },
-  { code: 'TH', name: 'Tailandia', flag: '🇹🇭' },
-  { code: 'VN', name: 'Vietnam', flag: '🇻🇳' },
-  { code: 'ID', name: 'Indonesia', flag: '🇮🇩' },
-  { code: 'PH', name: 'Filipinas', flag: '🇵🇭' },
-  { code: 'PK', name: 'Pakistán', flag: '🇵🇰' },
-  { code: 'BD', name: 'Bangladés', flag: '🇧🇩' },
-  { code: 'NG', name: 'Nigeria', flag: '🇳🇬' },
-  { code: 'KE', name: 'Kenia', flag: '🇰🇪' },
-  { code: 'MA', name: 'Marruecos', flag: '🇲🇦' },
-  { code: 'other', name: 'Otro', flag: '🌍' }
-];
+import { COUNTRIES, findCountry, getCountryName } from '../utils/countries';
 
 const CompanionFormSection = ({ 
   companions, 
@@ -168,10 +102,12 @@ const CompanionFormSection = ({
   return (
     <div id="companions-section" className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
       {companions.map((companion, index) => {
-        const selectedCountry = COUNTRIES.find(c => c.name === companion.nacionalidad);
+        const selectedCountry = findCountry(companion.nacionalidad);
+        const displayedNationalityName = getCountryName(companion.nacionalidad);
         const nationalitySearch = nationalitySearches[index] || '';
         const filteredCountries = COUNTRIES.filter(c =>
-          c.name.toLowerCase().includes(nationalitySearch.toLowerCase())
+          c.name.toLowerCase().includes(nationalitySearch.toLowerCase()) ||
+          c.code.toLowerCase().includes(nationalitySearch.toLowerCase())
         );
         const isNatActive = activeDropdown?.index === index && activeDropdown?.type === 'nationality';
         const isDocActive = activeDropdown?.index === index && activeDropdown?.type === 'doc';
@@ -343,7 +279,14 @@ const CompanionFormSection = ({
                       <>
                         <span className="text-xl sm:text-2xl shrink-0">{selectedCountry.flag}</span>
                         <span className="truncate text-sm sm:text-base font-bold text-brand-text-main dark:text-dark-text-main">
-                          {selectedCountry.name}
+                          {displayedNationalityName}
+                        </span>
+                      </>
+                    ) : companion.nacionalidad ? (
+                      <>
+                        <span className="text-xl sm:text-2xl shrink-0">🌍</span>
+                        <span className="truncate text-sm sm:text-base font-bold text-brand-text-main dark:text-dark-text-main">
+                          {displayedNationalityName}
                         </span>
                       </>
                     ) : (
@@ -401,7 +344,9 @@ const CompanionFormSection = ({
                               setActiveDropdown(null);
                             }}
                             className={`w-full px-5 sm:px-6 py-3.5 sm:py-4 text-left flex items-center gap-3 sm:gap-4 transition-colors hover:bg-brand-light/50 dark:hover:bg-dark-bg-main/50 border-b border-brand-light dark:border-dark-border last:border-0 ${
-                              companion.nacionalidad === country.name ? 'text-brand-primary bg-brand-primary/5' : 'text-brand-text-main dark:text-dark-text-main'
+                              (selectedCountry && selectedCountry.code === country.code)
+                                ? 'text-brand-primary bg-brand-primary/5'
+                                : 'text-brand-text-main dark:text-dark-text-main'
                             }`}
                           >
                             <span className="text-xl sm:text-2xl shrink-0">{country.flag}</span>

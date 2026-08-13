@@ -9,73 +9,7 @@ import PaymentModal from '../components/PaymentModal';
 import WelcomeModal from '../components/WelcomeModal';
 import { saveParticipantsForReservation } from '../services/participantService';
 import { createReservation } from '../services/reservationService';
-
-const COUNTRIES_MAP = {
-  'Colombia': '🇨🇴',
-  'Argentina': '🇦🇷',
-  'Brasil': '🇧🇷',
-  'México': '🇲🇽',
-  'España': '🇪🇸',
-  'Estados Unidos': '🇺🇸',
-  'Venezuela': '🇻🇪',
-  'Perú': '🇵🇪',
-  'Chile': '🇨🇱',
-  'Ecuador': '🇪🇨',
-  'Panamá': '🇵🇦',
-  'Costa Rica': '🇨🇷',
-  'Uruguay': '🇺🇾',
-  'Paraguay': '🇵🇾',
-  'Bolivia': '🇧🇴',
-  'Guatemala': '🇬🇹',
-  'Honduras': '🇭🇳',
-  'El Salvador': '🇸🇻',
-  'Nicaragua': '🇳🇮',
-  'República Dominicana': '🇩🇴',
-  'Puerto Rico': '🇵🇷',
-  'Cuba': '🇨🇺',
-  'Francia': '🇫🇷',
-  'Alemania': '🇩🇪',
-  'Italia': '🇮🇹',
-  'Portugal': '🇵🇹',
-  'Reino Unido': '🇬🇧',
-  'Canadá': '🇨🇦',
-  'Australia': '🇦🇺',
-  'Japón': '🇯🇵',
-  'China': '🇨🇳',
-  'Corea del Sur': '🇰🇷',
-  'India': '🇮🇳',
-  'Rusia': '🇷🇺',
-  'Sudáfrica': '🇿🇦',
-  'Emiratos Árabes Unidos': '🇦🇪',
-  'Arabia Saudita': '🇸🇦',
-  'Egipto': '🇪🇬',
-  'Israel': '🇮🇱',
-  'Turquía': '🇹🇷',
-  'Grecia': '🇬🇷',
-  'Países Bajos': '🇳🇱',
-  'Bélgica': '🇧🇪',
-  'Suiza': '🇨🇭',
-  'Suecia': '🇸🇪',
-  'Noruega': '🇳🇴',
-  'Dinamarca': '🇩🇰',
-  'Finlandia': '🇫🇮',
-  'Polonia': '🇵🇱',
-  'Austria': '🇦🇹',
-  'Nueva Zelanda': '🇳🇿',
-  'Irlanda': '🇮🇪',
-  'Singapur': '🇸🇬',
-  'Malasia': '🇲🇾',
-  'Tailandia': '🇹🇭',
-  'Vietnam': '🇻🇳',
-  'Indonesia': '🇮🇩',
-  'Filipinas': '🇵🇭',
-  'Pakistán': '🇵🇰',
-  'Bangladés': '🇧🇩',
-  'Nigeria': '🇳🇬',
-  'Kenia': '🇰🇪',
-  'Marruecos': '🇲🇦',
-  'Otro': '🌍'
-};
+import { getCountryFlag, getCountryName } from '../utils/countries';
 
 const HomePage = ({
   isModalOpen,
@@ -512,9 +446,9 @@ const HomePage = ({
                             <p className="text-brand-text-secondary dark:text-dark-text-secondary text-xs flex items-center gap-1">
                               <span className="w-1.5 h-1.5 rounded-full bg-brand-primary/50 shrink-0"></span>
                               <span className="font-black text-brand-primary/70 mr-1">{t('sections.nationality').toUpperCase()}:</span>
-                              <span className="text-sm mr-1">{COUNTRIES_MAP[reservationData.contact.nacionalidad] || '🌍'}</span>
+                              <span className="text-sm mr-1">{getCountryFlag(reservationData.contact.nacionalidad)}</span>
                               <span className="font-black text-brand-dark dark:text-brand-primary">
-                                {reservationData.contact.nacionalidad}
+                                {getCountryName(reservationData.contact.nacionalidad)}
                               </span>
                             </p>
                           )}
@@ -719,9 +653,9 @@ const HomePage = ({
                                 <p className="text-brand-text-secondary dark:text-dark-text-secondary text-[10px] flex items-center gap-1">
                                   <span className="w-1 h-1 rounded-full bg-brand-primary/30 shrink-0"></span>
                                   <span className="font-black text-brand-primary/50 mr-1 uppercase">{t('sections.nationality')}:</span>
-                                  <span className="text-sm mr-1">{COUNTRIES_MAP[comp.nacionalidad] || '🌍'}</span>
+                                  <span className="text-sm mr-1">{getCountryFlag(comp.nacionalidad)}</span>
                                   <span className="font-black text-brand-dark/80 dark:text-brand-primary/90">
-                                    {comp.nacionalidad}
+                                    {getCountryName(comp.nacionalidad)}
                                   </span>
                                 </p>
                               )}
