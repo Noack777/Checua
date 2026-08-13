@@ -312,47 +312,81 @@ const DateSelectionSection = ({ onSelect, selectedDate, errors, sectionRef, avai
               <div className="grid gap-3">
                 {availableDateItems.map(({ iso, date }) => {
                   const selected = selectedDate && formatDateISO(selectedDate) === iso
+                  const dateIsPast = isPast(date)
+                  const isDisabled = !isSelectable(date)
                   return (
-                    <button
-                      key={iso}
-                      type="button"
-                      onClick={() => handleDateClick(date)}
-                      className={`w-full text-left rounded-[1.5rem] p-5 border transition-all duration-300 ${
-                        selected
-                          ? 'bg-brand-primary/10 border-brand-primary/30'
-                          : 'bg-white/40 dark:bg-dark-bg-card/40 border-brand-border/60 dark:border-dark-border hover:border-brand-primary/40'
-                      }`}
-                    >
-                      <div className="flex items-center justify-between gap-4">
-                        <div className="min-w-0">
-                          <p className="text-brand-text-main dark:text-dark-text-main font-black text-sm md:text-base capitalize truncate">
-                            {formatDateLegible(date)}
-                          </p>
-                          <div className="flex flex-wrap gap-2 mt-2">
-                            {isHoliday(date) && (
-                              <span className="px-3 py-1 bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 text-[9px] font-black uppercase rounded-full border border-red-200 dark:border-red-900/50">
-                                {t('sections.holiday')}
-                              </span>
+                    <div key={iso} className="relative group">
+                      <button
+                        type="button"
+                        onClick={() => handleDateClick(date)}
+                        disabled={isDisabled}
+                        title={dateIsPast ? t('sections.date_past_tooltip') : undefined}
+                        className={`w-full text-left rounded-[1.5rem] p-5 border transition-all duration-300 ${
+                          selected
+                            ? 'bg-brand-primary/10 border-brand-primary/30'
+                            : dateIsPast
+                            ? 'bg-white/10 dark:bg-dark-bg-card/10 border-brand-border/30 dark:border-dark-border/30 opacity-60 cursor-not-allowed'
+                            : 'bg-white/40 dark:bg-dark-bg-card/40 border-brand-border/60 dark:border-dark-border hover:border-brand-primary/40 hover:-translate-y-0.5 hover:shadow-lg'
+                        }`}
+                      >
+                        <div className="flex items-center justify-between gap-4">
+                          <div className="min-w-0">
+                            <div className="flex flex-wrap items-center gap-2">
+                              <p className={`font-black text-sm md:text-base capitalize truncate ${
+                                dateIsPast
+                                  ? 'text-brand-text-secondary/50 dark:text-dark-text-secondary/50 line-through decoration-brand-text-secondary/30'
+                                  : 'text-brand-text-main dark:text-dark-text-main'
+                              }`}>
+                                {formatDateLegible(date)}
+                              </p>
+                              {dateIsPast && (
+                                <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-gray-200/80 dark:bg-gray-700/40 text-gray-500 dark:text-gray-400 text-[8px] md:text-[9px] font-black uppercase rounded-full border border-gray-300/50 dark:border-gray-600/40 tracking-wider shrink-0">
+                                  <svg className="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                  </svg>
+                                  {t('sections.date_past')}
+                                </span>
+                              )}
+                            </div>
+                            <div className="flex flex-wrap gap-2 mt-2">
+                              {isHoliday(date) && (
+                                <span className="px-3 py-1 bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 text-[9px] font-black uppercase rounded-full border border-red-200 dark:border-red-900/50">
+                                  {t('sections.holiday')}
+                                </span>
+                              )}
+                              {isWeekend(date) && (
+                                <span className="px-3 py-1 bg-brand-primary/10 text-brand-primary text-[9px] font-black uppercase rounded-full border border-brand-primary/20">
+                                  {t('sections.weekend')}
+                                </span>
+                              )}
+                            </div>
+                            {dateIsPast && (
+                              <p className="text-[9px] md:text-[10px] text-gray-500 dark:text-gray-400 font-medium mt-2 italic">
+                                {t('sections.date_past_explanation')}
+                              </p>
                             )}
-                            {isWeekend(date) && (
-                              <span className="px-3 py-1 bg-brand-primary/10 text-brand-primary text-[9px] font-black uppercase rounded-full border border-brand-primary/20">
-                                {t('sections.weekend')}
-                              </span>
+                          </div>
+
+                          <div className={`w-10 h-10 rounded-2xl flex items-center justify-center border transition-all duration-300 shrink-0 ${
+                            selected
+                              ? 'bg-brand-primary text-white border-brand-primary scale-110 shadow-lg'
+                              : dateIsPast
+                              ? 'bg-transparent text-gray-400/40 dark:text-gray-500/40 border-gray-300/30 dark:border-gray-600/30'
+                              : 'bg-transparent text-brand-text-secondary/20 dark:text-dark-text-secondary/20 border-brand-border/40 dark:border-dark-border/40'
+                          }`}>
+                            {dateIsPast ? (
+                              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
+                              </svg>
+                            ) : (
+                              <svg className={`w-5 h-5 transition-all duration-300 ${selected ? 'scale-110' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={selected ? "3" : "2.5"}>
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                              </svg>
                             )}
                           </div>
                         </div>
-
-                        <div className={`w-10 h-10 rounded-2xl flex items-center justify-center border transition-all duration-300 ${
-                          selected
-                            ? 'bg-brand-primary text-white border-brand-primary scale-110 shadow-lg'
-                            : 'bg-transparent text-brand-text-secondary/20 dark:text-dark-text-secondary/20 border-brand-border/40 dark:border-dark-border/40'
-                        }`}>
-                          <svg className={`w-5 h-5 transition-all duration-300 ${selected ? 'scale-110' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={selected ? "3" : "2.5"} d="M5 13l4 4L19 7" />
-                          </svg>
-                        </div>
-                      </div>
-                    </button>
+                      </button>
+                    </div>
                   )
                 })}
               </div>
