@@ -97,6 +97,21 @@
     "dni": "Foreign national identity document",
     "other": "Other"
   },
+  "steps": {
+    "step1_title": "Plan & Client",
+    "step2_title": "Participants",
+    "step3_title": "Summary",
+    "step_active": "Current",
+    "step1_continue": "Continue to participants",
+    "step1_summary_label": "Reservation scheduled for",
+    "back_step1": "Back to plan",
+    "step2_section_title": "Participants information",
+    "add_participant": "Add participant",
+    "step2_continue": "Continue with booking",
+    "back_step2": "Back to participants",
+    "edit_all": "Edit information",
+    "edit_participants": "Edit participants"
+  },
   "summary": {
     "title": "Your Reservation Summary",
     "responsible": "Responsible",

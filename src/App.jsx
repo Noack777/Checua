@@ -83,6 +83,7 @@ function App() {
   const [errors, setErrors] = useState({});
   const [showSummary, setShowSummary] = useState(false);
   const [showCompanionsSection, setShowCompanionsSection] = useState(false);
+  const [currentStep, setCurrentStep] = useState(1);
 
   // --- REFS PARA SCROLL ---
   const contactRef = useRef(null);
@@ -264,8 +265,8 @@ function App() {
     return age >= 0 ? age : null;
   };
 
-  // --- VALIDACIÓN Y ENVÍO ---
-  const validateForm = () => {
+  // --- VALIDACIÓN POR PASOS ---
+  const validateStep1 = () => {
     const newErrors = {};
     const { contact, tour, date, time } = reservationData;
 
@@ -343,7 +344,6 @@ function App() {
       newErrors.date_key = 'required_date';
     }
 
-    // Validación de hora según el tipo de hora del plan
     if (tour.tipo_hora === 'varias_horas' || tour.tipo_hora === 'hora_fija') {
       if (!time.hora_reserva) {
         newErrors.time = t('errors.required_time');
@@ -351,7 +351,21 @@ function App() {
       }
     }
 
-    // Validar acompañantes
+    setErrors(newErrors);
+
+    if (Object.keys(newErrors).length > 0) {
+      if (newErrors.contact) contactRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      else if (newErrors.tour) tourRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      else if (newErrors.date) dateRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      else if (newErrors.time) timeRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return false;
+    }
+    return true;
+  };
+
+  const validateStep2 = () => {
+    const newErrors = {};
+
     reservationData.companions.forEach((companion, index) => {
       if (!companion.nombre.trim()) {
         newErrors[`companion_${index}_nombre`] = t('errors.required_name');
@@ -385,13 +399,10 @@ function App() {
       }
     });
 
-    setErrors(newErrors);
+    setErrors(prev => ({ ...prev, ...newErrors }));
 
     if (Object.keys(newErrors).length > 0) {
-      if (newErrors.contact) contactRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      else if (newErrors.tour) tourRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      else if (newErrors.date) dateRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      else if (newErrors.time) timeRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      document.getElementById('companions-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
       return false;
     }
     return true;
@@ -399,8 +410,22 @@ function App() {
 
   const handleEditInformation = () => {
     setShowSummary(false);
+    setCurrentStep(1);
     setShowCompanionsSection(false);
-    contactRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleStep1Continue = () => {
+    if (validateStep1()) {
+      setCurrentStep(2);
+      setShowCompanionsSection(true);
+      if (reservationData.companions.length === 0) {
+        addCompanion();
+      }
+      setTimeout(() => {
+        document.getElementById('companions-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 100);
+    }
   };
 
   const handleAddCompanions = () => {
@@ -410,9 +435,10 @@ function App() {
     }, 100);
   };
 
-  const handleContinue = () => {
-    if (validateForm()) {
+  const handleStep2Continue = () => {
+    if (validateStep2()) {
       setShowSummary(true);
+      setCurrentStep(3);
       setTimeout(() => {
         document.getElementById('reservation-summary')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }, 100);
@@ -465,16 +491,18 @@ function App() {
               tours={tours}
               loadingData={loadingData}
               reservationData={reservationData}
-              setReservationData={setReservationData}
               handleContactChange={handleContactChange}
               handleTourSelect={handleTourSelect}
               handleDateSelect={handleDateSelect}
               handleTimeSelect={handleTimeSelect}
-              handleContinue={handleContinue}
+              handleStep1Continue={handleStep1Continue}
+              handleStep2Continue={handleStep2Continue}
               showSummary={showSummary}
+              setShowSummary={setShowSummary}
               handleEditInformation={handleEditInformation}
               handleAddCompanions={handleAddCompanions}
               showCompanionsSection={showCompanionsSection}
+              setShowCompanionsSection={setShowCompanionsSection}
               addCompanion={addCompanion}
               removeCompanion={removeCompanion}
               handleCompanionChange={handleCompanionChange}
@@ -483,6 +511,8 @@ function App() {
               tourRef={tourRef}
               dateRef={dateRef}
               timeRef={timeRef}
+              currentStep={currentStep}
+              setCurrentStep={setCurrentStep}
             />
           } 
         />

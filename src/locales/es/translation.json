@@ -97,6 +97,21 @@
     "dni": "Documento nacional de identidad extranjero",
     "other": "Otro"
   },
+  "steps": {
+    "step1_title": "Plan y Cliente",
+    "step2_title": "Participantes",
+    "step3_title": "Resumen",
+    "step_active": "Actual",
+    "step1_continue": "Continuar a participantes",
+    "step1_summary_label": "Reserva programada para",
+    "back_step1": "Volver al plan",
+    "step2_section_title": "Información de participantes",
+    "add_participant": "Añadir participante",
+    "step2_continue": "Continuar con la reserva",
+    "back_step2": "Volver a participantes",
+    "edit_all": "Editar información",
+    "edit_participants": "Editar participantes"
+  },
   "summary": {
     "title": "Resumen de tu reserva",
     "responsible": "Responsable",

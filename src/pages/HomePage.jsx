@@ -26,11 +26,13 @@ const HomePage = ({
   handleTourSelect,
   handleDateSelect,
   handleTimeSelect,
-  handleContinue,
+  handleStep1Continue,
+  handleStep2Continue,
   showSummary,
+  setShowSummary,
   handleEditInformation,
   handleAddCompanions,
-  showCompanionsSection,
+  setShowCompanionsSection,
   addCompanion,
   removeCompanion,
   handleCompanionChange,
@@ -38,7 +40,9 @@ const HomePage = ({
   contactRef,
   tourRef,
   dateRef,
-  timeRef
+  timeRef,
+  currentStep,
+  setCurrentStep
 }) => {
   const { t, i18n } = useTranslation();
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
@@ -296,99 +300,245 @@ const HomePage = ({
            </div>
         )}
 
-        <div className="section-container">
-          <label className="section-title-premium">{t('sections.responsible_info')}</label>
-          <ReservationContactSection 
-            sectionRef={contactRef}
-            data={reservationData.contact}
-            onChange={handleContactChange}
-            errors={errors}
-          />
-        </div>
-        
-        <div className="section-container">
-          <label className="section-title-premium">{t('sections.tour')}</label>
-          <TourSelectionSection 
-            sectionRef={tourRef}
-            selectedTourId={reservationData.tour.id_plan}
-            onSelect={handleTourSelect}
-            errors={errors}
-            tours={tours}
-            loading={loadingData}
-          />
-        </div>
-        
-        <div className="section-container">
-          <label className="section-title-premium">{t('sections.date')}</label>
-          <DateSelectionSection 
-            sectionRef={dateRef}
-            selectedDate={reservationData.date.rawDate}
-            onSelect={handleDateSelect}
-            errors={errors}
-            availableDates={reservationData.tour.availableDates}
-            tipoFecha={reservationData.tour.tipo_fecha}
-          />
-        </div>
-        
-        <div className="section-container">
-          <label className="section-title-premium">{t('sections.time')}</label>
-          <TimeSelectionSection 
-            sectionRef={timeRef}
-            selectedTime={reservationData.time}
-            onSelect={handleTimeSelect}
-            schedules={reservationData.tour.availableHours}
-            loading={loadingData}
-            errors={errors}
-            tipoHora={reservationData.tour.tipo_hora}
-          />
+        {/* INDICADOR DE PASOS */}
+        <div className="mb-8 md:mb-12 px-2">
+          <div className="max-w-3xl mx-auto relative">
+            <div className="flex items-center justify-between z-10 relative">
+              {[
+                { n: 1, label: t('steps.step1_title') || 'Plan & Cliente' },
+                { n: 2, label: t('steps.step2_title') || 'Participantes' },
+                { n: 3, label: t('steps.step3_title') || 'Resumen' }
+              ].map((step, i, arr) => {
+                const isActive = currentStep === step.n;
+                const isCompleted = currentStep > step.n;
+                return (
+                  <div key={step.n} className="flex flex-col items-center gap-2 flex-1 relative">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (step.n === 1) {
+                          setCurrentStep(1);
+                          setShowSummary(false);
+                        } else if (step.n === 2 && currentStep >= 2) {
+                          setCurrentStep(2);
+                          setShowSummary(false);
+                          setShowCompanionsSection(true);
+                        } else if (step.n === 3 && currentStep === 3) {
+                          setCurrentStep(3);
+                        }
+                      }}
+                      disabled={step.n > currentStep}
+                      className={`w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center font-black text-sm md:text-base border-2 transition-all duration-300 z-10 ${
+                        isCompleted
+                          ? 'bg-brand-primary border-brand-primary text-white shadow-lg scale-105'
+                          : isActive
+                          ? 'bg-white dark:bg-dark-bg-card border-brand-primary text-brand-primary shadow-xl ring-4 ring-brand-primary/20 scale-110'
+                          : 'bg-white/50 dark:bg-dark-bg-card/50 border-brand-border/50 dark:border-dark-border/50 text-brand-text-secondary/40 dark:text-dark-text-secondary/40 cursor-not-allowed'
+                      } ${step.n <= currentStep ? 'cursor-pointer' : 'cursor-not-allowed'}`}
+                    >
+                      {isCompleted ? (
+                        <svg className="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="3">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                        </svg>
+                      ) : (
+                        step.n
+                      )}
+                    </button>
+                    <p className={`text-[10px] md:text-xs font-black uppercase tracking-wider text-center max-w-[120px] transition-colors ${
+                      isActive || isCompleted
+                        ? 'text-brand-primary dark:text-brand-primary'
+                        : 'text-brand-text-secondary/40 dark:text-dark-text-secondary/40'
+                    }`}>
+                      {step.label}
+                    </p>
+                    <span className={`text-[8px] md:text-[9px] uppercase tracking-widest text-center ${
+                      isActive
+                        ? 'text-brand-primary/60 dark:text-brand-primary/60 font-black'
+                        : 'text-brand-text-secondary/30 dark:text-dark-text-secondary/30'
+                    }`}>
+                      {isActive ? t('steps.step_active') || 'Actual' : ''}
+                    </span>
+                    {i < arr.length - 1 && (
+                      <div className={`hidden md:block absolute top-5 -right-1/2 w-full h-[3px] -z-0 ${
+                        currentStep > step.n
+                          ? 'bg-brand-primary shadow-[0_0_10px_rgba(132,204,22,0.6)]'
+                          : 'bg-brand-border/40 dark:bg-dark-border/40'
+                      }`}></div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
         </div>
 
-        {/* Sección de Acompañantes */}
-        {showCompanionsSection && (
-          <div className="section-container">
-            <label className="section-title-premium">{t('summary.companions_info') || 'Información de los acompañantes'}</label>
-            <CompanionFormSection 
-              companions={reservationData.companions}
-              onCompanionChange={handleCompanionChange}
-              onRemoveCompanion={removeCompanion}
-              onAddCompanion={addCompanion}
-              errors={errors}
-            />
+        {/* ============== PASO 1: CLIENTE + PLAN + FECHA + HORA ============== */}
+        {currentStep === 1 && (
+          <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 space-y-8">
+            <div className="section-container">
+              <label className="section-title-premium">{t('sections.responsible_info')}</label>
+              <ReservationContactSection 
+                sectionRef={contactRef}
+                data={reservationData.contact}
+                onChange={handleContactChange}
+                errors={errors}
+              />
+            </div>
+            
+            <div className="section-container">
+              <label className="section-title-premium">{t('sections.tour')}</label>
+              <TourSelectionSection 
+                sectionRef={tourRef}
+                selectedTourId={reservationData.tour.id_plan}
+                onSelect={handleTourSelect}
+                errors={errors}
+                tours={tours}
+                loading={loadingData}
+              />
+            </div>
+            
+            <div className="section-container">
+              <label className="section-title-premium">{t('sections.date')}</label>
+              <DateSelectionSection 
+                sectionRef={dateRef}
+                selectedDate={reservationData.date.rawDate}
+                onSelect={handleDateSelect}
+                errors={errors}
+                availableDates={reservationData.tour.availableDates}
+                tipoFecha={reservationData.tour.tipo_fecha}
+              />
+            </div>
+            
+            <div className="section-container">
+              <label className="section-title-premium">{t('sections.time')}</label>
+              <TimeSelectionSection 
+                sectionRef={timeRef}
+                selectedTime={reservationData.time}
+                onSelect={handleTimeSelect}
+                schedules={reservationData.tour.availableHours}
+                loading={loadingData}
+                errors={errors}
+                tipoHora={reservationData.tour.tipo_hora}
+              />
+            </div>
+
+            {/* Botón continuar PASO 1 */}
+            <div className="pt-4">
+              <button
+                onClick={handleStep1Continue}
+                className="btn-animate-continue w-full"
+              >
+                <div className="dots_border"></div>
+                <svg className="sparkle" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path className="path" d="M12 2L14.5 9L22 11.5L14.5 14L12 21L9.5 14L2 11.5L9.5 9L12 2Z" />
+                </svg>
+                <span className="text_button">{t('steps.step1_continue') || 'Continuar a participantes'}</span>
+                <svg className="sparkle" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path className="path" d="M12 2L14.5 9L22 11.5L14.5 14L12 21L9.5 14L2 11.5L9.5 9L12 2Z" />
+                </svg>
+              </button>
+            </div>
           </div>
         )}
 
-        {/* Botón Continuar */}
-        <div className="pt-4">
-          <button
-            onClick={handleContinue}
-            className="btn-animate-continue w-full"
-          >
-            <div className="dots_border"></div>
-            <svg
-              className="sparkle"
-              viewBox="0 0 24 24"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
+        {/* ============== PASO 2: PARTICIPANTES ============== */}
+        {currentStep === 2 && (
+          <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 space-y-6">
+            {/* Mini resumen compacto paso 1 (solo para recordar) */}
+            <div className="bg-brand-primary/5 dark:bg-brand-primary/5 border border-brand-primary/15 rounded-3xl p-4 md:p-5 mb-4">
+              <p className="text-[10px] md:text-xs uppercase font-black text-brand-primary tracking-wider mb-3 flex items-center gap-2">
+                <span className="w-6 h-6 rounded-full bg-brand-primary text-white flex items-center justify-center text-[10px]">1</span>
+                {t('steps.step1_summary_label') || 'Reserva programada para'}
+              </p>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4 text-xs md:text-sm">
+                <div className="flex items-center gap-2">
+                  <svg className="w-4 h-4 text-brand-primary shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3" />
+                  </svg>
+                  <span className="text-brand-text-main dark:text-dark-text-main font-bold truncate">
+                    {reservationData.tour.tour_reserva || '—'}
+                  </span>
+                </div>
+                {reservationData.date.fecha_reserva && (
+                  <div className="flex items-center gap-2">
+                    <svg className="w-4 h-4 text-brand-primary shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    <span className="text-brand-text-main dark:text-dark-text-main font-bold">
+                      {reservationData.date.fecha_reserva}
+                    </span>
+                  </div>
+                )}
+                {reservationData.time.label && (
+                  <div className="flex items-center gap-2">
+                    <svg className="w-4 h-4 text-brand-primary shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span className="text-brand-text-main dark:text-dark-text-main font-bold">
+                      {reservationData.time.label}
+                    </span>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Sección participantes */}
+            <div className="section-container" id="companions-section">
+              <div className="flex items-center justify-between mb-4">
+                <label className="section-title-premium !mb-0">
+                  {t('steps.step2_section_title') || 'Información de participantes'}
+                </label>
+                <span className="text-[10px] md:text-xs font-black uppercase px-3 py-1.5 rounded-full bg-brand-primary text-white">
+                  +{reservationData.companions.length}
+                </span>
+              </div>
+              <CompanionFormSection 
+                companions={reservationData.companions}
+                onCompanionChange={handleCompanionChange}
+                onRemoveCompanion={removeCompanion}
+                onAddCompanion={addCompanion}
+                errors={errors}
+              />
+            </div>
+
+            {/* Botones paso 2 */}
+            <div className="pt-2 grid gap-3 md:grid-cols-2">
+              <button
+                onClick={() => setCurrentStep(1)}
+                className="rounded-[1.25rem] px-6 py-4 md:py-5 font-black text-sm md:text-base uppercase tracking-wider border-2 border-brand-primary/20 text-brand-primary dark:text-brand-primary bg-transparent hover:bg-brand-primary/5 transition-all duration-300 flex items-center justify-center gap-2"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+                </svg>
+                {t('steps.back_step1') || 'Volver al plan'}
+              </button>
+
+              <button
+                onClick={handleAddCompanions}
+                className="rounded-[1.25rem] px-6 py-4 md:py-5 font-black text-sm md:text-base uppercase tracking-wider border-2 border-brand-primary/40 text-brand-primary bg-brand-primary/5 hover:bg-brand-primary/10 dark:bg-brand-primary/10 hover:shadow-lg transition-all duration-300 flex items-center justify-center gap-2"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="3">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+                </svg>
+                {t('steps.add_participant') || 'Añadir participante'}
+              </button>
+            </div>
+
+            <button
+              onClick={handleStep2Continue}
+              className="btn-animate-continue w-full mt-2"
             >
-              <path
-                className="path"
-                d="M12 2L14.5 9L22 11.5L14.5 14L12 21L9.5 14L2 11.5L9.5 9L12 2Z"
-              ></path>
-            </svg>
-            <span className="text_button">{t('welcome.continue')}</span>
-            <svg
-              className="sparkle"
-              viewBox="0 0 24 24"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                className="path"
-                d="M12 2L14.5 9L22 11.5L14.5 14L12 21L9.5 14L2 11.5L9.5 9L12 2Z"
-              ></path>
-            </svg>
-          </button>
-        </div>
+              <div className="dots_border"></div>
+              <svg className="sparkle" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path className="path" d="M12 2L14.5 9L22 11.5L14.5 14L12 21L9.5 14L2 11.5L9.5 9L12 2Z" />
+              </svg>
+              <span className="text_button">{t('steps.step2_continue') || 'Continuar con la reserva'}</span>
+              <svg className="sparkle" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path className="path" d="M12 2L14.5 9L22 11.5L14.5 14L12 21L9.5 14L2 11.5L9.5 9L12 2Z" />
+              </svg>
+            </button>
+          </div>
+        )}
 
         {/* Resumen Final */}
         {showSummary && (
@@ -591,16 +741,23 @@ const HomePage = ({
                   <svg className="w-4 h-4 transition-transform group-hover:-translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                   </svg>
-                  {t('summary.edit')}
+                  {t('steps.edit_all') || t('summary.edit')}
                 </button>
                 <button
-                  onClick={handleAddCompanions}
+                  onClick={() => {
+                    setShowSummary(false);
+                    setCurrentStep(2);
+                    setShowCompanionsSection(true);
+                    setTimeout(() => {
+                      document.getElementById('companions-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }, 100);
+                  }}
                   className="flex-1 py-4 px-6 bg-brand-light dark:bg-dark-bg-main border-2 border-brand-primary/20 hover:border-brand-primary text-brand-dark dark:text-brand-primary font-black text-xs uppercase tracking-widest rounded-full transition-all duration-300 flex items-center justify-center gap-2 shadow-sm"
                 >
-                  <svg className="w-4 h-4 text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M12 4v16m8-8H4" />
+                  <svg className="w-4 h-4 text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="3">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
                   </svg>
-                  {t('summary.add_companions')}
+                  {t('steps.edit_participants') || t('summary.add_companions')}
                 </button>
               </div>
 
