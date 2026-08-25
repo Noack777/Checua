@@ -12,9 +12,13 @@ const WelcomeStartForm = ({
   isValid,
   clientStatus,
   selectedTourId,
+  selectedGroupId,
   onTourChange,
+  onSubplanChange,
   tours,
+  subplans = [],
   loading,
+  loadingSubplans,
   acceptedTerms,
   onTermsChange,
   isProcessing,
@@ -23,13 +27,20 @@ const WelcomeStartForm = ({
   isEnglish
 }) => {
   const [isTourDropdownOpen, setIsTourDropdownOpen] = useState(false);
+  const [isRouteDropdownOpen, setIsRouteDropdownOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
+  const [routeSearchTerm, setRouteSearchTerm] = useState('');
   const [phoneDropdownPosition, setPhoneDropdownPosition] = useState('down');
   const dropdownRef = useRef(null);
+  const routeDropdownRef = useRef(null);
   const searchInputRef = useRef(null);
+  const routeSearchInputRef = useRef(null);
   const phoneContainerRef = useRef(null);
 
-  const selectedTour = tours.find((tour) => String(tour.id) === String(selectedTourId));
+  const selectedMainTour = tours.find((tour) => String(tour.id) === String(selectedGroupId || selectedTourId));
+  const selectedSubplan = subplans.find((tour) => String(tour.id) === String(selectedTourId));
+  const selectedIsGroup = Boolean(selectedMainTour?.es_grupo);
+
   const filteredTours = !searchTerm.trim()
     ? tours
     : tours.filter((tour) => {
@@ -39,16 +50,75 @@ const WelcomeStartForm = ({
           || tour.category?.toLowerCase().includes(term);
       });
 
+  const filteredRoutes = !routeSearchTerm.trim()
+    ? subplans
+    : subplans.filter((route) => {
+        const term = routeSearchTerm.toLowerCase().trim();
+        return route.name?.toLowerCase().includes(term)
+          || route.description?.toLowerCase().includes(term);
+      });
+
   const copy = {
     checking: isEnglish ? 'Checking client' : 'Verificando cliente',
     found: isEnglish ? 'Existing client' : 'Cliente encontrado',
     newClient: isEnglish ? 'New client' : 'Cliente nuevo',
-    processing: isEnglish ? 'Processing...' : 'Procesando...'
+    processing: isEnglish ? 'Processing...' : 'Procesando...',
+    chooseRoute: isEnglish ? 'Which Buggy route do you want?' : '¿Qué ruta de Buggy quieres?',
+    routePlaceholder: isEnglish ? 'Select a Buggy route' : 'Selecciona una ruta de Buggy',
+    routesAvailable: isEnglish ? 'View routes and prices' : 'Ver rutas y precios',
+    loadingRoutes: isEnglish ? 'Loading routes...' : 'Cargando rutas...',
+    onePerson: isEnglish ? '1 person' : '1 persona',
+    twoPeople: isEnglish ? '2 people' : '2 personas'
+  };
+
+  const formatCOP = (value) => `$${Number(value || 0).toLocaleString('es-CO')}`;
+
+  const getRoutePrices = (route) => {
+    const tariffs = Array.isArray(route?.tariffs) ? route.tariffs : [];
+    const one = tariffs.find((tariff) => Number(tariff.peopleMin) === 1);
+    const two = tariffs.find((tariff) => Number(tariff.peopleMin) === 2);
+
+    return {
+      one: Number(one?.totalPrice || route?.price || 0),
+      two: Number(two?.totalPrice || 0)
+    };
+  };
+
+  const renderRoutePrices = (route, compact = false) => {
+    const prices = getRoutePrices(route);
+    if (!prices.one && !prices.two) return null;
+
+    if (compact) {
+      return (
+        <p className="text-brand-primary font-black text-xs sm:text-sm mt-1 flex flex-wrap gap-x-2 gap-y-0.5">
+          {prices.one > 0 && <span>{copy.onePerson}: {formatCOP(prices.one)}</span>}
+          {prices.two > 0 && <span>• {copy.twoPeople}: {formatCOP(prices.two)}</span>}
+        </p>
+      );
+    }
+
+    return (
+      <div className="mt-2 grid grid-cols-2 gap-2">
+        {prices.one > 0 && (
+          <div className="rounded-xl border border-brand-primary/15 bg-brand-primary/5 px-3 py-2">
+            <p className="text-[9px] uppercase tracking-wider font-black text-brand-text-secondary dark:text-dark-text-secondary">{copy.onePerson}</p>
+            <p className="text-sm font-black text-brand-primary">{formatCOP(prices.one)}</p>
+          </div>
+        )}
+        {prices.two > 0 && (
+          <div className="rounded-xl border border-brand-primary/15 bg-brand-primary/5 px-3 py-2">
+            <p className="text-[9px] uppercase tracking-wider font-black text-brand-text-secondary dark:text-dark-text-secondary">{copy.twoPeople}</p>
+            <p className="text-sm font-black text-brand-primary">{formatCOP(prices.two)}</p>
+          </div>
+        )}
+      </div>
+    );
   };
 
   useEffect(() => {
     const onClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) setIsTourDropdownOpen(false);
+      if (routeDropdownRef.current && !routeDropdownRef.current.contains(event.target)) setIsRouteDropdownOpen(false);
     };
     document.addEventListener('mousedown', onClickOutside);
     return () => document.removeEventListener('mousedown', onClickOutside);
@@ -59,6 +129,19 @@ const WelcomeStartForm = ({
     const timer = setTimeout(() => searchInputRef.current?.focus(), 100);
     return () => clearTimeout(timer);
   }, [isTourDropdownOpen]);
+
+  useEffect(() => {
+    if (!isRouteDropdownOpen) return undefined;
+    const timer = setTimeout(() => routeSearchInputRef.current?.focus(), 100);
+    return () => clearTimeout(timer);
+  }, [isRouteDropdownOpen]);
+
+  useEffect(() => {
+    if (!selectedIsGroup) {
+      setIsRouteDropdownOpen(false);
+      setRouteSearchTerm('');
+    }
+  }, [selectedIsGroup]);
 
   const handlePhoneDropdownClick = () => {
     if (!phoneContainerRef.current) return;
@@ -131,13 +214,18 @@ const WelcomeStartForm = ({
           <div className="relative">
             <button
               type="button"
-              onClick={() => setIsTourDropdownOpen((open) => !open)}
+              onClick={() => {
+                setIsTourDropdownOpen((open) => !open);
+                setIsRouteDropdownOpen(false);
+              }}
               className={`w-full px-6 py-4 bg-brand-light/30 dark:bg-dark-bg-main/50 border-2 rounded-full text-left transition-all flex items-center justify-between gap-4 ${isTourDropdownOpen ? 'border-brand-primary ring-4 ring-brand-primary/5' : 'border-brand-border dark:border-dark-border hover:border-brand-primary/50'}`}
             >
-              {selectedTour ? (
+              {selectedMainTour ? (
                 <div className="min-w-0">
-                  <p className="text-brand-text-main dark:text-dark-text-main font-bold text-sm md:text-base truncate">{selectedTour.name}</p>
-                  <p className="text-brand-primary font-black text-sm mt-1">${Number(selectedTour.price || 0).toLocaleString('es-CO')}</p>
+                  <p className="text-brand-text-main dark:text-dark-text-main font-bold text-sm md:text-base truncate">{selectedMainTour.name}</p>
+                  <p className="text-brand-primary font-black text-sm mt-1">
+                    {selectedMainTour.es_grupo ? copy.routesAvailable : formatCOP(selectedMainTour.price)}
+                  </p>
                 </div>
               ) : (
                 <span className="text-brand-text-secondary/60 dark:text-dark-text-secondary/60 font-bold text-sm md:text-base">{t('welcome.experience_placeholder')}</span>
@@ -170,10 +258,12 @@ const WelcomeStartForm = ({
                           setIsTourDropdownOpen(false);
                           setSearchTerm('');
                         }}
-                        className={`w-full px-5 py-4 text-left border-b border-brand-light dark:border-dark-border last:border-0 transition-colors ${String(selectedTourId) === String(tour.id) ? 'bg-brand-primary/10' : 'hover:bg-brand-light/50 dark:hover:bg-dark-bg-main/50'}`}
+                        className={`w-full px-5 py-4 text-left border-b border-brand-light dark:border-dark-border last:border-0 transition-colors ${String(selectedGroupId || selectedTourId) === String(tour.id) ? 'bg-brand-primary/10' : 'hover:bg-brand-light/50 dark:hover:bg-dark-bg-main/50'}`}
                       >
                         <p className="font-bold text-sm text-brand-text-main dark:text-dark-text-main">{tour.name}</p>
-                        <p className="text-brand-primary font-black text-sm mt-1">${Number(tour.price || 0).toLocaleString('es-CO')}</p>
+                        <p className="text-brand-primary font-black text-sm mt-1">
+                          {tour.es_grupo ? copy.routesAvailable : formatCOP(tour.price)}
+                        </p>
                       </button>
                     ))
                   ) : (
@@ -184,6 +274,100 @@ const WelcomeStartForm = ({
             )}
           </div>
         </div>
+
+        {selectedIsGroup && (
+          <div className={`space-y-2 transition-all animate-in fade-in slide-in-from-top-2 duration-300 ${isRouteDropdownOpen ? 'pb-[330px]' : ''}`} ref={routeDropdownRef}>
+            <label className="text-[10px] font-black text-brand-primary uppercase tracking-[0.2em] ml-4">
+              🚙 {copy.chooseRoute}
+            </label>
+            <div className="relative">
+              <button
+                type="button"
+                onClick={() => {
+                  if (!loadingSubplans && subplans.length) {
+                    setIsRouteDropdownOpen((open) => !open);
+                    setIsTourDropdownOpen(false);
+                  }
+                }}
+                disabled={loadingSubplans || !subplans.length}
+                className={`w-full px-6 py-4 bg-brand-light/30 dark:bg-dark-bg-main/50 border-2 rounded-full text-left transition-all flex items-center justify-between gap-4 disabled:opacity-60 ${isRouteDropdownOpen ? 'border-brand-primary ring-4 ring-brand-primary/5' : 'border-brand-border dark:border-dark-border hover:border-brand-primary/50'}`}
+              >
+                {selectedSubplan ? (
+                  <div className="min-w-0 flex-1">
+                    <p className="text-brand-text-main dark:text-dark-text-main font-bold text-sm md:text-base truncate">{selectedSubplan.name}</p>
+                    {renderRoutePrices(selectedSubplan, true)}
+                  </div>
+                ) : (
+                  <span className="text-brand-text-secondary/60 dark:text-dark-text-secondary/60 font-bold text-sm md:text-base">
+                    {loadingSubplans ? copy.loadingRoutes : copy.routePlaceholder}
+                  </span>
+                )}
+                <span className={`text-brand-primary text-lg transition-transform ${isRouteDropdownOpen ? 'rotate-180' : ''}`}>⌄</span>
+              </button>
+
+              {isRouteDropdownOpen && (
+                <div className="absolute left-0 right-0 mt-3 bg-white dark:bg-dark-bg-card border-2 border-brand-border dark:border-dark-border rounded-[1.5rem] shadow-2xl z-[1002] overflow-hidden">
+                  <div className="p-3 border-b border-brand-light dark:border-dark-border">
+                    <input
+                      ref={routeSearchInputRef}
+                      type="text"
+                      value={routeSearchTerm}
+                      onChange={(event) => setRouteSearchTerm(event.target.value)}
+                      placeholder={isEnglish ? 'Search Buggy route...' : 'Buscar ruta de Buggy...'}
+                      className="w-full px-4 py-3 bg-brand-light/30 dark:bg-dark-bg-main/50 rounded-xl text-sm font-bold text-brand-text-main dark:text-dark-text-main outline-none border-2 border-transparent focus:border-brand-primary/30"
+                    />
+                  </div>
+
+                  <div className="max-h-[290px] overflow-y-auto">
+                    {loadingSubplans ? (
+                      <div className="p-8 text-center text-sm font-bold text-brand-text-secondary">{copy.loadingRoutes}</div>
+                    ) : filteredRoutes.length ? (
+                      filteredRoutes.map((route) => (
+                        <button
+                          key={route.id}
+                          type="button"
+                          onClick={() => {
+                            onSubplanChange(String(route.id));
+                            setIsRouteDropdownOpen(false);
+                            setRouteSearchTerm('');
+                          }}
+                          className={`w-full px-5 py-4 text-left border-b border-brand-light dark:border-dark-border last:border-0 transition-colors ${String(selectedTourId) === String(route.id) ? 'bg-brand-primary/10' : 'hover:bg-brand-light/50 dark:hover:bg-dark-bg-main/50'}`}
+                        >
+                          <p className="font-bold text-sm text-brand-text-main dark:text-dark-text-main">{route.name}</p>
+                          {renderRoutePrices(route, true)}
+                        </button>
+                      ))
+                    ) : (
+                      <div className="p-8 text-center text-sm font-bold text-brand-text-secondary">
+                        {isEnglish ? 'No routes found.' : 'No encontramos rutas.'}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {selectedSubplan && (
+              <div className="mx-1 rounded-2xl border border-brand-primary/20 bg-brand-primary/5 px-4 py-3">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <p className="text-[9px] uppercase tracking-[0.16em] font-black text-brand-text-secondary dark:text-dark-text-secondary">
+                      {isEnglish ? 'Selected route' : 'Ruta seleccionada'}
+                    </p>
+                    <p className="text-sm font-black text-brand-text-main dark:text-dark-text-main mt-1">{selectedSubplan.name}</p>
+                  </div>
+                  <span className="shrink-0 rounded-full bg-brand-primary/10 text-brand-primary text-[9px] font-black uppercase tracking-wider px-3 py-1.5">Buggy</span>
+                </div>
+                {renderRoutePrices(selectedSubplan)}
+                <p className="text-[10px] text-brand-text-secondary dark:text-dark-text-secondary mt-2 leading-relaxed">
+                  {isEnglish
+                    ? 'Prices shown are the total for 1 Buggy according to the number of occupants.'
+                    : 'Los precios mostrados son el total de 1 Buggy según la cantidad de ocupantes.'}
+                </p>
+              </div>
+            )}
+          </div>
+        )}
 
         <div className="space-y-4 pt-2">
           <p className="text-[11px] text-brand-text-secondary dark:text-dark-text-secondary leading-relaxed ml-1">{t('welcome.terms_authorize')}</p>
