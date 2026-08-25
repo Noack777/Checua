@@ -31,9 +31,7 @@ export const saveParticipants = async (participants) => {
         .eq('numero_documento', participant.numero_documento)
         .select()
 
-      if (updateError) {
-        return { data: null, error: updateError }
-      }
+      if (updateError) return { data: null, error: updateError }
 
       if (updatedData && updatedData.length > 0) {
         results.push(...updatedData)
@@ -45,10 +43,7 @@ export const saveParticipants = async (participants) => {
         .insert(participant)
         .select()
 
-      if (insertError) {
-        return { data: null, error: insertError }
-      }
-
+      if (insertError) return { data: null, error: insertError }
       if (insertedData) results.push(...insertedData)
     }
 
@@ -59,42 +54,49 @@ export const saveParticipants = async (participants) => {
   }
 }
 
+/**
+ * Sincroniza la lista completa de participantes de una reserva.
+ * La lista recibida desde el formulario es la fuente de verdad:
+ * responsable + todos los acompañantes.
+ */
 export const saveParticipantsForReservation = async (participants, reservationId) => {
   try {
-    const participantsWithReservation = participants.map(p => ({
-      ...p,
+    if (!reservationId) {
+      return { data: null, error: new Error('reservationId es obligatorio') }
+    }
+
+    const participantsWithReservation = (participants || []).map((participant) => ({
+      ...participant,
       id_reserva: reservationId
     }))
+
+    if (participantsWithReservation.length === 0) {
+      return { data: [], error: null }
+    }
+
+    // Evita que reaperturas del modal acumulen o sobrescriban solo una parte
+    // de los participantes. La reserva queda exactamente como está el formulario.
+    const { error: deleteError } = await supabase
+      .from('participante')
+      .delete()
+      .eq('id_reserva', reservationId)
+
+    if (deleteError) {
+      console.error('Error al limpiar participantes anteriores:', deleteError)
+      return { data: null, error: deleteError }
+    }
 
     const { data, error } = await supabase
       .from('participante')
       .insert(participantsWithReservation)
       .select()
 
-    if (!error) return { data, error: null }
-
-    if (error?.code !== '23505') {
+    if (error) {
+      console.error('Error al insertar la lista completa de participantes:', error)
       return { data: null, error }
     }
 
-    const results = []
-
-    for (const participant of participantsWithReservation) {
-      const { data: updatedData, error: updateError } = await supabase
-        .from('participante')
-        .update(participant)
-        .eq('id_reserva', participant.id_reserva)
-        .eq('numero_documento', participant.numero_documento)
-        .select()
-
-      if (updateError) {
-        return { data: null, error: updateError }
-      }
-
-      if (updatedData) results.push(...updatedData)
-    }
-
-    return { data: results, error: null }
+    return { data: data || [], error: null }
   } catch (err) {
     console.error('Error in saveParticipantsForReservation service:', err)
     return { data: null, error: err }
